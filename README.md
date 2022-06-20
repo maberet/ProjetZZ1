@@ -15,7 +15,8 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 ├── travail_individuel    
     ├── Belkhiri    
     ├── Beret   
-    └── Meyer      
+    └── Meyer  
+        └── x_fenetre
 ├── travail_de_groupe   
     ├── chef_oeuvre   
     └── jeu_appren_par_renfo    
