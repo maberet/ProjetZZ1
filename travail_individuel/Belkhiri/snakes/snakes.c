@@ -210,7 +210,7 @@ int main(int argc, char** argv) {
     for (int i = 0; i < NB_SNAKES; i++) {
         // random int between 0 and WIDTH
 
-        snakeList[i] = init_snake(rand()%screen.w, rand()%screen.h, rand()%200, rand()%50);
+        snakeList[i] = init_snake(rand()%screen.w/2, rand()%screen.h/2, rand()%200, rand()%50);
     }
 
     for (int i=0; i< 50; i++){
