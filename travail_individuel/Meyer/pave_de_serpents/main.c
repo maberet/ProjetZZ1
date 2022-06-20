@@ -1,13 +1,13 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#define PI 3.141592654
 
 int main(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-
-    int vainqueur = 0;
 
     SDL_Window
         *window = NULL;
@@ -25,8 +25,14 @@ int main(int argc, char **argv)
     SDL_Renderer *renderer;
     SDL_Rect rect;
 
-    int pale_1_x;
-    int pale_1_y;
+    int pale_1_x = 300;
+    int pale_1_y = 300;
+
+    int pale_2_x = 700;
+    int pale_2_y = 300;
+
+    int pale_3_x = 250;
+    int pale_3_y = 500;
 
     if (SDL_GetDesktopDisplayMode(0, &mode) != 0)
     {
@@ -70,67 +76,86 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    // dessin
-    /* couleur de fond */
-    SDL_SetRenderDrawColor(renderer, 157, 224, 144, 255);
-    SDL_RenderClear(renderer);
+    int i = 20;
 
-    //sol
-    SDL_SetRenderDrawColor(renderer, 49, 150, 29, 255);
-    rect.w = window_width;
-    rect.h = window_height/3;
-    rect.x = 0;
-    rect.y = window_height - window_height/3;
-    SDL_RenderFillRect(renderer, &rect);
+    while(i>0){
 
-    /* bloc du moulin */
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    rect.w = 150;
-    rect.h = 250;
-    rect.x = (window_width - rect.w)/2;
-    rect.y = window_height - rect.h - 150;
-    SDL_RenderFillRect(renderer, &rect);
+        // dessin
+        /* couleur de fond */
+        SDL_SetRenderDrawColor(renderer, 157, 224, 144, 255);
+        SDL_RenderClear(renderer);
 
-    /*triangle moulin*/
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    rect.w = 150;
-    rect.h = 50;
-    rect.x = (window_width - rect.w)/2;
-    rect.y = window_height - rect.h - 400;
-    SDL_RenderFillRect(renderer, &rect);
+        //sol
+        SDL_SetRenderDrawColor(renderer, 49, 150, 29, 255);
+        rect.w = window_width;
+        rect.h = window_height/3;
+        rect.x = 0;
+        rect.y = window_height - window_height/3;
+        SDL_RenderFillRect(renderer, &rect);
 
-    //pales du moulin
-    //pale 1 du moulin
-    pale_1_x = 50;
-    pale_1_y = 50;
-    SDL_SetRenderDrawColor(renderer, 163, 82, 2, 255);
-    SDL_RenderDrawLine(renderer,
-        (window_width - rect.w)/2,
-        window_height - rect.h - 400,
-        pale_1_x, 
-        pale_1_y);
+        /* bloc du moulin */
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        rect.w = 150;
+        rect.h = 250;
+        rect.x = (window_width - rect.w)/2;
+        rect.y = window_height - rect.h - 150;
+        SDL_RenderFillRect(renderer, &rect);
 
-   
+        /*triangle moulin*/
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        rect.w = 150;
+        rect.h = 50;
+        rect.x = (window_width - rect.w)/2;
+        rect.y = window_height - rect.h - 400;
+        SDL_RenderFillRect(renderer, &rect);
 
-    /* afficher à l'ecran */
-    SDL_RenderPresent(renderer);
+        //pales du moulin
+        //pale 1 du moulin
+        int theta = 40;
+        int px = window_width/2;
+        int py = window_height - rect.h - 375;
+        float c = cos(theta), s = sin(theta);
+        float dx = pale_1_x - px, dy = pale_1_y - py;
+        pale_1_x = pale_1_x + c * dx - s * dy;
+        pale_1_y = pale_1_y + s * dx + c * dy;
 
+        SDL_SetRenderDrawColor(renderer, 163, 82, 2, 255);
+        SDL_RenderDrawLine(renderer,
+            px,
+            py,
+            pale_1_x, 
+            pale_1_y);
 
+        //pale 2 du moulin
+        dx = pale_2_x - px, dy = pale_2_y - py;
+        pale_2_x = pale_2_x + c * dx - s * dy;
+        pale_2_y = pale_2_y + s * dx + c * dy;
+        SDL_SetRenderDrawColor(renderer, 163, 82, 2, 255);
+        SDL_RenderDrawLine(renderer,
+            px,
+            py,
+            pale_2_x, 
+            pale_2_y);
+        
+        //pale 3 du moulin
+        dx = pale_3_x - px, dy = pale_3_y - py;
+        pale_3_x = pale_3_x + c * dx - s * dy;
+        pale_3_y = pale_3_y + s * dx + c * dy;
+        SDL_SetRenderDrawColor(renderer, 163, 82, 2, 255);
+        SDL_RenderDrawLine(renderer,
+            px,
+            py,
+            pale_3_x, 
+            pale_3_y);
 
-    // départ de la course
-    /*while (vainqueur == 0)
-    {
+        /* afficher à l'ecran */
+        SDL_RenderPresent(renderer);
+        SDL_Delay(1000);
+        SDL_RenderClear(renderer);
+        i = i - 2;
+    }
 
-        if (cercle.x > display_width)
-        {
-            vainqueur = 1;
-        }
-    }*/
-
-    // ecrire victoire
-
-
-    SDL_Delay(2000);
+    SDL_DestroyRenderer(renderer);
 
     // fermer fenetre
     SDL_DestroyWindow(window); // la fenêtre
