@@ -8,4 +8,4 @@ main.o:main.c
 	$(CC) -c main.c -g -Wall -Wextra
 
 clean:
-	rm -rf main
+	rm -rf main main.o
