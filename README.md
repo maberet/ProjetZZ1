@@ -13,7 +13,9 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 ## Architecture du git
 ```
 ├── travail_individuel    
-    ├── Belkhiri    
+    └── Belkhiri    
+    |   └── x_fenetre
+    |   └── snakes
     ├── Beret   
     └── Meyer  
         └── x_fenetre
