@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-#define TAILLE_MONDE_DELIMITE 20
 #define TAILLE_TABLEAU_REGLES 9
 
 int survie[TAILLE_TABLEAU_REGLES] = {0, 0, 1, 1, 0, 0, 0, 0, 0};
@@ -16,6 +15,8 @@ SDL_Rect rect;
 SDL_Event event;
 int running = 1;
 int tailleAffichage = 30;
+
+int taille_monde_delimitee = 20;
 
 void initSDL2(){
 
@@ -54,23 +55,23 @@ void destroySDL2(){
     SDL_Quit();
 }
 
-void initMonde(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
+void initMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     int i = 0;
     int j = 0;
     
-    for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
-        for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
+    for(i=0; i<taille_monde_delimitee; i++){
+        for(j=0; j<taille_monde_delimitee; j++){
             monde[i][j] = 0;
         }
     } 
 }
 
-void afficheMonde(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
+void afficheMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     int i = 0;
     int j = 0;
 
-    for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
-        for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
+    for(i=0; i<taille_monde_delimitee; i++){
+        for(j=0; j<taille_monde_delimitee; j++){
             switch(monde[i][j]){
                 case 0:
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -91,7 +92,7 @@ void afficheMonde(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
     }
 }
 
-void afficherEcran(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
+void afficherEcran(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     
     SDL_SetRenderDrawColor(renderer, 0, 16, 158, 0);
     SDL_RenderClear(renderer);
@@ -101,7 +102,7 @@ void afficherEcran(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
     SDL_RenderPresent(renderer);
 }
 
-void changeCellule(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE], int clic_x, int clic_y){
+void changeCellule(int monde[taille_monde_delimitee][taille_monde_delimitee], int clic_x, int clic_y){
     int ligne = clic_y/tailleAffichage;
     int colonne = clic_x/tailleAffichage;
     if(0 == monde[colonne][ligne]){
@@ -111,23 +112,23 @@ void changeCellule(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE], int 
     }
 }
 
-int nombreVoisinsVivants(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE], int cel_x, int cel_y){
+int nombreVoisinsVivants(int monde[taille_monde_delimitee][taille_monde_delimitee], int cel_x, int cel_y){
     int nbrVoisinsVivants = 0;
     if(cel_x==0 && cel_y==0){
         nbrVoisinsVivants = monde[cel_x+1][cel_y] + monde[cel_x][cel_y+1] + monde[cel_x+1][cel_y+1];
-    } else if(cel_x==0 && cel_y==TAILLE_MONDE_DELIMITE-1){
+    } else if(cel_x==0 && cel_y==taille_monde_delimitee-1){
         nbrVoisinsVivants = monde[cel_x+1][cel_y] + monde[cel_x][cel_y-1] + monde[cel_x+1][cel_y-1];
-    }else if(cel_x==TAILLE_MONDE_DELIMITE-1 && cel_y==0 ){
+    }else if(cel_x==taille_monde_delimitee-1 && cel_y==0 ){
         nbrVoisinsVivants = monde[cel_x-1][cel_y] + monde[cel_x][cel_y+1] + monde[cel_x-1][cel_y+1];
-    }else if(cel_x==TAILLE_MONDE_DELIMITE-1 && cel_y==TAILLE_MONDE_DELIMITE-1){
+    }else if(cel_x==taille_monde_delimitee-1 && cel_y==taille_monde_delimitee-1){
         nbrVoisinsVivants = monde[cel_x-1][cel_y] + monde[cel_x][cel_y-1] + monde[cel_x-1][cel_y-1];
     }else if(cel_x==0){
         nbrVoisinsVivants = monde[cel_x][cel_y-1] + monde[cel_x+1][cel_y-1] + monde[cel_x+1][cel_y] + monde[cel_x+1][cel_y+1] + monde[cel_x][cel_y+1];
-    }else if(cel_x==TAILLE_MONDE_DELIMITE-1){
+    }else if(cel_x==taille_monde_delimitee-1){
         nbrVoisinsVivants = monde[cel_x][cel_y-1] + monde[cel_x-1][cel_y-1] + monde[cel_x-1][cel_y] + monde[cel_x-1][cel_y+1] + monde[cel_x][cel_y+1];
     }else if(cel_y==0){
         nbrVoisinsVivants = monde[cel_x-1][cel_y] + monde[cel_x-1][cel_y+1] + monde[cel_x][cel_y+1] + monde[cel_x+1][cel_y+1] + monde[cel_x+1][cel_y];
-    }else if(cel_y==TAILLE_MONDE_DELIMITE-1){
+    }else if(cel_y==taille_monde_delimitee-1){
         nbrVoisinsVivants = monde[cel_x-1][cel_y] + monde[cel_x-1][cel_y-1] + monde[cel_x][cel_y-1] + monde[cel_x+1][cel_y-1] + monde[cel_x+1][cel_y];
     }else{
         nbrVoisinsVivants = monde[cel_x-1][cel_y-1] + monde[cel_x][cel_y-1] + monde[cel_x+1][cel_y-1] + monde[cel_x+1][cel_y] +
@@ -136,15 +137,21 @@ int nombreVoisinsVivants(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]
     return nbrVoisinsVivants;
 }
 
-void reglesEvolutions(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
+void reglesEvolutions(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     int i = 0;
     int j = 0;
     
-    int mondeSuivant[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE] = {0};
+    int mondeSuivant[taille_monde_delimitee][taille_monde_delimitee];
+
+    for(i=0; i<taille_monde_delimitee; i++){
+        for(j=0; j<taille_monde_delimitee; j++){
+            mondeSuivant[i][j] = 0;
+        }
+    }
 
     int nbrVoisinsVivants = 0;
-    for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
-        for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
+    for(i=0; i<taille_monde_delimitee; i++){
+        for(j=0; j<taille_monde_delimitee; j++){
             nbrVoisinsVivants = nombreVoisinsVivants(monde, i, j);
             if(monde[i][j]==1 && survie[nbrVoisinsVivants]==0){
                 mondeSuivant[i][j] = 0;
@@ -156,18 +163,48 @@ void reglesEvolutions(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
         }
     }
 
-    for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
-        for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
+    for(i=0; i<taille_monde_delimitee; i++){
+        for(j=0; j<taille_monde_delimitee; j++){
             monde[i][j] = mondeSuivant[i][j];
         }
     }
-
-   
 }
 
-int main() {
+void chargeNiveauFichier(char *nom_fichier, int monde[taille_monde_delimitee][taille_monde_delimitee]){
+    FILE *fichier = NULL;
+    int valeur;
+    int ligne = -1;
+    int colonne = 0;
+    fichier = fopen(nom_fichier, "r");
+    if(fichier != NULL){
+        while(fscanf(fichier, "%d", &valeur) != EOF){
+            if(ligne == -1){
+                taille_monde_delimitee = valeur;
+                ligne = 0;
+            }else{
+                monde[colonne][ligne] = valeur;
+                colonne = colonne + 1;
+                if(colonne==taille_monde_delimitee){
+                    ligne = ligne + 1;
+                    colonne = 0;
+                    if(ligne==taille_monde_delimitee){
+                        break;
+                    }
+                }
+            }
+            printf("%d (%d, %d)\n", valeur, ligne, colonne);
+        }
+    }
+    fclose(fichier);
+}
 
-    int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE];
+int main(int argc, char** argv) {
+
+    if(argc == 2){
+        taille_monde_delimitee = atoi(argv[1]);
+    }
+
+    int monde[taille_monde_delimitee][taille_monde_delimitee];
 
     initSDL2();
 
@@ -199,8 +236,9 @@ int main() {
                             printf("goo calcul!\n");
                             reglesEvolutions(monde);
                             break;
-                        case SDLK_s:
-                            printf("stop calcul...\n");
+                        case SDLK_c:
+                            printf("charge niveau.txt...\n");
+                            chargeNiveauFichier("niveau.txt", monde);
                             break;
                         default:
                             printf("une touche est tapee\n");
