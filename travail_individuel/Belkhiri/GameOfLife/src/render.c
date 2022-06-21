@@ -126,17 +126,8 @@ void drawColumns(){
     SDL_RenderCopy(renderer, columnTexture, NULL, &rightRect);
 }
 
-void drawGame(){
-    SDL_RenderClear(renderer);
-    drawBackground();
-    drawBackground2();
-    drawMap();
-    drawColumns();
-    SDL_RenderPresent(renderer);
-}
-
 void drawStable(){
-    char str[20] = "Stable state reached";
+    char str[21] = "Stable state reached";
     SDL_Color textColor = {0, 0, 0};
     SDL_Surface * surface = TTF_RenderText_Solid(RobotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -147,6 +138,18 @@ void drawStable(){
     SDL_Rect titleRect = {ScreenDimension.w/2 - titleWidth/2, ScreenDimension.h/2 - titleHeight, titleWidth, titleHeight};
     SDL_RenderCopy(renderer, texture, NULL, &titleRect);
 
+    SDL_RenderPresent(renderer);
+}
+
+void drawGame(){
+    SDL_RenderClear(renderer);
+    drawBackground();
+    drawBackground2();
+    drawMap();
+    drawColumns();
+    if (stable){
+        drawStable();
+    }
     SDL_RenderPresent(renderer);
 }
 

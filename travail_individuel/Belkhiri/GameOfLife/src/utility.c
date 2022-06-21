@@ -2,6 +2,7 @@
 
 int surviveRule[NB_RULES] = {0, 0, 1, 1, 0, 0, 0, 0, 0};
 int bornRule[NB_RULES] = {0, 0, 0, 1, 0, 0, 0, 0, 0};
+int stable;
 
 int survivingNeighbors(int x, int y){
     int count = 0;
@@ -17,7 +18,7 @@ int survivingNeighbors(int x, int y){
 
 void updateMap(){
     int newMap[MAPSIZE][MAPSIZE];
-    int stable = 1;
+    stable = 1;
     for (int i=0; i<MAPSIZE; i++){
         for (int j=0; j<MAPSIZE; j++){
             int count = survivingNeighbors(j, i);
@@ -38,16 +39,10 @@ void updateMap(){
         }
     }
 
-    if (stable){
-        drawStable();
-    }
-
     for (int i=0; i<MAPSIZE; i++){
         for (int j=0; j<MAPSIZE; j++){
             map[i][j] = newMap[i][j];
         }
     }
-
-    addMapToList(map);
 }
 

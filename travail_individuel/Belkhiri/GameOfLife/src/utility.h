@@ -7,6 +7,7 @@
 
 #define NB_RULES 9
 
+extern int stable;
 void updateMap();
 
 

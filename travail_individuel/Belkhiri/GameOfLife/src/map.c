@@ -65,25 +65,3 @@ void addMapToList(int **map)
     mapList[mapListSize] = map;
     mapListSize++;
 }
-
-void checkForCycle()
-{
-    for (int i = 0; i < mapListSize; i++)
-    {
-        int cycle = 1;
-        int j = 0;
-        while (cycle && j < MAPSIZE)
-        {
-            int k = 0;
-            while (cycle && k < MAPSIZE)
-            {
-                if (mapList[i][j][k] != map[j][k])
-                {
-                    cycle = 0;
-                }
-                k++;
-            }
-            j++;
-        }
-    }
-}
