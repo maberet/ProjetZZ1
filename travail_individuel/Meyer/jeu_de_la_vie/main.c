@@ -8,13 +8,12 @@ int survie[TAILLE_TABLEAU_REGLES] = {0, 0, 1, 1, 0, 0, 0, 0, 0};
 int naissance[TAILLE_TABLEAU_REGLES] = {0, 0, 0, 1, 0, 0, 0, 0, 0};
 
 SDL_Window *window;                   
-int width = 700;
+int width = 600;
 int height = 700;
 SDL_Renderer *renderer;
 SDL_Rect rect;
 SDL_Event event;
 int running = 1;
-int tailleAffichage = 30;
 
 int taille_monde_delimitee = 20;
 
@@ -55,7 +54,13 @@ void destroySDL2(){
     SDL_Quit();
 }
 
-void initMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
+int quelleTaillePourLesCases(int divise, int diviseur){
+    int r;
+    r = divise/diviseur;
+    return r;
+}
+
+void initMonde(int ** monde){
     int i = 0;
     int j = 0;
     
@@ -66,10 +71,9 @@ void initMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     } 
 }
 
-void afficheMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
+void afficheMonde(int ** monde){
     int i = 0;
     int j = 0;
-
     for(i=0; i<taille_monde_delimitee; i++){
         for(j=0; j<taille_monde_delimitee; j++){
             switch(monde[i][j]){
@@ -80,19 +84,19 @@ void afficheMonde(int monde[taille_monde_delimitee][taille_monde_delimitee]){
                     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
                     break;
                 default:
-                    printf("Problème valeur tableau monde.\n");
+                    printf("Problème valeur tableau monde. %d; %d\n", i, j);
                     break;
             }
-            rect.x = tailleAffichage*i;
-            rect.y = tailleAffichage*j;
-            rect.w = tailleAffichage-2;
-            rect.h = tailleAffichage-2;
+            rect.x = quelleTaillePourLesCases(width, taille_monde_delimitee)*i;
+            rect.y = quelleTaillePourLesCases(height, taille_monde_delimitee)*j;
+            rect.w = quelleTaillePourLesCases(width, taille_monde_delimitee)-2;
+            rect.h = quelleTaillePourLesCases(height, taille_monde_delimitee)-2;
             SDL_RenderFillRect(renderer, &rect);
         }
     }
 }
 
-void afficherEcran(int monde[taille_monde_delimitee][taille_monde_delimitee]){
+void afficherEcran(int ** monde){
     
     SDL_SetRenderDrawColor(renderer, 0, 16, 158, 0);
     SDL_RenderClear(renderer);
@@ -102,9 +106,9 @@ void afficherEcran(int monde[taille_monde_delimitee][taille_monde_delimitee]){
     SDL_RenderPresent(renderer);
 }
 
-void changeCellule(int monde[taille_monde_delimitee][taille_monde_delimitee], int clic_x, int clic_y){
-    int ligne = clic_y/tailleAffichage;
-    int colonne = clic_x/tailleAffichage;
+void changeCellule(int ** monde, int clic_x, int clic_y){
+    int ligne = clic_y/quelleTaillePourLesCases(height, taille_monde_delimitee);
+    int colonne = clic_x/quelleTaillePourLesCases(width, taille_monde_delimitee);
     if(0 == monde[colonne][ligne]){
         monde[colonne][ligne] = 1;
     }else{
@@ -112,7 +116,7 @@ void changeCellule(int monde[taille_monde_delimitee][taille_monde_delimitee], in
     }
 }
 
-int nombreVoisinsVivants(int monde[taille_monde_delimitee][taille_monde_delimitee], int cel_x, int cel_y){
+int nombreVoisinsVivants(int ** monde, int cel_x, int cel_y){
     int nbrVoisinsVivants = 0;
     if(cel_x==0 && cel_y==0){
         nbrVoisinsVivants = monde[cel_x+1][cel_y] + monde[cel_x][cel_y+1] + monde[cel_x+1][cel_y+1];
@@ -137,7 +141,7 @@ int nombreVoisinsVivants(int monde[taille_monde_delimitee][taille_monde_delimite
     return nbrVoisinsVivants;
 }
 
-void reglesEvolutions(int monde[taille_monde_delimitee][taille_monde_delimitee]){
+void reglesEvolutions(int ** monde){
     int i = 0;
     int j = 0;
     
@@ -170,16 +174,21 @@ void reglesEvolutions(int monde[taille_monde_delimitee][taille_monde_delimitee])
     }
 }
 
-void chargeNiveauFichier(char *nom_fichier, int monde[taille_monde_delimitee][taille_monde_delimitee]){
+void chargeNiveauFichier(char *nom_fichier, int ** monde, int nbrLigne){
     FILE *fichier = NULL;
     int valeur;
     int ligne = -1;
     int colonne = 0;
+
     fichier = fopen(nom_fichier, "r");
     if(fichier != NULL){
         while(fscanf(fichier, "%d", &valeur) != EOF){
             if(ligne == -1){
                 taille_monde_delimitee = valeur;
+                if(taille_monde_delimitee != nbrLigne){
+                    printf("PROBLEME DE DIMENSION\n");
+                    return;
+                }
                 ligne = 0;
             }else{
                 monde[colonne][ligne] = valeur;
@@ -204,11 +213,22 @@ int main(int argc, char** argv) {
         taille_monde_delimitee = atoi(argv[1]);
     }
 
-    int monde[taille_monde_delimitee][taille_monde_delimitee];
+    int ** monde;
+
+    monde = malloc(taille_monde_delimitee*sizeof(int*));
+    for(int i = 0; i < taille_monde_delimitee; ++i)
+    {
+        monde[i] = malloc(taille_monde_delimitee*sizeof(int));
+    }
 
     initSDL2();
 
-    initMonde(monde);
+    if(argc < 3){
+        initMonde(monde);
+    }else if(argc == 3){
+        chargeNiveauFichier(argv[2], monde, atoi(argv[1]));
+    }
+    
 
     while (running) {
         while (SDL_PollEvent(&event)){
@@ -224,6 +244,9 @@ int main(int argc, char** argv) {
                             height = event.window.data2;
                             printf("Size : %d%d\n", width, height);
                             break;
+                        default:
+                            afficherEcran(monde);
+                            break;
                     }   
                     break;
                 case SDL_MOUSEBUTTONDOWN:
@@ -238,7 +261,7 @@ int main(int argc, char** argv) {
                             break;
                         case SDLK_c:
                             printf("charge niveau.txt...\n");
-                            chargeNiveauFichier("niveau.txt", monde);
+                            initMonde(monde);
                             break;
                         default:
                             printf("une touche est tapee\n");
