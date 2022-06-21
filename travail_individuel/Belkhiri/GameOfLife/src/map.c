@@ -51,14 +51,14 @@ void writeMap(char *filename)
     fclose(f);
 }
 
-int MapToBinary(int ** map)
+long long int MapToBinary(int ** map)
 {
-    int binary = 0;
+    long long int binary = 0;
     for (int i = 0; i < MAPSIZE; i++)
     {
         for (int j = 0; j < MAPSIZE; j++)
         {
-            binary += map[i][j] * pow(2, (i * MAPSIZE + j));
+            binary += (long long int)map[i][j] * powl(2, (i * MAPSIZE + j));
         }
     }
     return binary;

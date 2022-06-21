@@ -9,6 +9,6 @@ extern int ** map;
 void printMap();
 void initMap();
 void writeMap(char* filename);
-int MapToBinary(int ** map);
+long long int MapToBinary(int ** map);
 
 #endif

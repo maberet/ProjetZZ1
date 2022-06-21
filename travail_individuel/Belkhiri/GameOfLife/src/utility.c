@@ -4,7 +4,7 @@ int surviveRule[NB_RULES] = {0, 0, 1, 1, 0, 0, 0, 0, 0};
 int bornRule[NB_RULES] = {0, 0, 0, 1, 0, 0, 0, 0, 0};
 int stable;
 
-int BinaryList[LIST_SIZE];
+long long int BinaryList[LIST_SIZE];
 int BinaryListSize;
 
 int survivingNeighbors(int x, int y){
@@ -18,16 +18,28 @@ int survivingNeighbors(int x, int y){
     return count;
 }
 
-void addBinaryToList(int binary){
+void addBinaryToList(long long int binary){
     if (BinaryListSize == LIST_SIZE) return;
     BinaryList[BinaryListSize] = binary;
     BinaryListSize++;
 }
 
+
+
+void printBinaryList(){
+    for (int i=0; i<BinaryListSize; i++){
+        printf("%lld ", BinaryList[i]);
+    }
+    printf("\n");
+}
+
+
 void checkForCycle(){
     int i = 0;
-    while (i < BinaryListSize){
+    printBinaryList();
+    while (i < BinaryListSize-1){
         if (BinaryList[i] == BinaryList[BinaryListSize - 1]){
+            printf("%lld\n %lld\n", BinaryList[i], BinaryList[BinaryListSize - 1]);
             printf("Cycle detected!\n");
             return;
         }
@@ -40,7 +52,7 @@ void updateMap(){
     int newMap[MAPSIZE][MAPSIZE];
     stable = 1;
 
-    int binary = MapToBinary(map);
+    long long int binary = MapToBinary(map);
     addBinaryToList(binary);
 
     for (int i=0; i<MAPSIZE; i++){

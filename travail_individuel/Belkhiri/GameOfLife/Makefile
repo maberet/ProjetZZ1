@@ -1,6 +1,6 @@
 CC=gcc
 
-LDFLAG=$(shell sdl2-config --cflags --libs) -lm -lSDL2_ttf -D_REENTRANT -lSDL2_image -pthread
+LDFLAG=$(shell sdl2-config --cflags --libs) -Wall -Wextra -lm -lSDL2_ttf -D_REENTRANT -lSDL2_image -pthread
 CFLAG=-Wall $(shell sdl2-config --cflags --libs)
 
 EXEC=run
