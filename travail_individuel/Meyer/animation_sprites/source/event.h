@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "render.h"
+#include "utility.h"
 
 //void *eventLoop(void *);
 void eventLoop();

@@ -8,6 +8,7 @@
 
 #include "render.h"
 #include "event.h"
+#include "utility.h"
 
 int main(int, char**);
 
