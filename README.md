@@ -15,8 +15,10 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 ├── travail_individuel    
 │   ├── Belkhiri    
 │   │   ├── x_fenetre
-│   │   └── snakes
-│   ├── Beret 
+│   │   ├── snakes
+│   │   └── GameOfLife
+│   ├── Beret
+│   │   ├── snakes 
 │   │   └── x_fenetre
 │   └── Meyer  
 │       ├── x_fenetre

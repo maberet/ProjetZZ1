@@ -139,17 +139,30 @@ int nombreVoisinsVivants(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]
 void reglesEvolutions(int monde[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE]){
     int i = 0;
     int j = 0;
+    
+    int mondeSuivant[TAILLE_MONDE_DELIMITE][TAILLE_MONDE_DELIMITE] = {0};
+
     int nbrVoisinsVivants = 0;
     for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
         for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
             nbrVoisinsVivants = nombreVoisinsVivants(monde, i, j);
             if(monde[i][j]==1 && survie[nbrVoisinsVivants]==0){
-                monde[i][j] = 0;
+                mondeSuivant[i][j] = 0;
             }else if(monde[i][j]==0 && naissance[nbrVoisinsVivants]==1){
-                monde[i][j] = 1;
+                mondeSuivant[i][j] = 1;
+            }else{
+                mondeSuivant[i][j] = monde[i][j];
             }
         }
     }
+
+    for(i=0; i<TAILLE_MONDE_DELIMITE; i++){
+        for(j=0; j<TAILLE_MONDE_DELIMITE; j++){
+            monde[i][j] = mondeSuivant[i][j];
+        }
+    }
+
+   
 }
 
 int main() {
