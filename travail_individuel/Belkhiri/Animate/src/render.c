@@ -5,6 +5,23 @@ SDL_Renderer *renderer;
 
 TTF_Font *RobotoFont;
 
+SDL_Surface * character_walk_surface;
+SDL_Surface * character_jump_surface;
+SDL_Surface * character_attack_surface;
+
+SDL_Texture * character_walk_texture;
+SDL_Texture * character_jump_texture;
+SDL_Texture * character_attack_texture;
+
+int character_walk_w;
+int character_walk_h;
+
+int character_jump_w;
+int character_jump_h;
+
+int character_attack_w;
+int character_attack_h;
+
 void CreateWindow(){
     SDL_DisplayMode ScreenDimension;
 
@@ -38,9 +55,48 @@ void CreateWindow(){
 
 }
 
+void Game(int step){
+    SDL_RenderClear(renderer);
+    SDL_Rect character_walk_rect;
+
+    character_walk_rect.x = step;
+    character_walk_rect.y = 0;
+    character_walk_rect.w = 100;
+    character_walk_rect.h = 250;
+
+    if (step < 100){
+        SDL_Rect destRect;
+        destRect.w = character_walk_w/8;
+        destRect.h = character_walk_h;
+        destRect.x = (destRect.w * step)%character_walk_w;
+        destRect.y = 0;
+        SDL_RenderCopyEx(renderer, character_walk_texture, &destRect, &character_walk_rect, 0, NULL, SDL_FLIP_NONE);
+    }
+
+    SDL_RenderPresent(renderer);
+    SDL_Delay(100);
+}
+
 
 void MainLoop(){
     CreateWindow();
+    int step = 0;
+
+    character_walk_surface = IMG_Load("Res/king_run_spritesheet.png");
+    character_jump_surface = IMG_Load("Res/king_jump_spritesheet.png");
+    character_attack_surface = IMG_Load("Res/king_attack_spritesheet.png");
+
+    character_walk_texture = SDL_CreateTextureFromSurface(renderer, character_walk_surface);
+    character_jump_texture = SDL_CreateTextureFromSurface(renderer, character_jump_surface);
+    character_attack_texture = SDL_CreateTextureFromSurface(renderer, character_attack_surface);
+
+    SDL_FreeSurface(character_walk_surface);
+    SDL_FreeSurface(character_jump_surface);
+    SDL_FreeSurface(character_attack_surface);
+
+    SDL_QueryTexture(character_walk_texture, NULL, NULL, &character_walk_w, &character_walk_h);
+    SDL_QueryTexture(character_jump_texture, NULL, NULL, &character_jump_w, &character_jump_h);
+    SDL_QueryTexture(character_attack_texture, NULL, NULL, &character_attack_w, &character_attack_h);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -58,11 +114,9 @@ void MainLoop(){
         if (delta > 1/FPS_TO_GET){
             b = a;
             switch (game_state){
-                case MENU:
-                    //Menu();
-                    break;
                 case GAME:
-                    //Game();
+                    Game(step);
+                    step++;
                     break;
             }
         }
