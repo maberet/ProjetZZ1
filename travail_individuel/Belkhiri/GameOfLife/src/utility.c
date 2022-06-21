@@ -17,6 +17,7 @@ int survivingNeighbors(int x, int y){
 
 void updateMap(){
     int newMap[MAPSIZE][MAPSIZE];
+    int stable = 1;
     for (int i=0; i<MAPSIZE; i++){
         for (int j=0; j<MAPSIZE; j++){
             int count = survivingNeighbors(j, i);
@@ -30,10 +31,24 @@ void updateMap(){
             }
         }
     }
+
+    for (int i=0; i<MAPSIZE; i++){
+        for (int j=0; j<MAPSIZE; j++){
+            if (newMap[j][i] != map[j][i]) stable = 0;
+        }
+    }
+
+    if (stable){
+        printf("Stable state reached.\n");
+    }
+
     for (int i=0; i<MAPSIZE; i++){
         for (int j=0; j<MAPSIZE; j++){
             map[i][j] = newMap[i][j];
         }
     }
+
+    addMapToList(map);
+    checkForCycle();
 }
 
