@@ -12,13 +12,12 @@ void initSDL2();
 void afficherEcran();
 void destroySDL2();
 SDL_Texture* load_texture_from_image(char *, SDL_Window *, SDL_Renderer *);
+void loadTexture();
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_Texture *texture;
-extern SDL_Rect my_rect;
 extern int width;
 extern int height;
-
 
 #endif 
