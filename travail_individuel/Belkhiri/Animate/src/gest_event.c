@@ -1,7 +1,7 @@
 #include "gest_event.h"
 
 
-void gestMenu(){
+void gestGame(){
     SDL_Event event;
     while (SDL_PollEvent(&event)){
             switch(event.type)
@@ -33,8 +33,8 @@ void gestMenu(){
 void *EventLoop(void *arg){
     while(running){
         switch(game_state){
-            case MENU : gestMenu();break;
-            //case GAME : gestGame();break;
+            //case MENU : gestMenu();break;
+            case GAME : gestGame();break;
             default:printf("game state fault");break;
         }
     }
