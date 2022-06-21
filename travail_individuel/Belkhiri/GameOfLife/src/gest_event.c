@@ -10,15 +10,24 @@ void gestMenu(){
                     running = 0;
                     break;
                 
-                case SDL_KEYUP:
+                case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
                     {
                     case SDLK_x:
                         running = 0;
                         continue;
+
+                    case SDLK_UP:
+                        MAPSIZE++;
+                        continue;
+
+                    case SDLK_DOWN:
+                        MAPSIZE--;
+                        continue;
                     
                     default:
                         game_state = GAME;
+                        initMap();
                         continue;
                     }
                     break;
@@ -51,7 +60,7 @@ void gestGame(){
                         continue;
 
                     case SDLK_s:
-                        writeMap(map, "map.txt");
+                        writeMap("map.txt");
                         printf("Saved map to map.txt\n");
                     
                     default:

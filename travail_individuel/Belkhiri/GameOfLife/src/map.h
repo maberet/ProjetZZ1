@@ -3,11 +3,11 @@
 
 #include "main.h"
 
-#define MAPSIZE 20
-extern int map[MAPSIZE][MAPSIZE];
+extern int MAPSIZE;
+extern int ** map;
 
-void printMap(int map[MAPSIZE][MAPSIZE]);
-void initMap(int map[MAPSIZE][MAPSIZE]);
-void writeMap(int map[MAPSIZE][MAPSIZE], char* filename);
+void printMap();
+void initMap();
+void writeMap(char* filename);
 
 #endif

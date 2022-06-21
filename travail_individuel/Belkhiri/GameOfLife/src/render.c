@@ -18,6 +18,7 @@ SDL_Surface * columnSurface = NULL;
 SDL_Texture * backgroundTexture = NULL;
 SDL_Surface * backgroundSurface = NULL;
 
+
 void CreateWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -78,16 +79,31 @@ void drawPlayButton(){
     SDL_RenderCopy(renderer, playButtonTexture, NULL, &playButtonRect);
 }
 
+void drawMAPSIZE(){
+    char str[10];
+    sprintf(str, "%d", MAPSIZE);
+    SDL_Color textColor = {0, 0, 0};
+    SDL_Surface * surface = TTF_RenderText_Solid(RobotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    int titleWidth, titleHeight;
+    SDL_QueryTexture(texture, NULL, NULL, &titleWidth, &titleHeight);
+
+    SDL_Rect titleRect = {ScreenDimension.w/2 - titleWidth/2, ScreenDimension.h/1.2 - titleHeight, titleWidth, titleHeight};
+    SDL_RenderCopy(renderer, texture, NULL, &titleRect);
+}
+
 void drawMenu(){
     SDL_RenderClear(renderer);
     drawBackground();
     drawTitle();
     drawPlayButton();
+    drawMAPSIZE();
     SDL_RenderPresent(renderer);
 }
 
 
-void drawMap(int map[MAPSIZE][MAPSIZE]){
+void drawMap(){
     int x_offset = ScreenDimension.w/2 - MAPSIZE*CELLSIZE/2;
     for(int i = 0; i < MAPSIZE; i++){
         for(int j = 0; j < MAPSIZE; j++){
@@ -114,7 +130,7 @@ void drawGame(){
     SDL_RenderClear(renderer);
     drawBackground();
     drawBackground2();
-    drawMap(map);
+    drawMap();
     drawColumns();
     SDL_RenderPresent(renderer);
 }

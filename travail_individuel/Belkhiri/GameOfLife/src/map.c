@@ -1,10 +1,19 @@
 #include "map.h"
 
+int MAPSIZE = 20;
 
-int map[MAPSIZE][MAPSIZE];
+int ** map;
+
+void allocateMap(){
+    map = malloc(MAPSIZE * sizeof(int*));
+    for(int i = 0; i < MAPSIZE; i++){
+        map[i] = malloc(MAPSIZE * sizeof(int));
+    }
+}
 
 
-void initMap(int map[MAPSIZE][MAPSIZE]) {
+void initMap() {
+    allocateMap();
     for(int i = 0; i < MAPSIZE; i++){
         for(int j = 0; j < MAPSIZE; j++){
             map[i][j] = 0;
@@ -13,7 +22,7 @@ void initMap(int map[MAPSIZE][MAPSIZE]) {
 }
 
 
-void printMap(int map[MAPSIZE][MAPSIZE]){
+void printMap(){
     for(int i = 0; i < MAPSIZE; i++){
         for(int j = 0; j < MAPSIZE; j++){
             printf("%d ", map[i][j]);
@@ -23,7 +32,7 @@ void printMap(int map[MAPSIZE][MAPSIZE]){
 }
 
 
-void writeMap(int map[MAPSIZE][MAPSIZE], char* filename){
+void writeMap(char* filename){
     FILE* f = fopen(filename, "w");
     for(int i = 0; i < MAPSIZE; i++){
         for(int j = 0; j < MAPSIZE; j++){
