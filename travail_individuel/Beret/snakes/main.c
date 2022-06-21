@@ -8,16 +8,17 @@
 
 void draw(SDL_Renderer* renderer, int temps) {                               
   SDL_Rect rectangle = {0,0,300,200};   
-  SDL_Rect rectangle2 = {(temps)%(300),150,20,10};
+  SDL_Rect rectangle2 = {(temps/2)%(300),150,20,10};
+  SDL_Rect rectangle3 = {(temps/3+50)%(300),10,35,15};
+  SDL_Rect rectangle4 = {(temps/2+150)%(300),190,50,20};
   int oiseauxx[17]={0,1,2,2,2,3,3,4,1,1,0,0,0,-1,-1,-2,-3};
   int oiseauxy[17]={0,0,0,1,2,2,3,3,-1,-2,-1,-2,-3,0,1,1,2};
 
   srand( time( NULL ) );
-  int saut= rand() % 5;
-  printf("saut%d\n",saut);
+  int saut= rand() % 10;
   srand( time( NULL ) );
   int signe= rand() % 2;
-  printf("signe%d\n",signe);
+
 
   
   SDL_SetRenderDrawColor(renderer,                                                
@@ -33,7 +34,19 @@ void draw(SDL_Renderer* renderer, int temps) {
 
   SDL_RenderFillRect(renderer, &rectangle2);
 
+  SDL_SetRenderDrawColor(renderer,                                                
+                         255, 255, 255,                                  // mode Red, Green, Blue (tous dans 0..255)
+                         150);                                           // 0 = transparent ; 255 = opaque
 
+  SDL_RenderFillRect(renderer, &rectangle3);
+
+  SDL_SetRenderDrawColor(renderer,                                                
+                         255, 255, 255,                                  // mode Red, Green, Blue (tous dans 0..255)
+                         150);                                           // 0 = transparent ; 255 = opaque
+
+  SDL_RenderFillRect(renderer, &rectangle4);
+
+  if (signe%2!=0){saut = -saut; }
   int pt = 0;
   /* tracer un cercle n'est en fait pas trivial, voilà le résultat sans algo intelligent ... */
   while ( pt<16) {      
@@ -44,8 +57,8 @@ void draw(SDL_Renderer* renderer, int temps) {
                            255);
                                                               // opacité = opaque
     SDL_RenderDrawPoint(renderer,                                   
-                        (200+ temps/2 - oiseauxx[pt])%(300),                     // coordonnée en x
-                        100-oiseauxy[pt]);
+                        (200+ temps- oiseauxx[pt])%(300),                     // coordonnée en x
+                        100-oiseauxy[pt]+saut/2);
     
     SDL_SetRenderDrawColor(renderer,
                            0,          // quantité de Rouge      
@@ -54,8 +67,17 @@ void draw(SDL_Renderer* renderer, int temps) {
                            255);
                                                               // opacité = opaque
     SDL_RenderDrawPoint(renderer,                                   
-                        (180+ temps/2 - oiseauxx[pt])%(300),                     // coordonnée en x
-                        150-oiseauxy[pt]);
+                        (180+ temps - oiseauxx[pt])%(300),                     // coordonnée en x
+                        150-oiseauxy[pt]-(1.5*saut));
+    SDL_SetRenderDrawColor(renderer,
+                           0,          // quantité de Rouge      
+                           0,          //          de vert 
+                           0,              //          de bleu
+                           255);
+                                                              // opacité = opaque
+    SDL_RenderDrawPoint(renderer,                                   
+                        (10+ temps - oiseauxx[pt])%(300),                     // coordonnée en x
+                        10-oiseauxy[pt]-(saut));
     
     pt=pt+1;}
 }
