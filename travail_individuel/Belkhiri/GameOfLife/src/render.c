@@ -135,6 +135,19 @@ void drawGame(){
     SDL_RenderPresent(renderer);
 }
 
+void drawStable(){
+    char str[20] = "Stable state reached";
+    SDL_Color textColor = {0, 0, 0};
+    SDL_Surface * surface = TTF_RenderText_Solid(RobotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    int titleWidth, titleHeight;
+    SDL_QueryTexture(texture, NULL, NULL, &titleWidth, &titleHeight);
+
+    SDL_Rect titleRect = {ScreenDimension.w/2 - titleWidth/2, ScreenDimension.h/2 - titleHeight, titleWidth, titleHeight};
+    SDL_RenderCopy(renderer, texture, NULL, &titleRect);
+}
+
 void MainLoop(){
     CreateWindow();
 

@@ -15,4 +15,6 @@ extern SDL_DisplayMode ScreenDimension;
 
 void MainLoop();
 
+void drawStable();
+
 #endif

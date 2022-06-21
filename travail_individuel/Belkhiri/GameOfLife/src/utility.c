@@ -39,7 +39,7 @@ void updateMap(){
     }
 
     if (stable){
-        printf("Stable state reached.\n");
+        drawStable();
     }
 
     for (int i=0; i<MAPSIZE; i++){
@@ -49,6 +49,5 @@ void updateMap(){
     }
 
     addMapToList(map);
-    checkForCycle();
 }
 
