@@ -6,6 +6,7 @@
 
 
 #define NB_RULES 9
+#define LIST_SIZE 100
 
 extern int stable;
 void updateMap();

@@ -4,9 +4,6 @@ int MAPSIZE = 20;
 
 int **map;
 
-int ***mapList;
-int mapListSize = 0;
-
 void allocateMap()
 {
     map = malloc(MAPSIZE * sizeof(int *));
@@ -16,15 +13,9 @@ void allocateMap()
     }
 }
 
-void allocateMapList(int SIZE)
-{
-    mapList = malloc(SIZE * sizeof(int **));
-}
-
 void initMap()
 {
     allocateMap();
-    allocateMapList(100);
     for (int i = 0; i < MAPSIZE; i++)
     {
         for (int j = 0; j < MAPSIZE; j++)
@@ -60,8 +51,15 @@ void writeMap(char *filename)
     fclose(f);
 }
 
-void addMapToList(int **map)
+int MapToBinary(int ** map)
 {
-    mapList[mapListSize] = map;
-    mapListSize++;
+    int binary = 0;
+    for (int i = 0; i < MAPSIZE; i++)
+    {
+        for (int j = 0; j < MAPSIZE; j++)
+        {
+            binary += map[i][j] * pow(2, (i * MAPSIZE + j));
+        }
+    }
+    return binary;
 }
