@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>     // thread
-#include <pthread.h>    // 
 
 #include "render.h"
 #include "event.h"
