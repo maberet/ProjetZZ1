@@ -5,6 +5,7 @@ int MAPSIZE = 20;
 int **map;
 
 int ***mapList;
+int mapListSize = 0;
 
 void allocateMap()
 {
@@ -59,62 +60,30 @@ void writeMap(char *filename)
     fclose(f);
 }
 
-int **saveMapState()
-{
-    int **mapCopy = malloc(MAPSIZE * sizeof(int *));
-    for (int i = 0; i < MAPSIZE; i++)
-    {
-        mapCopy[i] = malloc(MAPSIZE * sizeof(int));
-    }
-    for (int i = 0; i < MAPSIZE; i++)
-    {
-        for (int j = 0; j < MAPSIZE; j++)
-        {
-            mapCopy[i][j] = map[i][j];
-        }
-    }
-    return mapCopy;
-}
-
 void addMapToList(int **map)
 {
-    int i = 0;
-    while (mapList[i] != NULL)
-    {
-        i++;
-    }
-    mapList[i] = map;
+    mapList[mapListSize] = map;
+    mapListSize++;
 }
 
 void checkForCycle()
 {
-    // count number of maps saved
-    int i = 0;
-    while (mapList[i] != NULL)
-    {
-        i++;
-    }
-
-    int j = 0;
-    for (j = 0; j < i; j++)
+    for (int i = 0; i < mapListSize; i++)
     {
         int cycle = 1;
-        // compare values of maps
-        int k = 0;
-        for (k = 0; k < MAPSIZE; k++)
+        int j = 0;
+        while (cycle && j < MAPSIZE)
         {
-            for (int l = 0; l < MAPSIZE; l++)
+            int k = 0;
+            while (cycle && k < MAPSIZE)
             {
-                if (mapList[j][k][l] != map[k][l])
+                if (mapList[i][j][k] != map[j][k])
                 {
                     cycle = 0;
                 }
+                k++;
             }
-        }
-        if (cycle == 1)
-        {
-            printf("Cycle found!\n");
-            break;
+            j++;
         }
     }
 }

@@ -6,6 +6,7 @@
 extern int MAPSIZE;
 extern int ** map;
 extern int *** mapList;
+extern int mapListSize;
 
 void printMap();
 void initMap();

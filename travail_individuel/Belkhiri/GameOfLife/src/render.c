@@ -146,6 +146,8 @@ void drawStable(){
 
     SDL_Rect titleRect = {ScreenDimension.w/2 - titleWidth/2, ScreenDimension.h/2 - titleHeight, titleWidth, titleHeight};
     SDL_RenderCopy(renderer, texture, NULL, &titleRect);
+
+    SDL_RenderPresent(renderer);
 }
 
 void MainLoop(){
