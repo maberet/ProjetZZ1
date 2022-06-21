@@ -4,9 +4,15 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 
 TTF_Font *RobotoFont;
+SDL_DisplayMode ScreenDimension;
+
+SDL_Surface * grassSurface;
+SDL_Texture * grassTexture;
+
+SDL_Surface * treeSurface;
+SDL_Texture * treeTexture;
 
 void CreateWindow(){
-    SDL_DisplayMode ScreenDimension;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Couldn't create window.");
@@ -38,9 +44,43 @@ void CreateWindow(){
 
 }
 
+void drawMap(){
+    int i, j;
+    SDL_Rect rect;
+    rect.h = CELLSIZE;
+    rect.w = CELLSIZE;
+    rect.x = (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2; // centers the drawing
+    rect.y = 0;
+    for(i = 0; i < MAPSIZE; i++){
+        for(j = 0; j < MAPSIZE; j++){
+            SDL_RenderCopy(renderer, grassTexture, NULL, &rect);
+            if(map[i][j] == 1){
+                SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+            }
+            rect.x += CELLSIZE;
+        }
+        rect.x = (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+        rect.y += CELLSIZE;
+    }
+}
+
+void drawGame(){
+    SDL_RenderClear(renderer);
+    drawMap();
+    SDL_RenderPresent(renderer);
+}
 
 void MainLoop(){
     CreateWindow();
+
+    grassSurface = IMG_Load("Res/grass.png");
+    grassTexture = SDL_CreateTextureFromSurface(renderer, grassSurface);
+
+    treeSurface = IMG_Load("Res/tree.png");
+    treeTexture = SDL_CreateTextureFromSurface(renderer, treeSurface);
+
+    SDL_FreeSurface(grassSurface);
+    SDL_FreeSurface(treeSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -62,7 +102,7 @@ void MainLoop(){
                     //Menu();
                     break;
                 case GAME:
-                    //Game();
+                    drawGame();
                     break;
             }
         }

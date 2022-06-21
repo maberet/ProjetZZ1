@@ -5,6 +5,7 @@
 #include "gest_event.h"
 
 #define FPS_TO_GET 60
+#define CELLSIZE (ScreenDimension.h / MAPSIZE)
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
