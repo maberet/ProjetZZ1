@@ -2,28 +2,36 @@
 
 SDL_Window *window;
 SDL_Renderer *renderer;
+SDL_DisplayMode ScreenDimension;
 
 TTF_Font *RobotoFont;
 
 SDL_Surface * character_walk_surface;
-SDL_Surface * character_jump_surface;
+SDL_Surface * character_fall_surface;
 SDL_Surface * character_attack_surface;
 
 SDL_Texture * character_walk_texture;
-SDL_Texture * character_jump_texture;
+SDL_Texture * character_fall_texture;
 SDL_Texture * character_attack_texture;
+
+SDL_Surface * parallax1_surface;
+SDL_Surface * parallax2_surface;
+SDL_Surface * parallax3_surface;
+
+SDL_Texture * parallax1_texture;
+SDL_Texture * parallax2_texture;
+SDL_Texture * parallax3_texture;
 
 int character_walk_w;
 int character_walk_h;
 
-int character_jump_w;
-int character_jump_h;
+int character_fall_w;
+int character_fall_h;
 
 int character_attack_w;
 int character_attack_h;
 
 void CreateWindow(){
-    SDL_DisplayMode ScreenDimension;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Couldn't create window.");
@@ -57,21 +65,75 @@ void CreateWindow(){
 
 void Game(int step){
     SDL_RenderClear(renderer);
+
+    SDL_Rect parallax2_rect;
+    parallax2_rect.x = step;
+    parallax2_rect.y = 0;
+    int parallax2_w, parallax2_h;
+    SDL_QueryTexture(parallax2_texture, NULL, NULL, &parallax2_w, &parallax2_h);
+    parallax2_rect.w = ScreenDimension.w;
+    parallax2_rect.h = ScreenDimension.h;
+
+    SDL_Rect parallax3_rect;
+    parallax3_rect.x = 4 * step;
+    parallax3_rect.y = 0;
+    int parallax3_w, parallax3_h;
+    SDL_QueryTexture(parallax3_texture, NULL, NULL, &parallax3_w, &parallax3_h);
+    parallax3_rect.w = ScreenDimension.w/10;
+    parallax3_rect.h = ScreenDimension.h;
+
+
+    SDL_RenderCopyEx(renderer, parallax1_texture, NULL, NULL, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, parallax2_texture, &parallax2_rect, NULL, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, parallax3_texture, &parallax3_rect, NULL, 0, NULL, SDL_FLIP_NONE);
+
     SDL_Rect character_walk_rect;
 
-    character_walk_rect.x = step;
-    character_walk_rect.y = 0;
+    character_walk_rect.x = 4 * step;
+    character_walk_rect.y = 100;
     character_walk_rect.w = 100;
     character_walk_rect.h = 250;
 
-    if (step < 100){
-        SDL_Rect destRect;
+
+
+    SDL_Rect destRect;
+    if (step < 50){
         destRect.w = character_walk_w/8;
         destRect.h = character_walk_h;
         destRect.x = (destRect.w * step)%character_walk_w;
         destRect.y = 0;
         SDL_RenderCopyEx(renderer, character_walk_texture, &destRect, &character_walk_rect, 0, NULL, SDL_FLIP_NONE);
     }
+    else if (step >= 50 && step < 100){
+        destRect.w = character_fall_w/2;
+        destRect.h = character_fall_h;
+        destRect.x = (destRect.w * (step - 50))%character_fall_w;
+        destRect.y = 0;
+        character_walk_rect.y = 100 + (step - 50) * 5;
+        SDL_RenderCopyEx(renderer, character_fall_texture, &destRect, &character_walk_rect, 0, NULL, SDL_FLIP_NONE);
+    }
+    else if (step >= 100 && step < 150){
+        destRect.w = character_walk_w/8;
+        destRect.h = character_walk_h;
+        destRect.x = (destRect.w * step)%character_walk_w;
+        destRect.y = 0;
+        character_walk_rect.y = 100 + (50) * 5;
+        SDL_RenderCopyEx(renderer, character_walk_texture, &destRect, &character_walk_rect, 0, NULL, SDL_FLIP_NONE);
+    }
+    else if (step >= 150 && step < 200){
+        destRect.w = character_attack_w/4;
+        destRect.h = character_attack_h;
+        destRect.x = (destRect.w * (step - 150))%character_attack_w;
+        destRect.y = 0;
+        character_walk_rect.y = 100 + (50) * 5;
+        character_walk_rect.w *= 2;
+        character_walk_rect.h *= 1.5;
+        SDL_RenderCopyEx(renderer, character_attack_texture, &destRect, &character_walk_rect, 0, NULL, SDL_FLIP_NONE);
+    }
+    else {
+        running = 0;
+    }
+
 
     SDL_RenderPresent(renderer);
     SDL_Delay(100);
@@ -83,19 +145,28 @@ void MainLoop(){
     int step = 0;
 
     character_walk_surface = IMG_Load("Res/king_run_spritesheet.png");
-    character_jump_surface = IMG_Load("Res/king_jump_spritesheet.png");
+    character_fall_surface = IMG_Load("Res/king_fall_spritesheet.png");
     character_attack_surface = IMG_Load("Res/king_attack_spritesheet.png");
+    parallax1_surface = IMG_Load("Res/parallax1.png");
+    parallax2_surface = IMG_Load("Res/parallax2.png");
+    parallax3_surface = IMG_Load("Res/parallax3.png");
 
     character_walk_texture = SDL_CreateTextureFromSurface(renderer, character_walk_surface);
-    character_jump_texture = SDL_CreateTextureFromSurface(renderer, character_jump_surface);
+    character_fall_texture = SDL_CreateTextureFromSurface(renderer, character_fall_surface);
     character_attack_texture = SDL_CreateTextureFromSurface(renderer, character_attack_surface);
+    parallax1_texture = SDL_CreateTextureFromSurface(renderer, parallax1_surface);
+    parallax2_texture = SDL_CreateTextureFromSurface(renderer, parallax2_surface);
+    parallax3_texture = SDL_CreateTextureFromSurface(renderer, parallax3_surface);
 
     SDL_FreeSurface(character_walk_surface);
-    SDL_FreeSurface(character_jump_surface);
+    SDL_FreeSurface(character_fall_surface);
     SDL_FreeSurface(character_attack_surface);
+    SDL_FreeSurface(parallax1_surface);
+    SDL_FreeSurface(parallax2_surface);
+    SDL_FreeSurface(parallax3_surface);
 
     SDL_QueryTexture(character_walk_texture, NULL, NULL, &character_walk_w, &character_walk_h);
-    SDL_QueryTexture(character_jump_texture, NULL, NULL, &character_jump_w, &character_jump_h);
+    SDL_QueryTexture(character_fall_texture, NULL, NULL, &character_fall_w, &character_fall_h);
     SDL_QueryTexture(character_attack_texture, NULL, NULL, &character_attack_w, &character_attack_h);
 
     unsigned int a = SDL_GetTicks();
