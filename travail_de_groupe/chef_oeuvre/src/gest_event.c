@@ -82,6 +82,7 @@ void gestMenu(){
                     continue;
             }
     }
+    GestMovement();
     SDL_Delay(5);
 }
 

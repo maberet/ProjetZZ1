@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "main.h"
+#include "gest_event.h"
 
 typedef struct Player{
     int x;
@@ -12,5 +13,6 @@ typedef struct Player{
 extern Player_t player;
 
 void initPlayer();
+void GestMovement();
 
 #endif
