@@ -1,25 +1,23 @@
 CC=gcc
-CFLAGS=-Wextra -Wall -lm -lSDL2
-LDFLAGS=
+
+LDFLAG=$(shell sdl2-config --cflags --libs) -Wall -Wextra -lm -lSDL2_ttf -D_REENTRANT -lSDL2_image -pthread
+CFLAG=-Wall $(shell sdl2-config --cflags --libs)
+
 EXEC=run
+SRC=$(wildcard src/*.c)
+OBJ=$(SRC:.c=.o)
 
 all:$(EXEC)
 
-run: main.o render.o map.o
-	$(CC) -o $@ $^ $(LDFLAGS)
-	@echo "Lancer le programme avec ./run"
+$(EXEC):$(OBJ)
+	$(CC) -o $@ $^ $(LDFLAG)
+	mv $^ bin/
 
-map.o : src/map.c src/map.h 
-	$(CC) -o $@ -c $< $(CFLAGS)
+%.o:%.c
+	$(CC) -o $@ -c $< $(CFLAG)
 
-render.o : src/render.c src/render.h 
-	$(CC) -o $@ -c $< $(CFLAGS)
-
-main.o : src/main.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+.PHONY:clean 
 
 clean:
-	rm -rf *.o
-
-rmExec: clean
+	rm -rf bin/*.o
 	rm -rf $(EXEC)
