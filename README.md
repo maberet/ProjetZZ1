@@ -23,7 +23,8 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 │   └── Meyer  
 │       ├── x_fenetre
 │       ├── pave_de_serpents
-│       └── jeu_de_la_vie
+│       ├── jeu_de_la_vie
+│       └── animation_sprites
 └── travail_de_groupe   
     ├── chef_oeuvre   
     └── jeu_appren_par_renfo    
