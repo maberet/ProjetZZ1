@@ -1,5 +1,8 @@
 #include "gest_event.h"
 
+int hover[2];
+int x;
+int y;
 
 void gestMenu(){
     SDL_Event event;
@@ -21,6 +24,14 @@ void gestMenu(){
                         continue;
                     }
                     break;
+                
+                case SDL_MOUSEMOTION:
+                        x = (event.motion.x - (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
+                        y = (event.motion.y - 0) / CELLSIZE;
+                        printf("%d %d\n", x, y);
+                        hover[0] = x;
+                        hover[1] = y;
+                    continue;
 
                 default:
                     continue;

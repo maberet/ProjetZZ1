@@ -12,6 +12,9 @@ SDL_Texture * grassTexture;
 SDL_Surface * treeSurface;
 SDL_Texture * treeTexture;
 
+SDL_Surface * hoverSurface;
+SDL_Texture * hoverTexture;
+
 void CreateWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -57,12 +60,16 @@ void drawMap(){
             if(map[i][j] == 1){
                 SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
             }
+            if (hover[0] == j && hover[1] == i){
+                SDL_RenderCopy(renderer, hoverTexture, NULL, &rect);
+            }
             rect.x += CELLSIZE;
         }
         rect.x = (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
         rect.y += CELLSIZE;
     }
 }
+
 
 void drawGame(){
     SDL_RenderClear(renderer);
@@ -78,6 +85,9 @@ void MainLoop(){
 
     treeSurface = IMG_Load("Res/tree.png");
     treeTexture = SDL_CreateTextureFromSurface(renderer, treeSurface);
+
+    hoverSurface = IMG_Load("Res/hover.png");
+    hoverTexture = SDL_CreateTextureFromSurface(renderer, hoverSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
