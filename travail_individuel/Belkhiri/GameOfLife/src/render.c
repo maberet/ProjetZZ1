@@ -15,6 +15,9 @@ SDL_Surface * playButtonSurface = NULL;
 SDL_Texture * columnTexture = NULL;
 SDL_Surface * columnSurface = NULL;
 
+SDL_Texture * backgroundTexture = NULL;
+SDL_Surface * backgroundSurface = NULL;
+
 void CreateWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -50,6 +53,11 @@ void drawBackground(){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_Rect rect = {0, 0, ScreenDimension.w, ScreenDimension.h};
     SDL_RenderFillRect(renderer, &rect);
+}
+
+void drawBackground2(){
+    SDL_Rect rect = {0, 0, ScreenDimension.w, ScreenDimension.h};
+    SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
 }
 
 void drawTitle(){
@@ -93,7 +101,6 @@ void drawMap(int map[MAPSIZE][MAPSIZE]){
 }
 
 void drawColumns(){
-    // draw 2 columnTexture, 1 left 1 right
     int columnWidth, columnHeight;
     SDL_QueryTexture(columnTexture, NULL, NULL, &columnWidth, &columnHeight);
     int x_offset = ScreenDimension.w/2 - MAPSIZE*CELLSIZE/2;
@@ -106,6 +113,7 @@ void drawColumns(){
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackground();
+    drawBackground2();
     drawMap(map);
     drawColumns();
     SDL_RenderPresent(renderer);
@@ -117,14 +125,17 @@ void MainLoop(){
     titleSurface = IMG_Load("Res/title.png");
     playButtonSurface = IMG_Load("Res/playButton.png");
     columnSurface = IMG_Load("Res/column.png");
+    backgroundSurface = IMG_Load("Res/background.png");
 
     titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
     playButtonTexture = SDL_CreateTextureFromSurface(renderer, playButtonSurface);
     columnTexture = SDL_CreateTextureFromSurface(renderer, columnSurface);
+    backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
 
     SDL_FreeSurface(titleSurface);
     SDL_FreeSurface(playButtonSurface);
     SDL_FreeSurface(columnSurface);
+    SDL_FreeSurface(backgroundSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -140,7 +151,6 @@ void MainLoop(){
         a = SDL_GetTicks();
         delta = (a - b);
         if (delta > 1/FPS_TO_GET){
-            printf("fps : %f\n", 1000/delta);
             b = a;
             switch (game_state){
                 case MENU:

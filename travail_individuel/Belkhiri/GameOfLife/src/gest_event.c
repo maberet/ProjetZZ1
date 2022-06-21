@@ -39,17 +39,25 @@ void gestGame(){
                     running = 0;
                     break;
                 
-                case SDL_KEYUP:
+                case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
                     {
                     case SDLK_x:
                         running = 0;
                         continue;
+
+                    case SDLK_RIGHT:
+                        updateMap(map);
+                        continue;
+
+                    case SDLK_s:
+                        writeMap(map, "map.txt");
+                        printf("Saved map to map.txt\n");
                     
                     default:
                         continue;
                     }
-                    break;
+                    continue;
 
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT){
@@ -62,7 +70,7 @@ void gestGame(){
                             map[j][i] = !map[j][i];
                         }
                     }
-                    break;
+                    continue;
 
                 default:
                     continue;
