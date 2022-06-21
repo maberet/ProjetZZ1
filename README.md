@@ -16,7 +16,8 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 │   ├── Belkhiri    
 │   │   ├── x_fenetre
 │   │   ├── snakes
-│   │   └── GameOfLife
+│   │   ├── GameOfLife
+│   │   └── Animate
 │   ├── Beret
 │   │   ├── snakes 
 │   │   └── x_fenetre
