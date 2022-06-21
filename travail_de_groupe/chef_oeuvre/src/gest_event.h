@@ -6,6 +6,7 @@
 #include "render.h"
 
 extern int hover[2];
+extern int Keys[10];
 
 void *EventLoop(void *arg);
 

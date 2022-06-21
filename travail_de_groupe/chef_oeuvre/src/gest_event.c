@@ -4,6 +4,8 @@ int hover[2];
 int x;
 int y;
 
+int Keys[10];
+
 void gestMenu(){
     SDL_Event event;
     while (SDL_PollEvent(&event)){
@@ -20,6 +22,50 @@ void gestMenu(){
                         running = 0;
                         continue;
 
+                    case SDLK_UP:
+                        Keys[0] = 0;
+                        break;
+                    
+                    case SDLK_DOWN:
+                        Keys[1] = 0;
+                        break;
+
+                    case SDLK_LEFT:
+                        Keys[2] = 0;
+                        break;
+
+                    case SDLK_RIGHT:
+                        Keys[3] = 0;
+                        break;
+
+                    default:
+                        continue;
+                    }
+                    break;
+                
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                    case SDLK_ESCAPE:
+                        running = 0;
+                        continue;
+                    
+                    case SDLK_UP:
+                        Keys[0] = 1;
+                        break;
+
+                    case SDLK_DOWN:
+                        Keys[1] = 1;
+                        break;
+
+                    case SDLK_LEFT:
+                        Keys[2] = 1;
+                        break;
+
+                    case SDLK_RIGHT:
+                        Keys[3] = 1;
+                        break;
+
                     default:
                         continue;
                     }
@@ -28,7 +74,6 @@ void gestMenu(){
                 case SDL_MOUSEMOTION:
                         x = (event.motion.x - (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
                         y = (event.motion.y - 0) / CELLSIZE;
-                        printf("%d %d\n", x, y);
                         hover[0] = x;
                         hover[1] = y;
                     continue;

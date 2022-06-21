@@ -15,6 +15,9 @@ SDL_Texture * treeTexture;
 SDL_Surface * hoverSurface;
 SDL_Texture * hoverTexture;
 
+SDL_Surface * playerSurface;
+SDL_Texture * playerTexture;
+
 void CreateWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -70,10 +73,20 @@ void drawMap(){
     }
 }
 
+void drawPlayer(){
+    SDL_Rect rect;
+    rect.h = CELLSIZE;
+    rect.w = CELLSIZE;
+    rect.x = player.x * CELLSIZE + (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    rect.y = player.y * CELLSIZE;
+    SDL_Rect destRect = {32 * (SDL_GetTicks()/200%4), 0, 32, 32};
+    SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, SDL_FLIP_NONE);
+}
 
 void drawGame(){
     SDL_RenderClear(renderer);
     drawMap();
+    drawPlayer();
     SDL_RenderPresent(renderer);
 }
 
@@ -89,8 +102,13 @@ void MainLoop(){
     hoverSurface = IMG_Load("Res/hover.png");
     hoverTexture = SDL_CreateTextureFromSurface(renderer, hoverSurface);
 
+    playerSurface = IMG_Load("Res/character_spritesheet.png");
+    playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
+    SDL_FreeSurface(hoverSurface);
+    SDL_FreeSurface(playerSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();

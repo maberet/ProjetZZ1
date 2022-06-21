@@ -17,6 +17,7 @@
 #include "render.h"
 #include "gest_event.h"
 #include "map.h"
+#include "player.h"
 
 
 #define MENU 0
