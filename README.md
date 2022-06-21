@@ -17,7 +17,8 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 │   │   ├── x_fenetre
 │   │   ├── snakes
 │   │   └── GameOfLife
-│   ├── Beret 
+│   ├── Beret
+│   │   ├── snakes 
 │   │   └── x_fenetre
 │   └── Meyer  
 │       ├── x_fenetre

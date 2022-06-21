@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-#define TAILLE_MONDE_DELIMITE 50
+#define TAILLE_MONDE_DELIMITE 20
 #define TAILLE_TABLEAU_REGLES 9
 
 int survie[TAILLE_TABLEAU_REGLES] = {0, 0, 1, 1, 0, 0, 0, 0, 0};
