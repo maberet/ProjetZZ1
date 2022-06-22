@@ -153,7 +153,6 @@ void drawFire(){
     srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
     srcRect.y= 0;
     while (cour != NULL){
-        printf("%p %d %d\n", (cour->fire), (cour->fire).x, (cour->fire).x);
         rect.h = CELLSIZE;
         rect.w = CELLSIZE;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
