@@ -21,6 +21,12 @@ SDL_Texture * playerTexture;
 SDL_Surface * backgroundSurface;
 SDL_Texture * backgroundTexture;
 
+SDL_Surface * playButtonSurface;
+SDL_Texture * playButtonTexture;
+
+SDL_Surface * playButtonHoverSurface;
+SDL_Texture * playButtonHoverTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -52,6 +58,12 @@ void createWindow(){
     robotoFont = TTF_OpenFont("Res/Roboto-Black.ttf", 50);  
 
 }
+
+void drawBackground(){
+    SDL_Rect rect = {0, 0, screenDimension.w, screenDimension.h};
+    SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
+}
+
 
 void drawMap(){
     int i, j;
@@ -108,13 +120,22 @@ void mainLoop(){
     playerSurface = IMG_Load("Res/character_spritesheet.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
 
-    backgroundSurface = IMG_Load("Res/background.png");
+    backgroundSurface = IMG_Load("Res/background_mat.png");
     backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
+
+    playButtonSurface = IMG_Load("Res/play_button.png");
+    playButtonTexture = SDL_CreateTextureFromSurface(renderer, playButtonSurface);
+
+    playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
+    playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
     SDL_FreeSurface(hoverSurface);
     SDL_FreeSurface(playerSurface);
+    SDL_FreeSurface(backgroundSurface);
+    SDL_FreeSurface(playButtonSurface);
+    SDL_FreeSurface(playButtonHoverSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
