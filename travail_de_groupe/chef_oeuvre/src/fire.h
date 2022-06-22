@@ -1,19 +1,16 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef FIRE_H
+#define FIRE_H
 
 #include "main.h"
 #include "gest_event.h"
+#include <time.h>
+#include <stdio.h>
+
 
 typedef enum                                                
 { 
     false,true
 }booleen_t;
-
-typedef struct chain {
-    fire_t fire; 
-
-    struct chain *next;
-}chainfire_t,*listchainfire_t;
 
 typedef struct fire{
     int x;
@@ -22,11 +19,19 @@ typedef struct fire{
 
 }fire_t;
 
+typedef struct chain {
+    fire_t fire; 
+
+    struct chain *next;
+}chainfire_t,*listchainfire_t;
 
 listchainfire_t initFire(void);
+booleen_t emptyListFire(listchainfire_t); 
 listchainfire_t insertAheadFire(fire_t, listchainfire_t); 
-booleen_t emptyListFire(listchainfire_t);
-
-
+listchainfire_t startFire(listchainfire_t ,int , int );
+booleen_t searchFire(listchainfire_t, int ,int);
+listchainfire_t deleteAheadFire(listchainfire_t);
+listchainfire_t deleteFire (listchainfire_t, int ,int );
+listchainfire_t freeListFire (listchainfire_t );
 
 #endif
