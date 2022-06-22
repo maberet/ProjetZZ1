@@ -6,7 +6,7 @@ int gameState;
 
 int main(){
     running = 1;
-    gameState = GAME;
+    gameState = MENU;
     readMapFromFile("map.txt");
     initPlayer();
 

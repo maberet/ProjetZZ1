@@ -65,8 +65,15 @@ void drawBackground(){
 }
 
 void drawPlayButton(){
-    SDL_Rect rect = {screenDimension.w/2 - playButtonSurface->w/2, screenDimension.h/2 - playButtonSurface->h/2, playButtonSurface->w, playButtonSurface->h};
+    SDL_Rect rect = {screenDimension.w/2 - screenDimension.w/12, screenDimension.h/2, screenDimension.w/6, screenDimension.h/6};
     SDL_RenderCopy(renderer, playButtonTexture, NULL, &rect);
+}
+
+void drawMenu(){
+    SDL_RenderClear(renderer);
+    drawBackground();
+    drawPlayButton();
+    SDL_RenderPresent(renderer);
 }
 
 
@@ -159,7 +166,7 @@ void mainLoop(){
             b = a;
             switch (gameState){
                 case MENU:
-                    //Menu();
+                    drawMenu();
                     break;
                 case GAME:
                     drawGame();
