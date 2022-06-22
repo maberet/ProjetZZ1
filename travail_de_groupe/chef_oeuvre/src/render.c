@@ -174,18 +174,48 @@ void drawBackgroundSides(){
 }
 
 void drawFire(){
+    int loop;
+    int step;
     listchainfire_t cour = fireList;
     SDL_Rect rect;
+    rect.h = CELLSIZE;
+    rect.w = CELLSIZE;
     SDL_Rect srcRect;
-    srcRect.w = 24;
-    srcRect.h =32;
-    srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
-    srcRect.y= 0;
     while (cour != NULL){
-        rect.h = CELLSIZE * (cour->fire).state;
-        rect.w = CELLSIZE * (cour->fire).state;
-        rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2 - rect.w/2;
-        rect.y = (cour->fire).y * CELLSIZE;
+        rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+        rect.y = (cour->fire).y * CELLSIZE - rect.h/2;
+
+        srcRect.w = 15;
+        srcRect.h =24;
+        srcRect.x = step + srcRect.w * (SDL_GetTicks()/200 % loop);
+        srcRect.y= 0;
+
+        switch ((cour->fire).state)
+        {
+            case SPARKLE:
+                step = 0;
+                loop = 2;
+                break;
+
+            case MEDIUM:
+                step = 2 * srcRect.w;
+                loop = 4;
+                break;
+
+            case STRONG:
+                step = 6 * srcRect.w;
+                loop = 6;
+                break;
+
+            case SPREAD:
+                step = 6 * srcRect.w;
+                loop = 6;
+                break;
+            
+            default:
+                break;
+        }
+
         SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);
         cour = cour->next;
     }
@@ -271,7 +301,7 @@ void mainLoop(){
     playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
     playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
 
-    fireSurface = IMG_Load("Res/fire.png");
+    fireSurface = IMG_Load("Res/fire_spritesheet.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
 
     waterSurface = IMG_Load("Res/water.png");
@@ -325,6 +355,9 @@ void mainLoop(){
                     drawMenu();
                     break;
                 case GAME:
+                    if ((int)timer % 20 == 0){
+                        nextFire(fireList);
+                    }
                     drawGame();
                     break;
             }

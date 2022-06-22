@@ -170,13 +170,13 @@ void nextFire(listchainfire_t listFire){
         state=(listTemporary->fire).state;
         probability= rand()%101;
 
-        pDead=markov[state][DEAD]*100;
-        pSparkle=(markov[state][SPARKLE]+markov[state][DEAD])*100;
+        pDead=markov[state][DEAD];
+        pSparkle=(markov[state][SPARKLE]+markov[state][DEAD]);
 
-        pMedium=(markov[state][SPARKLE]+markov[state][DEAD]+markov[state][MEDIUM])*100;
+        pMedium=(markov[state][SPARKLE]+markov[state][DEAD]+markov[state][MEDIUM]);
 
         pStrong=(markov[state][SPARKLE]+markov[state][DEAD]+
-                    markov[state][MEDIUM]+markov[state][STRONG])*100;
+                    markov[state][MEDIUM]+markov[state][STRONG]);
 
 
         if ((0<=probability)&&(probability<pDead)){(listTemporary->fire).state=DEAD;}
