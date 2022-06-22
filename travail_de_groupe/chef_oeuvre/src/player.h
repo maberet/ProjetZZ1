@@ -26,5 +26,7 @@ void initPlayer();
 void manageMovement();
 int selectStateHover();
 void pourWater(int, int);
+void fillWater(int, int);
+int giveCaseBelowPosition(int, int);
 
 #endif

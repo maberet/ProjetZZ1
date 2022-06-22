@@ -128,7 +128,12 @@ void manageGame(){
                     continue;
 
                 case SDL_MOUSEBUTTONDOWN:
-                    pourWater(mousePosition.x, mousePosition.y);
+                    //clic on water
+                    if(2 == map[mousePosition.y][mousePosition.x]){
+                        fillWater(mousePosition.x, mousePosition.y);
+                    }else{
+                        pourWater(mousePosition.x, mousePosition.y);
+                    }                    
                     break;
 
                 default:

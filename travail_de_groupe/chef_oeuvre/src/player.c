@@ -161,4 +161,10 @@ void pourWater(int x, int y){
     }
 }
 
+void fillWater(int x, int y){    
+    if(player.currentWater<player.waterMax && selectStateHover() == 1){
+        player.currentWater = player.currentWater + 1;
+    }
+}
+
 
