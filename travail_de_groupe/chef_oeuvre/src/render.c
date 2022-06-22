@@ -18,6 +18,9 @@ SDL_Texture * hoverTexture;
 SDL_Surface * playerSurface;
 SDL_Texture * playerTexture;
 
+SDL_Surface * backgroundSurface;
+SDL_Texture * backgroundTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -104,6 +107,9 @@ void mainLoop(){
 
     playerSurface = IMG_Load("Res/character_spritesheet.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
+    backgroundSurface = IMG_Load("Res/background.png");
+    backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
