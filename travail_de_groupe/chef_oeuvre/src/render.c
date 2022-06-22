@@ -41,6 +41,12 @@ SDL_Texture * fireTexture;
 SDL_Surface * waterSurface;
 SDL_Texture * waterTexture;
 
+SDL_Surface * emptyBucketSurface;
+SDL_Texture * emptyBucketTexture;
+
+SDL_Surface * filledBucketSurface;
+SDL_Texture * filledBucketTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -170,6 +176,25 @@ void drawFire(){
     }
 }
 
+void drawPlayerWaterLevel(){
+    int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    SDL_Rect rect;
+    rect.h = borderWidth/4;
+    rect.w = borderWidth/4;
+    int count = player.waterLevel;
+    for (int i=0; i<3; i++){
+        rect.x = (i*rect.h);
+        rect.y = screenDimension.h/4;
+        if (count){
+            count--;
+            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+        }
+    }
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
@@ -215,6 +240,12 @@ void mainLoop(){
 
     waterSurface = IMG_Load("Res/water.png");
     waterTexture = SDL_CreateTextureFromSurface(renderer, waterSurface);
+
+    emptyBucketSurface = IMG_Load("Res/empty_bucket.png");
+    emptyBucketTexture = SDL_CreateTextureFromSurface(renderer, emptyBucketSurface);
+
+    filledBucketSurface = IMG_Load("Res/filled_bucket.png");
+    filledBucketTexture = SDL_CreateTextureFromSurface(renderer, filledBucketSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
