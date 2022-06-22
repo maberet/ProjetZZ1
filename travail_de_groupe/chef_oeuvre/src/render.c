@@ -64,6 +64,11 @@ void drawBackground(){
     SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
 }
 
+void drawPlayButton(){
+    SDL_Rect rect = {screenDimension.w/2 - playButtonSurface->w/2, screenDimension.h/2 - playButtonSurface->h/2, playButtonSurface->w, playButtonSurface->h};
+    SDL_RenderCopy(renderer, playButtonTexture, NULL, &rect);
+}
+
 
 void drawMap(){
     int i, j;
