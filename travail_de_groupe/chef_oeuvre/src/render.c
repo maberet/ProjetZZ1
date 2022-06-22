@@ -179,12 +179,12 @@ void drawFire(){
 void drawPlayerWaterLevel(){
     int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     SDL_Rect rect;
-    rect.h = borderWidth/4;
-    rect.w = borderWidth/4;
+    rect.h = borderWidth/3;
+    rect.w = borderWidth/3;
     int count = player.waterLevel;
     for (int i=0; i<3; i++){
         rect.x = (i*rect.h);
-        rect.y = screenDimension.h/4;
+        rect.y = screenDimension.h/3;
         if (count){
             count--;
             SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
@@ -201,6 +201,7 @@ void drawGame(){
     drawMap();
     drawPlayer();
     drawFire();
+    drawPlayerWaterLevel();
     SDL_RenderPresent(renderer);
 }
 
