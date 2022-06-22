@@ -74,11 +74,11 @@ void manageGame(){
                         continue;
 
                     case SDLK_UP:
-                        keys[0] = 0;
+                        keys[PLAYER_UP] = 0;
                         break;
                     
                     case SDLK_DOWN:
-                        keys[1] = 0;
+                        keys[PLAYER_DOWN] = 0;
                         break;
 
                     case SDLK_LEFT:
@@ -102,11 +102,11 @@ void manageGame(){
                         continue;
                     
                     case SDLK_UP:
-                        keys[0] = 1;
+                        keys[PLAYER_UP] = 1;
                         break;
 
                     case SDLK_DOWN:
-                        keys[1] = 1;
+                        keys[PLAYER_DOWN] = 1;
                         break;
 
                     case SDLK_LEFT:

@@ -23,6 +23,9 @@ SDL_Texture * playerTexture;
 SDL_Surface * backgroundSurface;
 SDL_Texture * backgroundTexture;
 
+SDL_Surface * backgroundSidesSurface;
+SDL_Texture * backgroundSidesTexture;
+
 SDL_Surface * playButtonSurface;
 SDL_Texture * playButtonTexture;
 
@@ -125,8 +128,14 @@ void drawPlayer(){
     SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, SDL_FLIP_NONE);
 }
 
+void drawBackgroundSides(){
+    SDL_Rect rect = {0, 0, screenDimension.w, screenDimension.h};
+    SDL_RenderCopy(renderer, backgroundSidesTexture, NULL, &rect);
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
+    drawBackgroundSides();
     drawMap();
     drawPlayer();
     SDL_RenderPresent(renderer);
@@ -150,6 +159,9 @@ void mainLoop(){
     backgroundSurface = IMG_Load("Res/background_mat.png");
     backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
 
+    backgroundSidesSurface = IMG_Load("Res/background_sides.png");
+    backgroundSidesTexture = SDL_CreateTextureFromSurface(renderer, backgroundSidesSurface);
+
     playButtonSurface = IMG_Load("Res/play_button.png");
     playButtonTexture = SDL_CreateTextureFromSurface(renderer, playButtonSurface);
 
@@ -163,6 +175,7 @@ void mainLoop(){
     SDL_FreeSurface(backgroundSurface);
     SDL_FreeSurface(playButtonSurface);
     SDL_FreeSurface(playButtonHoverSurface);
+    SDL_FreeSurface(backgroundSidesSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
