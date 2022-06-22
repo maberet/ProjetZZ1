@@ -50,6 +50,9 @@ SDL_Texture * emptyBucketTexture;
 SDL_Surface * filledBucketSurface;
 SDL_Texture * filledBucketTexture;
 
+SDL_Surface * scoreSurface;
+SDL_Texture * scoreTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -200,6 +203,16 @@ void drawPlayerWaterLevel(){
     }
 }
 
+void drawScore(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h/6;
+    rect.w = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
+
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
@@ -207,6 +220,7 @@ void drawGame(){
     drawPlayer();
     drawFire();
     drawPlayerWaterLevel();
+    drawScore();
     SDL_RenderPresent(renderer);
 }
 
@@ -255,6 +269,9 @@ void mainLoop(){
 
     filledBucketSurface = IMG_Load("Res/filled_bucket.png");
     filledBucketTexture = SDL_CreateTextureFromSurface(renderer, filledBucketSurface);
+    
+    scoreSurface = IMG_Load("Res/score.png");
+    scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
@@ -267,6 +284,10 @@ void mainLoop(){
     SDL_FreeSurface(noHoverSurface);
     SDL_FreeSurface(fireSurface);
     SDL_FreeSurface(waterSurface);
+    SDL_FreeSurface(emptyBucketSurface);
+    SDL_FreeSurface(filledBucketSurface);
+    SDL_FreeSurface(scoreSurface);
+
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
