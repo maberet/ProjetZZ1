@@ -22,3 +22,9 @@ void manageMovement(){
         player.x++;
     }
 }
+
+int selectStateHover(){
+
+}
+
+            QUiChsoiitLeBonHover(); //0 = nonHover et 1 = hover
