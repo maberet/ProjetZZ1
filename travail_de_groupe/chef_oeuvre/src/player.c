@@ -4,11 +4,12 @@ player_t player;
 
 
 void initPlayer(){
-    player.x = 18*32;
-    player.y = 0;
+    player.x = (MAPSIZE/2)*CELLSIZE;
+    player.y = (MAPSIZE/2)*CELLSIZE;
     player.w = CELLSIZE*0.8;
     player.h = CELLSIZE*0.8;
-    player.waterLevel = 0;
+    player.waterMax = 3;
+    player.currentWater = player.waterMax;
     player.speed = 1;
     player.isMoving = 0;
 }
@@ -134,5 +135,15 @@ int selectStateHover(){
 }
 
 
+void pourWater(int x, int y){
+    int onFire = searchFire(fireList, x, y);     
+    if(player.currentWater>0){
+        //downgrade the cliqued fire
+        if(onFire == 1 && selectStateHover() == 1){ 
+            fireList = deleteFire (fireList, x, y); 
+        }
+        player.currentWater = player.currentWater - 1;
+    }
+}
 
 

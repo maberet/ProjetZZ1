@@ -167,8 +167,8 @@ void drawFire(){
     srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
     srcRect.y= 0;
     while (cour != NULL){
-        rect.h = CELLSIZE;
-        rect.w = CELLSIZE;
+        rect.h = CELLSIZE * (cour->fire).state;
+        rect.w = CELLSIZE * (cour->fire).state;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
         rect.y = (cour->fire).y * CELLSIZE;
         SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);
@@ -179,12 +179,12 @@ void drawFire(){
 void drawPlayerWaterLevel(){
     int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     SDL_Rect rect;
-    rect.h = borderWidth/4;
-    rect.w = borderWidth/4;
-    int count = player.waterLevel;
-    for (int i=0; i<3; i++){
+    rect.h = borderWidth/player.waterMax;
+    rect.w = borderWidth/player.waterMax;
+    int count = player.currentWater;
+    for (int i=0; i<player.waterMax; i++){
         rect.x = (i*rect.h);
-        rect.y = screenDimension.h/4;
+        rect.y = screenDimension.h/3;
         if (count){
             count--;
             SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
@@ -201,6 +201,7 @@ void drawGame(){
     drawMap();
     drawPlayer();
     drawFire();
+    drawPlayerWaterLevel();
     SDL_RenderPresent(renderer);
 }
 

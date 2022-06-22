@@ -6,13 +6,19 @@
 #include <time.h>
 #include <stdio.h>
 
-#define SIZEMARKOV 4
+#define SIZEMARKOV 5
+#define DEAD 0
+#define SPARKLE 1
+#define MEDIUM 2
+#define STRONG 3
+#define SPREAD 4
+
 
 
 typedef struct fire{
     int x;
     int y; 
-    int state; // { dead 0 ;sarkle 1 ; medium_fire 2 ; strong_fire 3}
+    int state; // { dead 0 ;sarkle 1 ; medium_fire 2 ; strong_fire 3; preading 4}
 
 }fire_t;
 
@@ -39,5 +45,9 @@ listchainfire_t deleteFire (listchainfire_t, int ,int );
 listchainfire_t freeListFire (listchainfire_t );
 listchainfire_t offFire (listchainfire_t, int,int );
 void travelFire(listchainfire_t listFire);
+void readFapFromFile(char * filename);
+void nextFire(listchainfire_t );
+
+
 
 #endif
