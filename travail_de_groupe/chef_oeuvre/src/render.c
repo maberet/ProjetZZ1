@@ -153,9 +153,13 @@ void drawPlayer(){
     rect.x = player.x  + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     rect.y = player.y ;
     SDL_Rect destRect = {32 * (SDL_GetTicks()/200%6), 0, 32, 32};
-    SDL_Texture * drawTexture = (player.isMoving) ? (playerTexture):(playerIdleTexture);
     int flip = (player.direction == PLAYER_LEFT) ? (SDL_FLIP_HORIZONTAL) : (SDL_FLIP_NONE);
-    SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, flip);
+    if (player.isMoving){
+        SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, flip);
+    }
+    else {
+        SDL_RenderCopyEx(renderer, playerIdleTexture, &destRect, &rect, 0, NULL, flip);
+    }
 }
 
 void drawBackgroundSides(){
