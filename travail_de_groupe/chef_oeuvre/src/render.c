@@ -38,6 +38,9 @@ SDL_Texture * playButtonHoverTexture;
 SDL_Surface * fireSurface;
 SDL_Texture * fireTexture;
 
+SDL_Surface * waterSurface;
+SDL_Texture * waterTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -111,8 +114,13 @@ void drawMap(){
     for(i = 0; i < MAPSIZE; i++){
         for(j = 0; j < MAPSIZE; j++){
             SDL_RenderCopy(renderer, grassTexture, NULL, &rect);
-            if(map[i][j] == 1){
-                SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+            switch (map[i][j]){
+                case 1:
+                    SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+                    break;
+                case 2:
+                    SDL_RenderCopy(renderer, waterTexture, NULL, &rect);
+                    break;
             }
             if (mousePosition.x == j && mousePosition.y == i){
                 if (selectStateHover()){
@@ -153,7 +161,6 @@ void drawFire(){
     srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
     srcRect.y= 0;
     while (cour != NULL){
-        printf("%p %d %d\n", (cour->fire), (cour->fire).x, (cour->fire).x);
         rect.h = CELLSIZE;
         rect.w = CELLSIZE;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
@@ -206,6 +213,9 @@ void mainLoop(){
     fireSurface = IMG_Load("Res/fire.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
 
+    waterSurface = IMG_Load("Res/water.png");
+    waterTexture = SDL_CreateTextureFromSurface(renderer, waterSurface);
+
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
     SDL_FreeSurface(hoverSurface);
@@ -216,6 +226,7 @@ void mainLoop(){
     SDL_FreeSurface(backgroundSidesSurface);
     SDL_FreeSurface(noHoverSurface);
     SDL_FreeSurface(fireSurface);
+    SDL_FreeSurface(waterSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
