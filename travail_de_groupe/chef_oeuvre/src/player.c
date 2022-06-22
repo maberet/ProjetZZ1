@@ -8,7 +8,7 @@ void initPlayer(){
     player.y = 0;
     player.w = CELLSIZE*0.8;
     player.h = CELLSIZE*0.8;
-    player.waterLevel = 0;
+    player.waterLevel = 3;
     player.speed = 1;
     player.isMoving = 0;
 }
@@ -134,5 +134,9 @@ int selectStateHover(){
 }
 
 
+void pourWater(){
+    player.waterLevel = player.waterLevel - 1;
+    
+}
 
 
