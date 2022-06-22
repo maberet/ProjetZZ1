@@ -125,8 +125,3 @@ listchainfire_t offFire (listchainfire_t listFire, int x ,int y ){
     }
     return listFire; 
 }
-
-chainfire_t * listFireTest=NULL;
-int numberFire=5;
-
-listFireTest=startFire(listFireTest,numberFire,MAPSIZE);
