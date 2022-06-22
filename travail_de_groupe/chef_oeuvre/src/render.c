@@ -150,7 +150,9 @@ void drawPlayer(){
     rect.x = player.x  + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     rect.y = player.y ;
     SDL_Rect destRect = {32 * (SDL_GetTicks()/200%6), 0, 32, 32};
-    SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, SDL_FLIP_NONE);
+    SDL_Texture * drawTexture = (player.isMoving) ? (playerTexture):(playerIdleTexture);
+    int flip = (player.direction == PLAYER_LEFT) ? (SDL_FLIP_HORIZONTAL) : (SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, flip);
 }
 
 void drawBackgroundSides(){
@@ -221,7 +223,7 @@ void mainLoop(){
     noHoverSurface = IMG_Load("Res/noHover.png");
     noHoverTexture = SDL_CreateTextureFromSurface(renderer, noHoverSurface);
 
-    playerSurface = IMG_Load("Res/character_spritesheet.png");
+    playerSurface = IMG_Load("Res/character_tileset.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
 
     backgroundSurface = IMG_Load("Res/background_mat.png");

@@ -124,18 +124,22 @@ void manageMovement(){
     if(keys[PLAYER_UP]){
         moveUpPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_UP;
     }
     if(keys[PLAYER_DOWN]){
         moveDownPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_DOWN;
     }
     if(keys[PLAYER_LEFT]){
         moveLeftPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_LEFT;
     }
     if(keys[PLAYER_RIGHT]){
         moveRightPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_RIGHT;
     }
     player.isMoving = 0;
 }

@@ -18,6 +18,7 @@ typedef struct player{
     int waterMax;
     int speed;
     int isMoving;
+    int direction;
 } player_t;
 
 extern player_t player;
