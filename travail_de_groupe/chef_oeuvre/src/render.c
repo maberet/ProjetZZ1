@@ -143,6 +143,7 @@ void drawGame(){
 
 void mainLoop(){
     createWindow();
+    initPlayer();
 
     grassSurface = IMG_Load("Res/grass.png");
     grassTexture = SDL_CreateTextureFromSurface(renderer, grassSurface);
