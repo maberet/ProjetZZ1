@@ -1,4 +1,7 @@
 #include "fire.h"
+#include "map.h"
+
+int markov[SIZEMARKOV][SIZEMARKOV];
 
 listchainfire_t initFire (void)
 {
@@ -107,4 +110,18 @@ listchainfire_t freeListFire (listchainfire_t listFire){
         listFire=deleteAheadFire(listFire);
     }
     return listFire;
+}
+
+listchainfire_t offFire (listchainfire_t listFire, int x ,int y ){
+
+    if (emptyListFire(listFire)){
+        return(listFire);
+    }
+    if(((listFire->fire).x==x)&&((listFire->fire).y==y)) {
+        (listFire->fire).state=0; // feu eteint
+    }
+    else{
+        listFire->next=offFire(listFire->next,x,y);
+    }
+    return listFire; 
 }

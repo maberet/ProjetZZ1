@@ -126,9 +126,8 @@ void manageMovement(){
 
 int selectStateHover(){
     int stateHover = 0;
-    int distance = sqrt(pow(abs(mousePosition.x-player.x), 2)+pow(abs(mousePosition.y-player.y), 2));
-    printf("distance : %d\n", distance);
-    if(distance <= 2){
+    int distance = sqrt(pow(abs(mousePosition.x - ((player.x+player.w/2))/CELLSIZE), 2)+pow(abs(mousePosition.y - ((player.y+player.h/2))/CELLSIZE), 2));
+    if(distance <= 1){
         stateHover = 1;
     }
     return stateHover;

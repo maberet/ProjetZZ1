@@ -17,6 +17,9 @@ SDL_Texture * treeTexture;
 SDL_Surface * hoverSurface;
 SDL_Texture * hoverTexture;
 
+SDL_Surface * noHoverSurface;
+SDL_Texture * noHoverTexture;
+
 SDL_Surface * playerSurface;
 SDL_Texture * playerTexture;
 
@@ -109,7 +112,12 @@ void drawMap(){
                 SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
             }
             if (mousePosition.x == j && mousePosition.y == i){
-                SDL_RenderCopy(renderer, hoverTexture, NULL, &rect);
+                if (selectStateHover()){
+                    SDL_RenderCopy(renderer, hoverTexture, NULL, &rect);
+                }
+                else {
+                    SDL_RenderCopy(renderer, noHoverTexture, NULL, &rect);
+                }
             }
             rect.x += CELLSIZE;
         }
@@ -154,6 +162,9 @@ void mainLoop(){
     hoverSurface = IMG_Load("Res/hover.png");
     hoverTexture = SDL_CreateTextureFromSurface(renderer, hoverSurface);
 
+    noHoverSurface = IMG_Load("Res/noHover.png");
+    noHoverTexture = SDL_CreateTextureFromSurface(renderer, noHoverSurface);
+
     playerSurface = IMG_Load("Res/character_spritesheet.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
 
@@ -177,6 +188,7 @@ void mainLoop(){
     SDL_FreeSurface(playButtonSurface);
     SDL_FreeSurface(playButtonHoverSurface);
     SDL_FreeSurface(backgroundSidesSurface);
+    SDL_FreeSurface(noHoverSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
