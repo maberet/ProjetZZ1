@@ -115,6 +115,9 @@ void drawMap(){
                 if (selectStateHover()){
                     SDL_RenderCopy(renderer, hoverTexture, NULL, &rect);
                 }
+                else {
+                    SDL_RenderCopy(renderer, noHoverTexture, NULL, &rect);
+                }
             }
             rect.x += CELLSIZE;
         }
