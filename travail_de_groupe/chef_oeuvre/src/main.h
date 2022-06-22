@@ -24,7 +24,7 @@
 #define GAME 1
 
 extern int running;
-extern int game_state;
+extern int gameState;
 
 
 #endif 

@@ -4,15 +4,15 @@
 #include "main.h"
 #include "gest_event.h"
 
-typedef struct Player{
+typedef struct player{
     int x;
     int y;
-    int water_level;
-} Player_t;
+    int waterLevel;
+} player_t;
 
-extern Player_t player;
+extern player_t player;
 
 void initPlayer();
-void GestMovement();
+void manageMovement();
 
 #endif

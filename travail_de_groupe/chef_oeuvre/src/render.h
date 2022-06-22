@@ -6,13 +6,13 @@
 #include "player.h"
 
 #define FPS_TO_GET 60
-#define CELLSIZE (ScreenDimension.h / MAPSIZE)
+#define CELLSIZE (screenDimension.h / MAPSIZE)
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern SDL_DisplayMode ScreenDimension;
+extern SDL_DisplayMode screenDimension;
 
 void drawHover(int x, int y);
-void MainLoop();
+void mainLoop();
 
 #endif 

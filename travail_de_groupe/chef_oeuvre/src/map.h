@@ -5,8 +5,6 @@
 
 #define MAPSIZE 20
 
-
-
 extern int map[MAPSIZE][MAPSIZE];
 
 void readMapFromFile(char * filename);

@@ -4,9 +4,9 @@ int hover[2];
 int x;
 int y;
 
-int Keys[10];
+int keys[10];
 
-void gestMenu(){
+void manageMenu(){
     SDL_Event event;
     while (SDL_PollEvent(&event)){
             switch(event.type)
@@ -23,19 +23,19 @@ void gestMenu(){
                         continue;
 
                     case SDLK_UP:
-                        Keys[0] = 0;
+                        keys[0] = 0;
                         break;
                     
                     case SDLK_DOWN:
-                        Keys[1] = 0;
+                        keys[1] = 0;
                         break;
 
                     case SDLK_LEFT:
-                        Keys[2] = 0;
+                        keys[2] = 0;
                         break;
 
                     case SDLK_RIGHT:
-                        Keys[3] = 0;
+                        keys[3] = 0;
                         break;
 
                     default:
@@ -51,19 +51,19 @@ void gestMenu(){
                         continue;
                     
                     case SDLK_UP:
-                        Keys[0] = 1;
+                        keys[0] = 1;
                         break;
 
                     case SDLK_DOWN:
-                        Keys[1] = 1;
+                        keys[1] = 1;
                         break;
 
                     case SDLK_LEFT:
-                        Keys[2] = 1;
+                        keys[2] = 1;
                         break;
 
                     case SDLK_RIGHT:
-                        Keys[3] = 1;
+                        keys[3] = 1;
                         break;
 
                     default:
@@ -72,7 +72,7 @@ void gestMenu(){
                     break;
                 
                 case SDL_MOUSEMOTION:
-                        x = (event.motion.x - (ScreenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
+                        x = (event.motion.x - (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
                         y = (event.motion.y - 0) / CELLSIZE;
                         hover[0] = x;
                         hover[1] = y;
@@ -82,16 +82,16 @@ void gestMenu(){
                     continue;
             }
     }
-    GestMovement();
+    manageMovement();
     SDL_Delay(5);
 }
 
 
-void *EventLoop(void *arg){
+void *eventLoop(void *arg){
     while(running){
-        switch(game_state){
-            case MENU : gestMenu();break;
-            case GAME : gestMenu();break;
+        switch(gameState){
+            case MENU : manageMenu();break;
+            case GAME : manageMenu();break;
             default:printf("game state fault");break;
         }
     }

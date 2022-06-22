@@ -1,15 +1,15 @@
 #include "main.h"
 
 int running;
-int game_state;
+int gameState;
 
 
 int main(){
     running = 1;
-    game_state = GAME;
+    gameState = GAME;
     readMapFromFile("map.txt");
     initPlayer();
 
-    MainLoop();
+    mainLoop();
 
 } 
