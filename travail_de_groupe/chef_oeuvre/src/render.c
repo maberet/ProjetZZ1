@@ -315,9 +315,9 @@ void mainLoop(){
     while (running){
         a = SDL_GetTicks();
         delta = (a - b);
-        timer += delta;
-        printf("timer : %f\n", timer);
         if (delta > 1000/FPS_TO_GET){
+            timer += delta;
+            printf("timer : %f\n", timer/1000);
             b = a;
             printf("fps : %f", 1000/delta);
             switch (gameState){
