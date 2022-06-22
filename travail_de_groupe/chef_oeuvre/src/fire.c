@@ -74,11 +74,11 @@ booleen_t searchFire(listchainfire_t listFire, int x ,int y)
 
     while((listFire!=NULL)&&!(result))
     {  
-        if(((listFire->fire).x==x)&&((listFire->fire).y==y)) // si on trouve la semaine voulue
+        if(((listFire->fire).x==x)&&((listFire->fire).y==y)) 
         {
-            result= true ;// on chercher si on trouve l'action ou non.
+            result= true ;
         }
-        listFire=listFire->next; // on passe au suivant.
+        listFire=listFire->next; 
     }
     return result;
 }
@@ -87,9 +87,9 @@ listchainfire_t deleteAheadFire(listchainfire_t listFire){
 
     listchainfire_t listTemporary; 
     
-    listTemporary = listFire; // recuperation de la semaine en tête de liste
-    listFire = listFire->next; // on avance la liste sur le maillon suivant
-    free(listTemporary); // on libere le maillon en tete
+    listTemporary = listFire; 
+    listFire = listFire->next; 
+    free(listTemporary); 
     return listFire;
 }
 
@@ -120,7 +120,7 @@ listchainfire_t offFire (listchainfire_t listFire, int x ,int y ){
         return(listFire);
     }
     if(((listFire->fire).x==x)&&((listFire->fire).y==y)) {
-        (listFire->fire).state=0; // feu eteint
+        (listFire->fire).state=(listFire->fire).state-1;
     }
     else{
         listFire->next=offFire(listFire->next,x,y);
@@ -137,3 +137,57 @@ void travelFire(listchainfire_t listFire){
     }
     //freeListFire(listTemporary);
 }
+
+void readFapFromFile(char * filename){
+    FILE * fp;
+    int i, j;
+    fp = fopen(filename, "r");
+    if(fp == NULL){
+        printf("Error opening file\n");
+        exit(1);
+    }
+    for(i = 0; i < SIZEMARKOV; i++){
+        for(j = 0; j < SIZEMARKOV; j++){
+            fscanf(fp, "%d", &markov[i][j]);
+        }
+    }
+    fclose(fp);
+}
+
+void nextFire(listchainfire_t listFire){
+    int probability; 
+    int state;
+    int pDead;
+    int pSparkle;
+    int pMedium;
+    int pStrong;
+    int pSpread;
+    listchainfire_t listTemporary; 
+
+    listTemporary= listFire;
+    srand(time(NULL));
+
+    while (!emptyListFire(listTemporary)){
+        state=(listTemporary->fire).state;
+        probability= rand()%101;
+
+        pDead=markov[state][DEAD]*100;
+        pSparkle=(markov[state][SPARKLE]+markov[state][DEAD])*100;
+
+        pMedium=(markov[state][SPARKLE]+markov[state][DEAD]+markov[state][MEDIUM])*100;
+
+        pStrong=(markov[state][SPARKLE]+markov[state][DEAD]+
+                    markov[state][MEDIUM]+markov[state][STRONG])*100;
+
+        pSpread=(markov[state][SPARKLE]+markov[state][DEAD]+
+                    markov[state][MEDIUM]+markov[state][STRONG]+markov[state][SPREAD])*100;
+
+        if (0<=probability<pDead){(listTemporary->fire).state=DEAD;}
+        else if (pDead<=probability<pSparkle){(listTemporary->fire).state=SPARKLE;}
+        else if (pSparkle<=probability<pMedium){(listTemporary->fire).state=MEDIUM;}
+        else if (pMedium<=probability<pStrong){(listTemporary->fire).state=STRONG;}
+        else {(listTemporary->fire).state=SPREAD;}
+
+        listTemporary=listTemporary->next;   
+    }
+} 
