@@ -12,6 +12,8 @@
 typedef struct player{
     int x;
     int y;
+    int w;
+    int h;
     int waterLevel;
     int speed;
 } player_t;

@@ -3,26 +3,68 @@
 player_t player;
 
 void initPlayer(){
-    player.x = 0;
+    player.x = 18*32;
     player.y = 0;
+    player.w = CELLSIZE;
+    player.h = CELLSIZE;
     player.waterLevel = 0;
     player.speed = 1;
 }
 
+int collisionsLeftPlayer(){
+    int collision = 0;
+    if(player.x <= 0){
+        collision = 1;
+    }
+    return collision;
+}
+
+int collisionsRightPlayer(){
+    int collision = 0;
+    if(player.x + player.w >= (MAPSIZE-1) * CELLSIZE){
+        collision = 1;
+    }
+    return collision;
+}
+
+int collisionsUpPlayer(){
+    int collision = 0;
+    if(player.y <= 0){
+        collision = 1;
+    }
+    return collision;
+}
+
+int collisionsDownPlayer(){
+    int collision = 0;
+    if(player.y + player.h >= (MAPSIZE-1) * CELLSIZE){
+        collision = 1;
+    }
+    return collision;
+}
+
 void moveRightPlayer(){
-    player.x = player.x + player.speed;
+    if(!collisionsRightPlayer()){
+        player.x = player.x + player.speed;
+    }
 }
 
 void moveLeftPlayer(){
-    player.x = player.x - player.speed;
+    if(!collisionsLeftPlayer()){
+        player.x = player.x - player.speed;
+    }
 }
 
 void moveUpPlayer(){
-    player.y = player.y - player.speed;
+    if(!collisionsUpPlayer()){
+        player.y = player.y - player.speed;
+    }
 }
 
 void moveDownPlayer(){
-    player.y = player.y + player.speed;
+    if(!collisionsDownPlayer()){
+        player.y = player.y + player.speed;
+    }
 }
 
 void manageMovement(){
@@ -49,6 +91,7 @@ int selectStateHover(){
     }
     return stateHover;
 }
+
 
 
 
