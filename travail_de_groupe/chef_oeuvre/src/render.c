@@ -23,6 +23,9 @@ SDL_Texture * noHoverTexture;
 SDL_Surface * playerSurface;
 SDL_Texture * playerTexture;
 
+SDL_Surface * playerIdleSurface;
+SDL_Texture * playerIdleTexture;
+
 SDL_Surface * backgroundSurface;
 SDL_Texture * backgroundTexture;
 
@@ -223,6 +226,9 @@ void mainLoop(){
 
     playerSurface = IMG_Load("Res/character_spritesheet.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
+    playerIdleSurface = IMG_Load("Res/character_idle_spritesheet.png");
+    playerIdleTexture = SDL_CreateTextureFromSurface(renderer, playerIdleSurface);
 
     backgroundSurface = IMG_Load("Res/background_mat.png");
     backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
