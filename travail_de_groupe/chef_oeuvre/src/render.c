@@ -149,7 +149,7 @@ void drawPlayer(){
     rect.w = CELLSIZE;
     rect.x = player.x  + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     rect.y = player.y ;
-    SDL_Rect destRect = {32 * (SDL_GetTicks()/200%4), 0, 32, 32};
+    SDL_Rect destRect = {32 * (SDL_GetTicks()/200%6), 0, 32, 32};
     SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, SDL_FLIP_NONE);
 }
 
