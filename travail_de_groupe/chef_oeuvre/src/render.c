@@ -167,8 +167,8 @@ void drawFire(){
     srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
     srcRect.y= 0;
     while (cour != NULL){
-        rect.h = CELLSIZE;
-        rect.w = CELLSIZE;
+        rect.h = CELLSIZE * (cour->fire).state;
+        rect.w = CELLSIZE * (cour->fire).state;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
         rect.y = (cour->fire).y * CELLSIZE;
         SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);

@@ -185,6 +185,9 @@ void nextFire(listchainfire_t listFire){
         else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
 
+        printf("%d %d\n", probability, state);
+        printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
+
         listTemporary=listTemporary->next;   
     }
 } 
