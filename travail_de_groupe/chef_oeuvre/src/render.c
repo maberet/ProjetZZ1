@@ -1,5 +1,8 @@
 #include "render.h"
 
+int score = 100;
+float timer = 0;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -196,7 +199,7 @@ void drawPlayerWaterLevel(){
     int count = player.currentWater;
     for (int i=0; i<player.waterMax; i++){
         rect.x = (i*rect.h);
-        rect.y = screenDimension.h/3;
+        rect.y = screenDimension.h - 1.5 * rect.h;
         if (count){
             count--;
             SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
@@ -214,7 +217,13 @@ void drawScore(){
     rect.x = 0;
     rect.y = 0;
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
-
+    rect.y += rect.h;
+    char str[10];
+    sprintf(str, "%d", score);
+    SDL_Color textColor = {237,222,17};
+    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
 void drawGame(){
@@ -305,9 +314,12 @@ void mainLoop(){
 
     while (running){
         a = SDL_GetTicks();
-        delta = (a - b) / 1000.0;
-        if (delta > 1/FPS_TO_GET){
+        delta = (a - b);
+        timer += delta;
+        printf("timer : %f\n", timer);
+        if (delta > 1000/FPS_TO_GET){
             b = a;
+            printf("fps : %f", 1000/delta);
             switch (gameState){
                 case MENU:
                     drawMenu();
@@ -319,7 +331,7 @@ void mainLoop(){
         }
         else {
             // fait dormir le thread pour garder des ressources
-            usleep(1000 * (1/FPS_TO_GET - delta));
+            usleep(1000 * (1000/FPS_TO_GET - delta));
         }
 
     }
