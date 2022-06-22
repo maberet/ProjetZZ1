@@ -38,6 +38,15 @@ SDL_Texture * playButtonHoverTexture;
 SDL_Surface * fireSurface;
 SDL_Texture * fireTexture;
 
+SDL_Surface * waterSurface;
+SDL_Texture * waterTexture;
+
+SDL_Surface * emptyBucketSurface;
+SDL_Texture * emptyBucketTexture;
+
+SDL_Surface * filledBucketSurface;
+SDL_Texture * filledBucketTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -111,8 +120,13 @@ void drawMap(){
     for(i = 0; i < MAPSIZE; i++){
         for(j = 0; j < MAPSIZE; j++){
             SDL_RenderCopy(renderer, grassTexture, NULL, &rect);
-            if(map[i][j] == 1){
-                SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+            switch (map[i][j]){
+                case 1:
+                    SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+                    break;
+                case 2:
+                    SDL_RenderCopy(renderer, waterTexture, NULL, &rect);
+                    break;
             }
             if (mousePosition.x == j && mousePosition.y == i){
                 if (selectStateHover()){
@@ -153,7 +167,6 @@ void drawFire(){
     srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
     srcRect.y= 0;
     while (cour != NULL){
-        printf("%p %d %d\n", (cour->fire), (cour->fire).x, (cour->fire).x);
         rect.h = CELLSIZE;
         rect.w = CELLSIZE;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
@@ -163,12 +176,32 @@ void drawFire(){
     }
 }
 
+void drawPlayerWaterLevel(){
+    int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    SDL_Rect rect;
+    rect.h = borderWidth/3;
+    rect.w = borderWidth/3;
+    int count = player.waterLevel;
+    for (int i=0; i<3; i++){
+        rect.x = (i*rect.h);
+        rect.y = screenDimension.h/3;
+        if (count){
+            count--;
+            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+        }
+    }
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
     drawMap();
     drawPlayer();
     drawFire();
+    drawPlayerWaterLevel();
     SDL_RenderPresent(renderer);
 }
 
@@ -206,6 +239,15 @@ void mainLoop(){
     fireSurface = IMG_Load("Res/fire.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
 
+    waterSurface = IMG_Load("Res/water.png");
+    waterTexture = SDL_CreateTextureFromSurface(renderer, waterSurface);
+
+    emptyBucketSurface = IMG_Load("Res/empty_bucket.png");
+    emptyBucketTexture = SDL_CreateTextureFromSurface(renderer, emptyBucketSurface);
+
+    filledBucketSurface = IMG_Load("Res/filled_bucket.png");
+    filledBucketTexture = SDL_CreateTextureFromSurface(renderer, filledBucketSurface);
+
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
     SDL_FreeSurface(hoverSurface);
@@ -216,6 +258,7 @@ void mainLoop(){
     SDL_FreeSurface(backgroundSidesSurface);
     SDL_FreeSurface(noHoverSurface);
     SDL_FreeSurface(fireSurface);
+    SDL_FreeSurface(waterSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
