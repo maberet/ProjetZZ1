@@ -7,6 +7,6 @@
 #include <SDL2/SDL.h>
 
 void init_sdl(SDL_Window *window_1 ,SDL_Renderer *renderer,int dimension_grille);
-void dessiner_grille(SDL_Renderer* renderer, int ** grille, int taille);
+void dessiner_grille(SDL_Renderer* renderer, int ** grille, int taille,int taille_fen);
 void fin_sdl(SDL_Renderer* renderer,SDL_Window *window_1);
 #endif 
