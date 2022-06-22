@@ -1,6 +1,6 @@
 #include "render.h"
 
-void init_sdl(SDL_Window *window_1,SDL_Renderer *renderer,int dimension_grille){
+void init_sdl(SDL_Window *window_1,SDL_Renderer *renderer,int dimension_tableau){
    
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Error : SDL initialisation - %s\n", 
@@ -9,9 +9,9 @@ void init_sdl(SDL_Window *window_1,SDL_Renderer *renderer,int dimension_grille){
 
     window_1 = SDL_CreateWindow("Jeu de la vie",
                             SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED, 10*dimension_grille,
-                            10*dimension_grille,
-                            SDL_WINDOW_OPENGL);              
+                            SDL_WINDOWPOS_CENTERED, dimension_tableau,
+                            dimension_tableau,
+                            SDL_WINDOW_RESIZABLE);              
 
     if (window_1 == NULL) {
         SDL_Log("Error : SDL window 1 creation - %s\n", 
@@ -29,15 +29,20 @@ void init_sdl(SDL_Window *window_1,SDL_Renderer *renderer,int dimension_grille){
 
 }
 
-void dessiner_grille(SDL_Renderer* renderer, int **grille,int taille){
+void dessiner_grille(SDL_Renderer* renderer, int **grille,int taille, int taille_fen){
 
     int i;
     int j; 
-
+    int taille_case= taille_fen/taille;
+    SDL_RenderClear(renderer);
     for (i=0;i<taille;i++){
         for(j=0;j<taille;j++){
 
-            SDL_Rect rectangle= {10*i,10*j,10,10};
+            SDL_Rect rectangle;
+            rectangle.x = quelleTaillePourLesCases(width, taille_monde_delimitee)*i;
+            rectangle.y = quelleTaillePourLesCases(height, taille_monde_delimitee)*j;
+            rectangle.w = quelleTaillePourLesCases(width, taille_monde_delimitee)-2;
+            rectangle.h = quelleTaillePourLesCases(height, taille_monde_delimitee)-2;
 
             if (grille [i][j]==1){
                 SDL_SetRenderDrawColor(renderer,                                                
@@ -53,6 +58,7 @@ void dessiner_grille(SDL_Renderer* renderer, int **grille,int taille){
             }
         }
     }
+    SDL_RenderPresent(renderer);
 }
 
 void fin_sdl(SDL_Renderer* renderer,SDL_Window *window_1){    
@@ -62,4 +68,4 @@ void fin_sdl(SDL_Renderer* renderer,SDL_Window *window_1){
     SDL_DestroyWindow(window_1);
     window_1 = NULL;
     SDL_Quit(); 
-    }
+}

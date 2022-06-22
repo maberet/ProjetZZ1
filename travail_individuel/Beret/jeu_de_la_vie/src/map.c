@@ -1,16 +1,22 @@
 #include "map.h"
 
+int quelleTaillePourLesCases(int divise, int diviseur){
+    int r;
+    r = divise/diviseur;
+    return r;
+}
+
 int nombrevoisin(int **grille,int i , int j,int w){
     int cpt=0; 
 
-    if (grille[(i-1)%w][(j-1)%w]==1){cpt++;}
-    if (grille[(i)%w][(j-1)%w]==1){cpt++;}
-    if (grille[(i+1)%w][(j-1)%w]==1){cpt++;}
+    if (grille[(w+i-1)%w][(w+j-1)%w]==1){cpt++;}
+    if (grille[(i)%w][(w+j-1)%w]==1){cpt++;}
+    if (grille[(i+1)%w][(w+j-1)%w]==1){cpt++;}
     if (grille[(i+1)%w][(j)%w]==1){cpt++;}
-    if (grille[(i-1)%w][(j)%w]==1){cpt++;}
-    if (grille[(i-1)%w][(j+1)%w]==1){cpt++;}
+    if (grille[(w+i-1)%w][(j)%w]==1){cpt++;}
+    if (grille[(w+i-1)%w][(j+1)%w]==1){cpt++;}
     if (grille[(i)%w][(j+1)%w]==1){cpt++;}
-    if (grille[(i+1)%w][(j+1)%w]==1){cpt++;}
+    if (grille[(w+i+1)%w][(j+1)%w]==1){cpt++;}
  
     return (cpt); 
 }
@@ -23,6 +29,17 @@ void liberer_grille(int ** grille,int taille){
     } 
     free(grille);
 
+}
+
+void init_grille( int **grille, int taille){
+    int i;
+    int j;
+    printf("taille%d\n",taille);
+    for (i=0;i<taille;i++){
+        for (j=0;j<taille;j++){
+            grille[i][j]=0;
+        }
+    }
 }
 
 void iteration_suivante(int **grille, int **nouvelle_grille ,int *regles_survie, int *regles_naissances, int taille){
@@ -48,12 +65,12 @@ void iteration_suivante(int **grille, int **nouvelle_grille ,int *regles_survie,
 
 
 void changer_case(int **grille,int i,int j,int taille){
-
-    if (grille[i%taille][j%taille]==0){
-        grille[i%taille][j%taille]=1;
+    printf("%d\n",grille[i][j]);
+    if (grille[i*taille][j/taille]==0){
+        grille[i/taille][j/taille]=1;
         }
     else {
-        grille[i%taille][j%taille]=0;
+        grille[i/taille][j/taille]=0;
         }
 }
 
