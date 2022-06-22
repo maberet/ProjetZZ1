@@ -147,8 +147,8 @@ void drawFire(){
         SDL_Rect rect;
         rect.h = CELLSIZE;
         rect.w = CELLSIZE;
-        rect.x = (cour->fire).x + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
-        rect.y = (cour->fire).y ;
+        rect.x = (cour->fire).x*CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+        rect.y = (cour->fire).y*CELLSIZE ;
         SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
         cour = cour->next;
     }

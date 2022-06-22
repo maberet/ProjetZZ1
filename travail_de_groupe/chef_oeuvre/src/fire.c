@@ -45,16 +45,17 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
     int i; 
     int xFire=0;
     int yFire=0;
+    srand(time(NULL));
 
     fire_t fire;
 
     if (emptyListFire(listFire)){
         for (i=0;i<numberFire;i++){
-            srand(time(NULL));
+            
             xFire= rand()%mapSize;
-            srand(time(NULL));
-            yFire= rand()%mapSize;
 
+            yFire= rand()%mapSize;
+            printf("xf:%d,yf:%d\n",xFire,yFire);
             fire.x= xFire;
             fire.y= yFire; 
             fire.state=1;
@@ -125,4 +126,14 @@ listchainfire_t offFire (listchainfire_t listFire, int x ,int y ){
         listFire->next=offFire(listFire->next,x,y);
     }
     return listFire; 
+}
+
+void travelFire(listchainfire_t listFire){
+    listchainfire_t listTemporary=listFire;
+
+    while(listTemporary!=NULL){
+        printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
+        listTemporary=listTemporary->next;
+    }
+    //freeListFire(listTemporary);
 }

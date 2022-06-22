@@ -9,5 +9,6 @@ int main(){
     gameState = MENU;
     readMapFromFile("map.txt");
     fireList = startFire(fireList,10,MAPSIZE);
+    travelFire(fireList);
     mainLoop();
 } 

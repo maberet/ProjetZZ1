@@ -38,5 +38,6 @@ listchainfire_t deleteAheadFire(listchainfire_t);
 listchainfire_t deleteFire (listchainfire_t, int ,int );
 listchainfire_t freeListFire (listchainfire_t );
 listchainfire_t offFire (listchainfire_t, int,int );
+void travelFire(listchainfire_t listFire);
 
 #endif
