@@ -8,8 +8,5 @@ int main(){
     running = 1;
     gameState = GAME;
     readMapFromFile("map.txt");
-    initPlayer();
-
     mainLoop();
-
 } 
