@@ -161,7 +161,6 @@ void nextFire(listchainfire_t listFire){
     int pSparkle;
     int pMedium;
     int pStrong;
-    int pSpread;
     listchainfire_t listTemporary; 
 
     listTemporary= listFire;
@@ -179,13 +178,11 @@ void nextFire(listchainfire_t listFire){
         pStrong=(markov[state][SPARKLE]+markov[state][DEAD]+
                     markov[state][MEDIUM]+markov[state][STRONG])*100;
 
-        pSpread=(markov[state][SPARKLE]+markov[state][DEAD]+
-                    markov[state][MEDIUM]+markov[state][STRONG]+markov[state][SPREAD])*100;
 
-        if (0<=probability<pDead){(listTemporary->fire).state=DEAD;}
-        else if (pDead<=probability<pSparkle){(listTemporary->fire).state=SPARKLE;}
-        else if (pSparkle<=probability<pMedium){(listTemporary->fire).state=MEDIUM;}
-        else if (pMedium<=probability<pStrong){(listTemporary->fire).state=STRONG;}
+        if ((0<=probability)&&(probability<pDead)){(listTemporary->fire).state=DEAD;}
+        else if ((pDead<=probability)&&(probability<pSparkle)){(listTemporary->fire).state=SPARKLE;}
+        else if ((pSparkle<=probability)&&(probability<pMedium)){(listTemporary->fire).state=MEDIUM;}
+        else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
 
         listTemporary=listTemporary->next;   
