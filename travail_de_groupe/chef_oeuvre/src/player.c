@@ -32,7 +32,10 @@ int collisionsLeftPlayer(){
     if(dotTopLeft==1 || dotDownLeft==1){
         collision = 1;
     }
-
+    //collision water
+    if(dotTopLeft==2 || dotDownLeft==2){
+        collision = 1;
+    }
     return collision;
 }
 
@@ -46,6 +49,10 @@ int collisionsRightPlayer(){
     }
     //collision tree
     if(dotTopRight==1 || dotDownRight==1){
+        collision = 1;
+    }
+    //collision water
+    if(dotTopRight==2 || dotDownRight==2){
         collision = 1;
     }
     return collision;
@@ -63,6 +70,10 @@ int collisionsUpPlayer(){
     if(dotTopRight==1 || dotTopLeft==1){
         collision = 1;
     }
+    //collision water
+    if(dotTopRight==2 || dotTopLeft==2){
+        collision = 1;
+    }
     return collision;
 }
 
@@ -76,6 +87,10 @@ int collisionsDownPlayer(){
     }
     //collision tree
     if(dotDownRight==1 || dotDownLeft==1){
+        collision = 1;
+    }
+    //collision water
+    if(dotDownRight==2 || dotDownLeft==2){
         collision = 1;
     }
     return collision;
@@ -109,18 +124,22 @@ void manageMovement(){
     if(keys[PLAYER_UP]){
         moveUpPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_UP;
     }
     if(keys[PLAYER_DOWN]){
         moveDownPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_DOWN;
     }
     if(keys[PLAYER_LEFT]){
         moveLeftPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_LEFT;
     }
     if(keys[PLAYER_RIGHT]){
         moveRightPlayer();
         player.isMoving = 1;
+        player.direction = PLAYER_RIGHT;
     }
     player.isMoving = 0;
 }
@@ -143,6 +162,12 @@ void pourWater(int x, int y){
             fireList = deleteFire (fireList, x, y); 
         }
         player.currentWater = player.currentWater - 1;
+    }
+}
+
+void fillWater(int x, int y){    
+    if(player.currentWater<player.waterMax && selectStateHover() == 1){
+        player.currentWater = player.currentWater + 1;
     }
 }
 

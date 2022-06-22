@@ -18,6 +18,7 @@ typedef struct player{
     int waterMax;
     int speed;
     int isMoving;
+    int direction;
 } player_t;
 
 extern player_t player;
@@ -26,5 +27,7 @@ void initPlayer();
 void manageMovement();
 int selectStateHover();
 void pourWater(int, int);
+void fillWater(int, int);
+int giveCaseBelowPosition(int, int);
 
 #endif
