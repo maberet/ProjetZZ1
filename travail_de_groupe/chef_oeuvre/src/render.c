@@ -6,6 +6,8 @@ SDL_Renderer *renderer;
 TTF_Font *robotoFont;
 SDL_DisplayMode screenDimension;
 
+SDL_Rect buttonRect;
+
 SDL_Surface * grassSurface;
 SDL_Texture * grassTexture;
 
@@ -69,12 +71,16 @@ void drawPlayButton(){
     int buttonPosY = screenDimension.h/2;
     int buttonW = screenDimension.w/6;
     int buttonH = screenDimension.h/6;
-    SDL_Rect rect = {buttonPosX, buttonPosY, buttonW, buttonH};
+    buttonRect.x = buttonPosX;
+    buttonRect.y = buttonPosY;
+    buttonRect.w = buttonW;
+    buttonRect.h = buttonH;
+
     if (mousePosition.x <= buttonPosX + buttonW && mousePosition.x >= buttonPosX && mousePosition.y >= buttonPosY && mousePosition.y <= buttonPosY + buttonH){
-        SDL_RenderCopy(renderer, playButtonHoverTexture, NULL, &rect);
+        SDL_RenderCopy(renderer, playButtonHoverTexture, NULL, &buttonRect);
     }
     else {
-        SDL_RenderCopy(renderer, playButtonTexture, NULL, &rect);
+        SDL_RenderCopy(renderer, playButtonTexture, NULL, &buttonRect);
     }
 }
 

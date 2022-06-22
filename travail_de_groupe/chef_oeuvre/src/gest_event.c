@@ -42,6 +42,13 @@ void manageMenu(){
                     mousePosition.y = event.motion.y;
                     continue;
 
+
+                case SDL_MOUSEBUTTONDOWN:
+                    if (SDL_PointInRect(&mousePosition, &buttonRect)){
+                        gameState = GAME;
+                    }
+                    break;
+
                 default:
                     continue;
             }
