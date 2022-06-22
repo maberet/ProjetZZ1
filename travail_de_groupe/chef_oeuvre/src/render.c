@@ -35,6 +35,9 @@ SDL_Texture * playButtonTexture;
 SDL_Surface * playButtonHoverSurface;
 SDL_Texture * playButtonHoverTexture;
 
+SDL_Surface * fireSurface;
+SDL_Texture * fireTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -143,13 +146,19 @@ void drawBackgroundSides(){
 
 void drawFire(){
     listchainfire_t cour = fireList;
+    SDL_Rect rect;
+    SDL_Rect srcRect;
+    srcRect.w = 24;
+    srcRect.h =32;
+    srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
+    srcRect.y= 0;
     while (cour != NULL){
-        SDL_Rect rect;
+        printf("%p %d %d\n", (cour->fire), (cour->fire).x, (cour->fire).x);
         rect.h = CELLSIZE;
         rect.w = CELLSIZE;
-        rect.x = (cour->fire).x + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
-        rect.y = (cour->fire).y ;
-        SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+        rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+        rect.y = (cour->fire).y * CELLSIZE;
+        SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);
         cour = cour->next;
     }
 }
@@ -194,6 +203,9 @@ void mainLoop(){
     playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
     playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
 
+    fireSurface = IMG_Load("Res/fire.png");
+    fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
+
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
     SDL_FreeSurface(hoverSurface);
@@ -203,6 +215,7 @@ void mainLoop(){
     SDL_FreeSurface(playButtonHoverSurface);
     SDL_FreeSurface(backgroundSidesSurface);
     SDL_FreeSurface(noHoverSurface);
+    SDL_FreeSurface(fireSurface);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
