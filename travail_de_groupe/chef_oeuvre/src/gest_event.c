@@ -123,9 +123,13 @@ void manageGame(){
                     break;
                 
                 case SDL_MOUSEMOTION:
-                        mousePosition.x = (event.motion.x - (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
-                        mousePosition.y = (event.motion.y - 0) / CELLSIZE;
+                    mousePosition.x = (event.motion.x - (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2) / CELLSIZE;
+                    mousePosition.y = (event.motion.y - 0) / CELLSIZE;
                     continue;
+
+                case SDL_MOUSEBUTTONDOWN:
+                    pourWater(mousePosition.x, mousePosition.y);
+                    break;
 
                 default:
                     continue;
