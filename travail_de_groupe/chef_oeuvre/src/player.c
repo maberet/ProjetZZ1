@@ -6,8 +6,8 @@ player_t player;
 void initPlayer(){
     player.x = 18*32;
     player.y = 0;
-    player.w = CELLSIZE*0.7;
-    player.h = CELLSIZE*0.7;
+    player.w = CELLSIZE*0.8;
+    player.h = CELLSIZE*0.8;
     player.waterLevel = 0;
     player.speed = 1;
     player.isMoving = 0;
@@ -31,6 +31,7 @@ int collisionsLeftPlayer(){
     if(dotTopLeft==1 || dotDownLeft==1){
         collision = 1;
     }
+
     return collision;
 }
 
@@ -60,7 +61,6 @@ int collisionsUpPlayer(){
     //collision tree
     if(dotTopRight==1 || dotTopLeft==1){
         collision = 1;
-        player.y++;
     }
     return collision;
 }
