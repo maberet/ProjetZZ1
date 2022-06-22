@@ -14,5 +14,6 @@ extern player_t player;
 
 void initPlayer();
 void manageMovement();
+int selectStateHover();
 
 #endif

@@ -5,7 +5,7 @@
 #include "main.h"
 #include "render.h"
 
-extern int hover[2];
+extern SDL_Point mousePosition;
 extern int keys[10];
 
 void *eventLoop(void *arg);

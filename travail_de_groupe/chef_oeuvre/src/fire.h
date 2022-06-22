@@ -22,7 +22,6 @@ typedef struct chain {
     struct chain *next;
 }chainfire_t,*listchainfire_t;
 
-
 listchainfire_t initFire(void);
 listchainfire_t insertAheadFire(fire_t, listchainfire_t); 
 booleen_t emptyListFire(listchainfire_t);

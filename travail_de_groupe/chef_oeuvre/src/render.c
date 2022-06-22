@@ -65,8 +65,17 @@ void drawBackground(){
 }
 
 void drawPlayButton(){
-    SDL_Rect rect = {screenDimension.w/2 - screenDimension.w/12, screenDimension.h/2, screenDimension.w/6, screenDimension.h/6};
-    SDL_RenderCopy(renderer, playButtonTexture, NULL, &rect);
+    int buttonPosX = screenDimension.w/2 - screenDimension.w/12;
+    int buttonPosY = screenDimension.h/2;
+    int buttonW = screenDimension.w/6;
+    int buttonH = screenDimension.h/6;
+    SDL_Rect rect = {buttonPosX, buttonPosY, buttonW, buttonH};
+    if (mousePosition.x <= buttonPosX + buttonW && mousePosition.x >= buttonPosX && mousePosition.y >= buttonPosY && mousePosition.y <= buttonPosY + buttonH){
+        SDL_RenderCopy(renderer, playButtonHoverTexture, NULL, &rect);
+    }
+    else {
+        SDL_RenderCopy(renderer, playButtonTexture, NULL, &rect);
+    }
 }
 
 void drawMenu(){
@@ -90,7 +99,7 @@ void drawMap(){
             if(map[i][j] == 1){
                 SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
             }
-            if (hover[0] == j && hover[1] == i){
+            if (mousePosition.x == j && mousePosition.y == i){
                 SDL_RenderCopy(renderer, hoverTexture, NULL, &rect);
             }
             rect.x += CELLSIZE;
