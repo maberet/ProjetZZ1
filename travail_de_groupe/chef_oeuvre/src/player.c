@@ -6,20 +6,37 @@ void initPlayer(){
     player.x = 0;
     player.y = 0;
     player.waterLevel = 0;
+    player.speed = 1;
+}
+
+void moveRightPlayer(){
+    player.x = player.x + player.speed;
+}
+
+void moveLeftPlayer(){
+    player.x = player.x - player.speed;
+}
+
+void moveUpPlayer(){
+    player.y = player.y - player.speed;
+}
+
+void moveDownPlayer(){
+    player.y = player.y + player.speed;
 }
 
 void manageMovement(){
-    if(keys[0] == 1){
-        player.y--;
+    if(keys[PLAYER_UP]){
+        moveUpPlayer();
     }
-    if(keys[1] == 1){
-        player.y++;
+    if(keys[PLAYER_DOWN] == 1){
+        moveDownPlayer();
     }
-    if(keys[2] == 1){
-        player.x--;
+    if(keys[PLAYER_LEFT] == 1){
+        moveLeftPlayer();
     }
-    if(keys[3] == 1){
-        player.x++;
+    if(keys[PLAYER_RIGHT] == 1){
+        moveRightPlayer();
     }
 }
 
@@ -32,6 +49,7 @@ int selectStateHover(){
     }
     return stateHover;
 }
+
 
 
 

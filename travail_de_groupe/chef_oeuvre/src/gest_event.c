@@ -82,11 +82,11 @@ void manageGame(){
                         break;
 
                     case SDLK_LEFT:
-                        keys[2] = 0;
+                        keys[PLAYER_LEFT] = 0;
                         break;
 
                     case SDLK_RIGHT:
-                        keys[3] = 0;
+                        keys[PLAYER_RIGHT] = 0;
                         break;
 
                     default:
@@ -110,11 +110,11 @@ void manageGame(){
                         break;
 
                     case SDLK_LEFT:
-                        keys[2] = 1;
+                        keys[PLAYER_LEFT] = 1;
                         break;
 
                     case SDLK_RIGHT:
-                        keys[3] = 1;
+                        keys[PLAYER_RIGHT] = 1;
                         break;
 
                     default:
