@@ -18,6 +18,7 @@
 #include "gest_event.h"
 #include "map.h"
 #include "player.h"
+#include "fire.h"
 
 
 #define MENU 0

@@ -1,6 +1,7 @@
 #include "fire.h"
 #include "map.h"
 
+listchainfire_t fireList;
 int markov[SIZEMARKOV][SIZEMARKOV];
 
 listchainfire_t initFire (void)
@@ -52,7 +53,7 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             srand(time(NULL));
             xFire= rand()%mapSize;
             srand(time(NULL));
-            xFire= rand()%mapSize;
+            yFire= rand()%mapSize;
 
             fire.x= xFire;
             fire.y= yFire; 
@@ -70,7 +71,7 @@ booleen_t searchFire(listchainfire_t listFire, int x ,int y)
 {
     booleen_t       result = false;
 
-    while((listFire!=NULL)||!(result))
+    while((listFire!=NULL)&&!(result))
     {  
         if(((listFire->fire).x==x)&&((listFire->fire).y==y)) // si on trouve la semaine voulue
         {

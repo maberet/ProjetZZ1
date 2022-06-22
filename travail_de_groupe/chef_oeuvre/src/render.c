@@ -141,11 +141,25 @@ void drawBackgroundSides(){
     SDL_RenderCopy(renderer, backgroundSidesTexture, NULL, &rect);
 }
 
+void drawFire(){
+    listchainfire_t cour = fireList;
+    while (cour != NULL){
+        SDL_Rect rect;
+        rect.h = CELLSIZE;
+        rect.w = CELLSIZE;
+        rect.x = (cour->fire).x + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+        rect.y = (cour->fire).y ;
+        SDL_RenderCopy(renderer, treeTexture, NULL, &rect);
+        cour = cour->next;
+    }
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
     drawMap();
     drawPlayer();
+    drawFire();
     SDL_RenderPresent(renderer);
 }
 
