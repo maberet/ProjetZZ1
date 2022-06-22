@@ -9,12 +9,6 @@ typedef enum
     false,true
 }booleen_t;
 
-typedef struct chain {
-    fire_t fire; 
-
-    struct chain *next;
-}chainfire_t,*listchainfire_t;
-
 typedef struct fire{
     int x;
     int y; 
@@ -22,6 +16,11 @@ typedef struct fire{
 
 }fire_t;
 
+typedef struct chain {
+    fire_t fire; 
+
+    struct chain *next;
+}chainfire_t,*listchainfire_t;
 
 listchainfire_t initFire(void);
 listchainfire_t insertAheadFire(fire_t, listchainfire_t); 

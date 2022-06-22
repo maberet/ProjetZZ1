@@ -24,7 +24,14 @@ void manageMovement(){
 }
 
 int selectStateHover(){
-
+    int stateHover = 0;
+    int distance = sqrt(pow(abs(hover[0]-player.x), 2)+pow(abs(hover[1]-player.y), 2));
+    printf("distance : %d\n", distance);
+    if(distance <= 2){
+        stateHover = 1;
+    }
+    return stateHover;
 }
 
-            QUiChsoiitLeBonHover(); //0 = nonHover et 1 = hover
+
+
