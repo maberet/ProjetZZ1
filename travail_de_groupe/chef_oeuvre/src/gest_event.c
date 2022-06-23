@@ -203,6 +203,7 @@ void manageGame(){
             }
     }
     updatePlayer();
+    //burnTree(fireList);
     SDL_Delay(5);
 }
 

@@ -216,8 +216,19 @@ listchainfire_t probabilitySpreadFire( listchainfire_t listFire, listchainfire_t
     return listFire;
 }
 
+void burnTree (listchainfire_t listFire){
+    listchainfire_t listTemporary = listFire; 
+
+    while (!emptyListFire(listTemporary)){
+        if (map[(listTemporary->fire).y][(listTemporary->fire).x]==TREE){map[(listTemporary->fire).y][(listTemporary->fire).x]=0;}
+    }
+}
+
 listchainfire_t spreadFire (listchainfire_t listFire){
     listchainfire_t listTemporary=fireList;
+    
+    //burnTree(listFire);
+
     srand(time(NULL));
     while (!emptyListFire(listTemporary)){
         if ((listTemporary->fire).state==4){
@@ -231,13 +242,8 @@ listchainfire_t spreadFire (listchainfire_t listFire){
 
 booleen_t winGame(listchainfire_t listFire){
     booleen_t win = true;
-    listchainfire_t listTemporary= listFire; 
+
+    if(!emptyListFire(listFire)){win=false;}
     
-    while (!emptyListFire( listTemporary)){
-        if ((listTemporary->fire).state!=0){
-            win= false;
-            break;
-        }
-    }
     return win;
 }
