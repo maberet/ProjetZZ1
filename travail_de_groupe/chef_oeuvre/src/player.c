@@ -33,12 +33,19 @@ int getPositionYInMap(int y){
     return y2;
 }
 
-int checkCollisionsTree(int dot1, int dot2){
+int checkCollisionsTypeGround(int dot1, int dot2, int typeGround){
     int coll = 0;
-    if(dot1==1 || dot2==1){
+    if(dot1==typeGround || dot2==typeGround){
         coll = 1;
     }
     return coll;
+}
+
+void checkCollisionsFire(int dot1, int dot2){
+    if((dot1==1 || dot2==1) && player.invisible==0){
+        player.currentHP = player.currentHP - 1;
+        player.invisible = 1;
+    }
 }
 
 int collisionsLeftPlayer(){
@@ -51,17 +58,10 @@ int collisionsLeftPlayer(){
     if(player.x <= 0){
         collision = 1;
     }
-    //collision tree
-    collision = checkCollisionsTree(dotTopLeft, dotDownLeft);
-    //collision water
-    if(dotTopLeft==2 || dotDownLeft==2){
-        collision = 1;
-    }
-    //collision fire
-    if((fireTopLeft==1 || fireDownLeft==1) && player.invisible==0){
-        player.currentHP = player.currentHP - 1;
-        player.invisible = 1;
-    }
+    //collisions
+    collision = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, TREE);
+    collision = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, WATER);
+    checkCollisionsFire(fireTopLeft, fireDownLeft);
     return collision;
 }
 
@@ -75,17 +75,10 @@ int collisionsRightPlayer(){
     if(player.x + player.w >= MAPSIZE * CELLSIZE){
         collision = 1;
     }
-    //collision tree
-    collision = checkCollisionsTree(dotTopRight, dotDownRight);
-    //collision water
-    if(dotTopRight==2 || dotDownRight==2){
-        collision = 1;
-    }
-    //collision fire
-    if((fireTopRight==1 || fireDownRight==1) && player.invisible==0){
-        player.currentHP = player.currentHP - 1;
-        player.invisible = 1;
-    }
+    //collisions
+    collision = checkCollisionsTypeGround(dotTopRight, dotDownRight, TREE);
+    collision = checkCollisionsTypeGround(dotTopRight, dotDownRight, WATER);
+    checkCollisionsFire(fireTopRight, fireDownRight);
     return collision;
 }
 
@@ -99,19 +92,10 @@ int collisionsUpPlayer(){
     if(player.y <= 0){
         collision = 1;
     }
-    //collision tree
-    if(dotTopRight==1 || dotTopLeft==1){
-        collision = 1;
-    }
-    //collision water
-    if(dotTopRight==2 || dotTopLeft==2){
-        collision = 1;
-    }
-    //collision fire
-    if((fireTopRight==1 || fireTopLeft==1) && player.invisible==0){
-        player.currentHP = player.currentHP - 1;
-        player.invisible = 1;
-    }
+    //collisions
+    collision = checkCollisionsTypeGround(dotTopRight, dotTopLeft, TREE);
+    collision = checkCollisionsTypeGround(dotTopRight, dotTopLeft, WATER);
+    checkCollisionsFire(fireTopRight, fireTopLeft);
     return collision;
 }
 
@@ -125,19 +109,10 @@ int collisionsDownPlayer(){
     if(player.y + player.h >= MAPSIZE * CELLSIZE){
         collision = 1;
     }
-    //collision tree
-    if(dotDownRight==1 || dotDownLeft==1){
-        collision = 1;
-    }
-    //collision water
-    if(dotDownRight==2 || dotDownLeft==2){
-        collision = 1;
-    }
-    //collision fire
-    if((fireDownRight==1 || fireDownLeft==1) && player.invisible==0){
-        player.currentHP = player.currentHP - 1;
-        player.invisible = 1;
-    }
+    //collisions
+    collision = checkCollisionsTypeGround(dotDownRight, dotDownLeft, TREE);
+    collision = checkCollisionsTypeGround(dotDownRight, dotDownLeft, WATER);
+    checkCollisionsFire(fireDownRight, fireDownLeft);
     return collision;
 }
 
