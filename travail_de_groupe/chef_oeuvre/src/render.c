@@ -79,6 +79,9 @@ SDL_Texture * scoreTexture;
 SDL_Surface * nextFireSurface;
 SDL_Texture * nextFireTexture;
 
+SDL_Surface * backgroundWonSurface;
+SDL_Texture * backgroundWonTexture;
+
 void createWindow(){
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -382,6 +385,19 @@ void drawLost(){
     SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
+void drawWon(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h;
+    rect.w = screenDimension.w;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_RenderCopy(renderer, backgroundWonTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+    SDL_RenderPresent(renderer);
+}
+
 void mainLoop(){
     createWindow();
     initPlayer();
@@ -452,7 +468,8 @@ void mainLoop(){
     heartSurface = IMG_Load("Res/heart_spritesheet.png");
     heartTexture = SDL_CreateTextureFromSurface(renderer, heartSurface);
     
-
+    backgroundWonSurface = IMG_Load("Res/wonScreen.png");
+    backgroundWonTexture = SDL_CreateTextureFromSurface(renderer, backgroundWonSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
@@ -474,6 +491,7 @@ void mainLoop(){
     SDL_FreeSurface(quitButtonHoverSurface);
     SDL_FreeSurface(playAgainButtonHoverSurface);
     SDL_FreeSurface(heartSurface);
+    SDL_FreeSurface(backgroundWonSurface);
 
     playAgainButtonRect.x = (screenDimension.w * 700)/1920;
     playAgainButtonRect.y = (screenDimension.h * 615)/1080;
@@ -514,10 +532,17 @@ void mainLoop(){
                     }
                     //updateMap();
                     drawGame();
+                    if (fireList == NULL){
+                        gameState = WON;
+                    }
                     break;
 
                 case LOSE:
                     drawLost();
+                    break;
+
+                case WON:
+                    drawWon();
                     break;
             }
         }
