@@ -1,5 +1,8 @@
 #include "render.h"
 
+int score = 100;
+float timer = 0;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -22,6 +25,9 @@ SDL_Texture * noHoverTexture;
 
 SDL_Surface * playerSurface;
 SDL_Texture * playerTexture;
+
+SDL_Surface * playerIdleSurface;
+SDL_Texture * playerIdleTexture;
 
 SDL_Surface * backgroundSurface;
 SDL_Texture * backgroundTexture;
@@ -46,6 +52,9 @@ SDL_Texture * emptyBucketTexture;
 
 SDL_Surface * filledBucketSurface;
 SDL_Texture * filledBucketTexture;
+
+SDL_Surface * scoreSurface;
+SDL_Texture * scoreTexture;
 
 void createWindow(){
 
@@ -149,8 +158,14 @@ void drawPlayer(){
     rect.w = CELLSIZE;
     rect.x = player.x  + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     rect.y = player.y ;
-    SDL_Rect destRect = {32 * (SDL_GetTicks()/200%4), 0, 32, 32};
-    SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, SDL_FLIP_NONE);
+    SDL_Rect destRect = {32 * (SDL_GetTicks()/200%6), 0, 32, 32};
+    int flip = (player.direction == PLAYER_LEFT) ? (SDL_FLIP_HORIZONTAL) : (SDL_FLIP_NONE);
+    if (player.isMoving){
+        SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, flip);
+    }
+    else {
+        SDL_RenderCopyEx(renderer, playerIdleTexture, &destRect, &rect, 0, NULL, flip);
+    }
 }
 
 void drawBackgroundSides(){
@@ -159,18 +174,49 @@ void drawBackgroundSides(){
 }
 
 void drawFire(){
+    int loop;
+    int step;
     listchainfire_t cour = fireList;
     SDL_Rect rect;
+    rect.h = CELLSIZE;
+    rect.w = CELLSIZE;
     SDL_Rect srcRect;
-    srcRect.w = 24;
-    srcRect.h =32;
-    srcRect.x = srcRect.w * (SDL_GetTicks()/200 % 8);
-    srcRect.y= 0;
     while (cour != NULL){
-        rect.h = CELLSIZE;
-        rect.w = CELLSIZE;
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
-        rect.y = (cour->fire).y * CELLSIZE;
+        rect.y = (cour->fire).y * CELLSIZE - rect.h/2;
+
+        switch ((cour->fire).state)
+        {
+            case SPARKLE:
+                step = 0;
+                loop = 2;
+                break;
+
+            case MEDIUM:
+                step = 2 * srcRect.w;
+                loop = 4;
+                break;
+
+            case STRONG:
+                step = 6 * srcRect.w;
+                loop = 6;
+                break;
+
+            case SPREAD:
+                step = 6 * srcRect.w;
+                loop = 6;
+                break;
+            
+            default:
+                break;
+        }
+        
+        srcRect.w = 15;
+        srcRect.h = 24;
+        srcRect.x = step + srcRect.w * (SDL_GetTicks()/200 % loop);
+        srcRect.y= 0;
+
+
         SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);
         cour = cour->next;
     }
@@ -184,7 +230,7 @@ void drawPlayerWaterLevel(){
     int count = player.currentWater;
     for (int i=0; i<player.waterMax; i++){
         rect.x = (i*rect.h);
-        rect.y = screenDimension.h/3;
+        rect.y = screenDimension.h - 1.5 * rect.h;
         if (count){
             count--;
             SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
@@ -195,6 +241,22 @@ void drawPlayerWaterLevel(){
     }
 }
 
+void drawScore(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h/6;
+    rect.w = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
+    rect.y += rect.h;
+    char str[10];
+    sprintf(str, "%d", score);
+    SDL_Color textColor = {237,222,17};
+    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
@@ -202,6 +264,7 @@ void drawGame(){
     drawPlayer();
     drawFire();
     drawPlayerWaterLevel();
+    drawScore();
     SDL_RenderPresent(renderer);
 }
 
@@ -221,8 +284,11 @@ void mainLoop(){
     noHoverSurface = IMG_Load("Res/noHover.png");
     noHoverTexture = SDL_CreateTextureFromSurface(renderer, noHoverSurface);
 
-    playerSurface = IMG_Load("Res/character_spritesheet.png");
+    playerSurface = IMG_Load("Res/character_tileset.png");
     playerTexture = SDL_CreateTextureFromSurface(renderer, playerSurface);
+
+    playerIdleSurface = IMG_Load("Res/character_idle_spritesheet.png");
+    playerIdleTexture = SDL_CreateTextureFromSurface(renderer, playerIdleSurface);
 
     backgroundSurface = IMG_Load("Res/background_mat.png");
     backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
@@ -236,7 +302,7 @@ void mainLoop(){
     playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
     playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
 
-    fireSurface = IMG_Load("Res/fire.png");
+    fireSurface = IMG_Load("Res/fire_spritesheet.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
 
     waterSurface = IMG_Load("Res/water.png");
@@ -247,6 +313,9 @@ void mainLoop(){
 
     filledBucketSurface = IMG_Load("Res/filled_bucket.png");
     filledBucketTexture = SDL_CreateTextureFromSurface(renderer, filledBucketSurface);
+    
+    scoreSurface = IMG_Load("Res/score.png");
+    scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
@@ -259,6 +328,10 @@ void mainLoop(){
     SDL_FreeSurface(noHoverSurface);
     SDL_FreeSurface(fireSurface);
     SDL_FreeSurface(waterSurface);
+    SDL_FreeSurface(emptyBucketSurface);
+    SDL_FreeSurface(filledBucketSurface);
+    SDL_FreeSurface(scoreSurface);
+
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -272,21 +345,29 @@ void mainLoop(){
 
     while (running){
         a = SDL_GetTicks();
-        delta = (a - b) / 1000.0;
-        if (delta > 1/FPS_TO_GET){
+        delta = (a - b);
+        if (delta > 1000/FPS_TO_GET){
+            timer += delta;
+            printf("timer : %f\n", timer/1000);
             b = a;
+            printf("fps : %f", 1000/delta);
             switch (gameState){
                 case MENU:
                     drawMenu();
                     break;
                 case GAME:
+                    if ((int)timer % 20 == 0){
+                        nextFire(fireList);
+                        fireList=spreadFire(fireList);
+                        printf("after spread fire : x%d,y%d\n",(fireList->fire).x,(fireList->fire).y);
+                    }
                     drawGame();
                     break;
             }
         }
         else {
             // fait dormir le thread pour garder des ressources
-            usleep(1000 * (1/FPS_TO_GET - delta));
+            usleep(1000 * (1000/FPS_TO_GET - delta));
         }
 
     }

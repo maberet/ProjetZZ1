@@ -6,7 +6,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#define SIZEMARKOV 4
+#define SIZEMARKOV 5
 #define DEAD 0
 #define SPARKLE 1
 #define MEDIUM 2
@@ -44,9 +44,13 @@ listchainfire_t deleteAheadFire(listchainfire_t);
 listchainfire_t deleteFire (listchainfire_t, int ,int );
 listchainfire_t freeListFire (listchainfire_t );
 listchainfire_t offFire (listchainfire_t, int,int );
-void travelFire(listchainfire_t listFire);
+void travelFire(listchainfire_t );
 void readFapFromFile(char * filename);
 void nextFire(listchainfire_t );
+listchainfire_t probabilitySpreadFire( listchainfire_t, listchainfire_t);
+listchainfire_t spreadFire (listchainfire_t );
+
+
 
 
 #endif

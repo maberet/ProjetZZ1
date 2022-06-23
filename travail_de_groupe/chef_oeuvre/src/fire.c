@@ -161,7 +161,6 @@ void nextFire(listchainfire_t listFire){
     int pSparkle;
     int pMedium;
     int pStrong;
-    int pSpread;
     listchainfire_t listTemporary; 
 
     listTemporary= listFire;
@@ -171,23 +170,71 @@ void nextFire(listchainfire_t listFire){
         state=(listTemporary->fire).state;
         probability= rand()%101;
 
-        pDead=markov[state][DEAD]*100;
-        pSparkle=(markov[state][SPARKLE]+markov[state][DEAD])*100;
+        pDead=markov[state][DEAD];
+        pSparkle=(markov[state][SPARKLE]+markov[state][DEAD]);
 
-        pMedium=(markov[state][SPARKLE]+markov[state][DEAD]+markov[state][MEDIUM])*100;
+        pMedium=(markov[state][SPARKLE]+markov[state][DEAD]+markov[state][MEDIUM]);
 
         pStrong=(markov[state][SPARKLE]+markov[state][DEAD]+
-                    markov[state][MEDIUM]+markov[state][STRONG])*100;
+                    markov[state][MEDIUM]+markov[state][STRONG]);
 
-        pSpread=(markov[state][SPARKLE]+markov[state][DEAD]+
-                    markov[state][MEDIUM]+markov[state][STRONG]+markov[state][SPREAD])*100;
 
-        if (0<=probability<pDead){(listTemporary->fire).state=DEAD;}
-        else if (pDead<=probability<pSparkle){(listTemporary->fire).state=SPARKLE;}
-        else if (pSparkle<=probability<pMedium){(listTemporary->fire).state=MEDIUM;}
-        else if (pMedium<=probability<pStrong){(listTemporary->fire).state=STRONG;}
+        if ((0<=probability)&&(probability<pDead)){(listTemporary->fire).state=DEAD;}
+        else if ((pDead<=probability)&&(probability<pSparkle)){(listTemporary->fire).state=SPARKLE;}
+        else if ((pSparkle<=probability)&&(probability<pMedium)){(listTemporary->fire).state=MEDIUM;}
+        else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
+
+        printf("%d %d\n", probability, state);
+        printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
 
         listTemporary=listTemporary->next;   
     }
 } 
+
+listchainfire_t probabilitySpreadFire( listchainfire_t listFire, listchainfire_t listTemporary){
+    int probability;
+    fire_t fire; 
+ 
+    probability= rand()%4;
+    printf("proba:%d\n", probability);
+    printf("listfire1: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
+
+    if((probability==0)&&((listTemporary->fire).x+1<MAPSIZE)){fire.state=1;
+        fire.x=(listTemporary->fire).x+1;
+        fire.y=(listTemporary->fire).y;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==1)&&((listTemporary->fire).y+1<MAPSIZE)){fire.state=1;
+        fire.x=(listTemporary->fire).x;
+        fire.y=(listTemporary->fire).y+1;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==2)&&((listTemporary->fire).y-1>=0)){fire.state=1;
+        fire.x=(listTemporary->fire).x;
+        fire.y=(listTemporary->fire).y-1;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==3)&&((listTemporary->fire).x-1>=0)){fire.state=1;
+        fire.x=(listTemporary->fire).x-1;
+        fire.y=(listTemporary->fire).y;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    printf("listtemp1: x%d,y%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
+    printf("listfire2: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
+    return listFire;
+}
+
+listchainfire_t spreadFire (listchainfire_t listFire){
+    listchainfire_t listTemporary=fireList;
+    srand(time(NULL));
+    while (!emptyListFire(listTemporary)){
+        if ((listTemporary->fire).state==4){
+            
+            listFire=probabilitySpreadFire(listFire, listTemporary); 
+            printf("listfire ajout: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
+        }
+        listTemporary=listTemporary->next; 
+    }
+    return listFire;
+}
