@@ -110,6 +110,7 @@ listchainfire_t freeListFire (listchainfire_t listFire){
     while (emptyListFire(listFire)){
         listFire=deleteAheadFire(listFire);
     }
+    listFire=NULL;
     return listFire;
 }
 
