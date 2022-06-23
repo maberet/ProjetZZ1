@@ -348,18 +348,15 @@ void mainLoop(){
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
             timer += delta;
-            printf("timer : %d\n", (int)timer%1000);
             b = a;
-            printf("fps : %f", 1000/delta);
             switch (gameState){
                 case MENU:
                     drawMenu();
                     break;
                 case GAME:
-                    if ((int)timer % 1000 == 0){
+                    if ((int)timer % 100 == 0){
                         nextFire(fireList);
                         fireList=spreadFire(fireList);
-                        printf("after spread fire : x%d,y%d\n",(fireList->fire).x,(fireList->fire).y);
                     }
                     drawGame();
                     break;

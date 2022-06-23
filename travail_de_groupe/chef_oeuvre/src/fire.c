@@ -55,7 +55,6 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             xFire= rand()%mapSize;
 
             yFire= rand()%mapSize;
-            printf("xf:%d,yf:%d\n",xFire,yFire);
             fire.x= xFire;
             fire.y= yFire; 
             fire.state=1;
@@ -135,7 +134,6 @@ void travelFire(listchainfire_t listFire){
         printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
         listTemporary=listTemporary->next;
     }
-    //freeListFire(listTemporary);
 }
 
 void readFapFromFile(char * filename){
@@ -185,9 +183,6 @@ void nextFire(listchainfire_t listFire){
         else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
 
-        printf("%d %d\n", probability, state);
-        printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
-
         listTemporary=listTemporary->next;   
     }
 } 
@@ -197,8 +192,6 @@ listchainfire_t probabilitySpreadFire( listchainfire_t listFire, listchainfire_t
     fire_t fire; 
  
     probability= rand()%4;
-    printf("proba:%d\n", probability);
-    printf("listfire1: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
 
     if((probability==0)&&((listTemporary->fire).x+1<MAPSIZE)){fire.state=1;
         fire.x=(listTemporary->fire).x+1;
@@ -220,8 +213,6 @@ listchainfire_t probabilitySpreadFire( listchainfire_t listFire, listchainfire_t
         fire.y=(listTemporary->fire).y;
         listFire=insertAheadFire(fire,listFire);
         }
-    printf("listtemp1: x%d,y%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
-    printf("listfire2: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
     return listFire;
 }
 
@@ -232,7 +223,6 @@ listchainfire_t spreadFire (listchainfire_t listFire){
         if ((listTemporary->fire).state==4){
             
             listFire=probabilitySpreadFire(listFire, listTemporary); 
-            printf("listfire ajout: x%d,y%d\n",(listFire->fire).x,(listFire->fire).y);
         }
         listTemporary=listTemporary->next; 
     }
