@@ -55,7 +55,7 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             xFire= rand()%mapSize;
 
             yFire= rand()%mapSize;
-            printf("xf:%d,yf:%d\n",xFire,yFire);
+            //printf("xf:%d,yf:%d\n",xFire,yFire);
             fire.x= xFire;
             fire.y= yFire; 
             fire.state=1;
@@ -132,7 +132,7 @@ void travelFire(listchainfire_t listFire){
     listchainfire_t listTemporary=listFire;
 
     while(listTemporary!=NULL){
-        printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
+        //printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
         listTemporary=listTemporary->next;
     }
     //freeListFire(listTemporary);
@@ -185,8 +185,8 @@ void nextFire(listchainfire_t listFire){
         else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
 
-        printf("%d %d\n", probability, state);
-        printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
+        //printf("%d %d\n", probability, state);
+        //printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
 
         listTemporary=listTemporary->next;   
     }
