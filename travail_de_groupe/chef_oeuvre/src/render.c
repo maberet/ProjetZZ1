@@ -440,7 +440,7 @@ void mainLoop(){
     heartTexture = SDL_CreateTextureFromSurface(renderer, heartSurface);
     
     backgroundWonSurface = IMG_Load("Res/wonScreen.png");
-    backgroundWonTexture = SDL_CreateTextureFromSurface(renderer, backgroundWonTexture);
+    backgroundWonTexture = SDL_CreateTextureFromSurface(renderer, backgroundWonSurface);
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
