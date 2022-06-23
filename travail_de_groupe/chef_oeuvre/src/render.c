@@ -182,7 +182,9 @@ void drawPlayer(){
     rect.y = player.y ;
     SDL_Rect destRect = {32 * (SDL_GetTicks()/200%6), 0, 32, 32};
     int flip = (player.direction == PLAYER_LEFT) ? (SDL_FLIP_HORIZONTAL) : (SDL_FLIP_NONE);
+    int tick = SDL_GetTicks()%2;
     if (player.isMoving){
+        SDL_SetTextureColorMod(playerIdleTexture, tick * 255 * (1 -player.invisible),tick * 255 * (1-player.invisible),tick * 255 * (1-player.invisible));
         SDL_RenderCopyEx(renderer, playerTexture, &destRect, &rect, 0, NULL, flip);
     }
     else {
