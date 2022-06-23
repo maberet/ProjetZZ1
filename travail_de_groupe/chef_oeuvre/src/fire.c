@@ -55,10 +55,6 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             xFire= rand()%mapSize;
 
             yFire= rand()%mapSize;
-<<<<<<< HEAD
-            //printf("xf:%d,yf:%d\n",xFire,yFire);
-=======
->>>>>>> 91e99d9a0e864cf399133d4e59d4d7951d1bbd0a
             fire.x= xFire;
             fire.y= yFire; 
             fire.state=1;

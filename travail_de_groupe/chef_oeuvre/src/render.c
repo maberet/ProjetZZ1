@@ -285,7 +285,8 @@ void drawTime(){
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    sprintf(str, "%d", UPDATETIME - (int)timer/1000 % UPDATETIME);
+    printf("%d\n", (UPDATETIME * 2000 - (int)timer % (UPDATETIME * 2000))/1000);
+    sprintf(str, "%d", (UPDATETIME * 2000 - (int)timer % (UPDATETIME * 2000))/1000);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -385,17 +386,14 @@ void mainLoop(){
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
             timer += delta;
+            printf("%d\n", (int)timer % 1000);
             b = a;
-<<<<<<< HEAD
-            //printf("fps : %f", 1000/delta);
-=======
->>>>>>> 91e99d9a0e864cf399133d4e59d4d7951d1bbd0a
             switch (gameState){
                 case MENU:
                     drawMenu();
                     break;
                 case GAME:
-                    if ((int)timer % 100 == 0){
+                    if ((int)timer % (UPDATETIME * 2000) < 10){
                         nextFire(fireList);
                         fireList=spreadFire(fireList);
                     }
