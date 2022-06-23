@@ -1,6 +1,5 @@
 #include "render.h"
 
-int score = 100;
 float timer = 0;
 
 SDL_Window *window;
@@ -75,6 +74,9 @@ SDL_Texture * heartTexture;
 
 SDL_Surface * scoreSurface;
 SDL_Texture * scoreTexture;
+
+SDL_Surface * nextFireSurface;
+SDL_Texture * nextFireTexture;
 
 void createWindow(){
 
@@ -297,7 +299,7 @@ void drawScore(){
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    //sprintf(str, "%d", score);
+    sprintf(str, "%d", player.score);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -310,7 +312,7 @@ void drawTime(){
     rect.w = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
     rect.x = rect.w + (MAPSIZE * CELLSIZE);
     rect.y = 0;
-    SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, nextFireTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
     printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
@@ -411,6 +413,9 @@ void mainLoop(){
     
     scoreSurface = IMG_Load("Res/score.png");
     scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+    nextFireSurface = IMG_Load("Res/nextFire.png");
+    nextFireTexture = SDL_CreateTextureFromSurface(renderer, nextFireSurface);
 
     heartSurface = IMG_Load("Res/heart_spritesheet.png");
     heartTexture = SDL_CreateTextureFromSurface(renderer, heartSurface);

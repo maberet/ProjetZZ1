@@ -13,7 +13,7 @@
 #define STRONG 3
 #define SPREAD 4
 
-#define UPDATETIME 10
+#define UPDATETIME 5
 
 
 typedef struct fire{

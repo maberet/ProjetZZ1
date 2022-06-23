@@ -16,6 +16,7 @@ void initPlayer(){
     player.currentHP = player.HPMax;
     player.invisible = 0;
     player.invisibleTime = 5;
+    player.score = 0;
 }
 
 int giveCaseBelowPosition(int x, int y){
@@ -189,6 +190,7 @@ void pourWater(int x, int y){
         //downgrade the cliqued fire
         if(onFire == 1 && selectStateHover() == 1){ 
             fireList = deleteFire (fireList, x, y); 
+            player.score+=1;
         }
         player.currentWater = player.currentWater - 1;
     }
