@@ -22,6 +22,8 @@ typedef struct player{
     int HPMax;
     int currentHP;
     int invisible;
+    int invisibleTime;
+    int timeLastHitFire;
 } player_t;
 
 extern player_t player;

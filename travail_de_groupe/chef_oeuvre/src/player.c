@@ -15,6 +15,7 @@ void initPlayer(){
     player.HPMax = 3;
     player.currentHP = player.HPMax;
     player.invisible = 0;
+    player.invisibleTime = 5;
 }
 
 int giveCaseBelowPosition(int x, int y){
@@ -42,9 +43,11 @@ int checkCollisionsTypeGround(int dot1, int dot2, int typeGround){
 }
 
 void checkCollisionsFire(int dot1, int dot2){
-    if((dot1==1 || dot2==1) && player.invisible==0){
+    if(player.invisible==0 && (dot1==1 || dot2==1) && player.currentHP>0){
         player.currentHP = player.currentHP - 1;
         player.invisible = 1;
+        player.timeLastHitFire = (int)timer/1000;
+        printf("touche\n");
     }
 }
 
@@ -162,6 +165,12 @@ void manageMovement(){
         player.direction = PLAYER_RIGHT;
     }
     else player.isMoving = 0;
+    //
+    if(player.invisible==1){
+        if((int)timer/1000 - player.timeLastHitFire > player.invisibleTime){
+            player.invisible = 0;
+        }
+    }
 }
 
 int selectStateHover(){
@@ -172,7 +181,6 @@ int selectStateHover(){
     }
     return stateHover;
 }
-
 
 void pourWater(int x, int y){
     int onFire = searchFire(fireList, x, y);     
