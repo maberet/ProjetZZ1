@@ -10,6 +10,8 @@ TTF_Font *robotoFont;
 SDL_DisplayMode screenDimension;
 
 SDL_Rect buttonRect;
+SDL_Rect playAgainButtonRect;
+SDL_Rect quitButtonRect;
 
 SDL_Surface * grassSurface;
 SDL_Texture * grassTexture;
@@ -35,11 +37,26 @@ SDL_Texture * backgroundTexture;
 SDL_Surface * backgroundSidesSurface;
 SDL_Texture * backgroundSidesTexture;
 
+SDL_Surface * backgroundLostSurface;
+SDL_Texture * backgroundLostTexture;
+
 SDL_Surface * playButtonSurface;
 SDL_Texture * playButtonTexture;
 
 SDL_Surface * playButtonHoverSurface;
 SDL_Texture * playButtonHoverTexture;
+
+SDL_Surface * playAgainButtonSurface;
+SDL_Texture * playAgainButtonTexture;
+
+SDL_Surface * playAgainButtonHoverSurface;
+SDL_Texture * playAgainButtonHoverTexture;
+
+SDL_Surface * quitButtonSurface;
+SDL_Texture * quitButtonTexture;
+
+SDL_Surface * quitButtonHoverSurface;
+SDL_Texture * quitButtonHoverTexture;
 
 SDL_Surface * fireSurface;
 SDL_Texture * fireTexture;
@@ -53,6 +70,9 @@ SDL_Texture * emptyBucketTexture;
 SDL_Surface * filledBucketSurface;
 SDL_Texture * filledBucketTexture;
 
+SDL_Surface * heartSurface;
+SDL_Texture * heartTexture;
+
 SDL_Surface * scoreSurface;
 SDL_Texture * scoreTexture;
 
@@ -65,7 +85,7 @@ void createWindow(){
 
     SDL_GetCurrentDisplayMode(0, &screenDimension);
 
-    window = SDL_CreateWindow("Game Of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenDimension.w, screenDimension.h, SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
+    window = SDL_CreateWindow("Mat the Firefighter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenDimension.w, screenDimension.h, SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     if (window == NULL){
         printf("Couldn't create window");
@@ -246,16 +266,24 @@ void drawPlayerHP(){
     SDL_Rect rect;
     rect.h = borderWidth/player.HPMax;
     rect.w = rect.h;
+    SDL_Rect destRect;
+    destRect.w = 1024;
+    destRect.h = 1024;
+    destRect.x = destRect.w * (SDL_GetTicks()/200 % 4);
+    destRect.y = 0;
     int count = player.currentHP;
     for (int i=0; i<player.HPMax; i++){
         rect.x = (i*rect.h);
         rect.y = screenDimension.h - 3 * rect.h;
         if (count){
             count--;
-            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+            SDL_RenderCopy(renderer, heartTexture, &destRect, &rect);
         }
         else {
-            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+            SDL_SetTextureColorMod( heartTexture,0,0,0);
+            SDL_RenderCopy(renderer, heartTexture, &destRect, &rect);
+            SDL_SetTextureColorMod( heartTexture,255,255,255);
+
         }
     }
 }
@@ -306,6 +334,20 @@ void drawGame(){
     SDL_RenderPresent(renderer);
 }
 
+
+void drawLost(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h;
+    rect.w = screenDimension.w;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_RenderCopy(renderer, backgroundLostTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+    SDL_RenderPresent(renderer);
+}
+
 void mainLoop(){
     createWindow();
     initPlayer();
@@ -334,11 +376,26 @@ void mainLoop(){
     backgroundSidesSurface = IMG_Load("Res/background_sides.png");
     backgroundSidesTexture = SDL_CreateTextureFromSurface(renderer, backgroundSidesSurface);
 
+    backgroundLostSurface = IMG_Load("Res/lostScreen.png");
+    backgroundLostTexture = SDL_CreateTextureFromSurface(renderer, backgroundLostSurface);
+
     playButtonSurface = IMG_Load("Res/play_button.png");
     playButtonTexture = SDL_CreateTextureFromSurface(renderer, playButtonSurface);
 
     playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
     playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
+
+    quitButtonSurface = IMG_Load("Res/buttonQuit.png");
+    quitButtonTexture = SDL_CreateTextureFromSurface(renderer, quitButtonSurface);
+
+    quitButtonHoverSurface = IMG_Load("Res/buttonQuitHover.png");
+    quitButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, quitButtonHoverSurface);
+
+    playAgainButtonSurface = IMG_Load("Res/buttonPlayAgain.png");
+    playAgainButtonTexture = SDL_CreateTextureFromSurface(renderer, playAgainButtonSurface);
+
+    playAgainButtonHoverSurface = IMG_Load("Res/buttonPlayAgainHover.png");
+    playAgainButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playAgainButtonHoverSurface);
 
     fireSurface = IMG_Load("Res/fire_spritesheet.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
@@ -355,6 +412,11 @@ void mainLoop(){
     scoreSurface = IMG_Load("Res/score.png");
     scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
 
+    heartSurface = IMG_Load("Res/heart_spritesheet.png");
+    heartTexture = SDL_CreateTextureFromSurface(renderer, heartSurface);
+    
+
+
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
     SDL_FreeSurface(hoverSurface);
@@ -369,7 +431,22 @@ void mainLoop(){
     SDL_FreeSurface(emptyBucketSurface);
     SDL_FreeSurface(filledBucketSurface);
     SDL_FreeSurface(scoreSurface);
+    SDL_FreeSurface(backgroundLostSurface);
+    SDL_FreeSurface(playAgainButtonSurface);
+    SDL_FreeSurface(quitButtonSurface);
+    SDL_FreeSurface(quitButtonHoverSurface);
+    SDL_FreeSurface(playAgainButtonHoverSurface);
+    SDL_FreeSurface(heartSurface);
 
+    playAgainButtonRect.x = (screenDimension.w * 700)/1920;
+    playAgainButtonRect.y = (screenDimension.h * 615)/1080;
+    playAgainButtonRect.w = (screenDimension.w * 400)/1920;
+    playAgainButtonRect.h = (screenDimension.h * 130)/1080;
+
+    quitButtonRect.x = playAgainButtonRect.x;
+    quitButtonRect.w = playAgainButtonRect.w;
+    quitButtonRect.y = (screenDimension.h * 887)/1080;
+    quitButtonRect.h = playAgainButtonRect.h;
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -398,6 +475,10 @@ void mainLoop(){
                         fireList=spreadFire(fireList);
                     }
                     drawGame();
+                    break;
+
+                case LOSE:
+                    drawLost();
                     break;
             }
         }

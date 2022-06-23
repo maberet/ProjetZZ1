@@ -200,4 +200,16 @@ void fillWater(int x, int y){
     }
 }
 
+void updatePlayer(){
+    if (player.currentHP <= 0){
+        gameState = LOSE;
+    }
+    manageMovement();
+}
+
+void initAll(){
+    initFire();
+    initPlayer();
+}
+
 
