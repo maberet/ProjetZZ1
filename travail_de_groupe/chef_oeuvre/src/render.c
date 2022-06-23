@@ -358,6 +358,8 @@ void mainLoop(){
                 case GAME:
                     if ((int)timer % 20 == 0){
                         nextFire(fireList);
+                        fireList=spreadFire(fireList);
+                        printf("after spread fire : x%d,y%d\n",(fireList->fire).x,(fireList->fire).y);
                     }
                     drawGame();
                     break;
