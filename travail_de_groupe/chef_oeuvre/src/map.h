@@ -11,5 +11,6 @@
 extern int map[MAPSIZE][MAPSIZE];
 
 void readMapFromFile(char * filename);
+void updateMap();
 
 #endif

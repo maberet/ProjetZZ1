@@ -210,7 +210,8 @@ void updatePlayer(){
 }
 
 void initAll(){
-    initFire();
+    fireList = freeListFire(fireList);
+    fireList = startFire(fireList,10,MAPSIZE);
     initPlayer();
 }
 

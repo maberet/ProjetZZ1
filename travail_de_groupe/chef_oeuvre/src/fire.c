@@ -31,7 +31,7 @@ listchainfire_t insertAheadFire(fire_t fire,listchainfire_t listFire)
         printf("problème d'allocation \n");
         exit(1);
     }
-    if ((!searchFire(listFire,fire.x,fire.y))&&(map[fire.x][fire.y]!=2)){
+    if ((!searchFire(listFire,fire.x,fire.y))&&(map[fire.y][fire.x]!=2)){
             m->fire=fire;
             m->next= listFire;
             listFire=m;

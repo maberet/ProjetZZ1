@@ -479,6 +479,7 @@ void mainLoop(){
                         nextFire(fireList);
                         fireList=spreadFire(fireList);
                     }
+                    //updateMap();
                     drawGame();
                     break;
 

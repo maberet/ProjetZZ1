@@ -17,3 +17,12 @@ void readMapFromFile(char * filename){
     }
     fclose(fp);
 }
+
+void updateMap(){
+    listchainfire_t cour = fireList;
+    while (cour != NULL){
+        if (map[(cour->fire).y][(cour->fire).x] == TREE){
+            map[(cour->fire).y][(cour->fire).x] = 0;
+        }
+    }
+}
