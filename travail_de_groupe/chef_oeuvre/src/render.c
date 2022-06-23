@@ -321,6 +321,19 @@ void drawGame(){
     SDL_RenderPresent(renderer);
 }
 
+
+void drawLost(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h;
+    rect.w = screenDimension.w;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_RenderCopy(renderer, backgroundLostTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, quitButtonTexture, NULL, &rect);
+    SDL_RenderPresent(renderer);
+}
+
 void mainLoop(){
     createWindow();
     initPlayer();
@@ -431,6 +444,10 @@ void mainLoop(){
                         fireList=spreadFire(fireList);
                     }
                     drawGame();
+                    break;
+
+                case LOSE:
+                    drawLost();
                     break;
             }
         }
