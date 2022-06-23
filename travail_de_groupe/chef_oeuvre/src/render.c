@@ -114,6 +114,40 @@ void createWindow(){
 
 }
 
+void endSDL(){
+    SDL_DestroyTexture(grassTexture);
+    SDL_DestroyTexture(treeTexture);
+    SDL_DestroyTexture(hoverTexture);
+    SDL_DestroyTexture(noHoverTexture);
+    SDL_DestroyTexture(playerTexture);
+    SDL_DestroyTexture(playerIdleTexture);
+    SDL_DestroyTexture(backgroundTexture);
+    SDL_DestroyTexture(backgroundSidesTexture);
+    SDL_DestroyTexture(backgroundLostTexture);
+    SDL_DestroyTexture(playButtonTexture);
+    SDL_DestroyTexture(playButtonHoverTexture);
+    SDL_DestroyTexture(playAgainButtonTexture);
+    SDL_DestroyTexture(playAgainButtonHoverTexture);
+    SDL_DestroyTexture(quitButtonTexture);
+    SDL_DestroyTexture(quitButtonHoverTexture);
+    SDL_DestroyTexture(fireTexture);
+    SDL_DestroyTexture(waterTexture);
+    SDL_DestroyTexture(emptyBucketTexture);
+    SDL_DestroyTexture(filledBucketTexture);
+    SDL_DestroyTexture(heartTexture);
+    SDL_DestroyTexture(scoreTexture);
+    SDL_DestroyTexture(nextFireTexture);
+    SDL_DestroyTexture(backgroundWonTexture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_CloseFont(robotoFont);
+    TTF_Quit();
+    SDL_Quit();
+    if (!fireList){
+        fireList = freeListFire(fireList);
+    }
+}
+
 void drawBackground(){
     SDL_Rect rect = {0, 0, screenDimension.w, screenDimension.h};
     SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
@@ -322,7 +356,7 @@ void drawTime(){
     SDL_RenderCopy(renderer, nextFireTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
+    //printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
     sprintf(str, "%d", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
@@ -519,7 +553,7 @@ void mainLoop(){
         if (delta > 1000/FPS_TO_GET){
             fps = 1000/delta;
             timer += delta;
-            printf("%d\n", (int)timer % 1000);
+            //printf("%d\n", (int)timer % 1000);
             b = a;
             switch (gameState){
                 case MENU:
@@ -550,6 +584,6 @@ void mainLoop(){
             // fait dormir le thread pour garder des ressources
             usleep(1000 * (1000/FPS_TO_GET - delta));
         }
-
     }
+    endSDL();
 } 

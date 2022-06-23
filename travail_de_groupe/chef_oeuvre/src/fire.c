@@ -36,6 +36,9 @@ listchainfire_t insertAheadFire(fire_t fire,listchainfire_t listFire)
             m->next= listFire;
             listFire=m;
     }
+    else {
+        free(m);
+    }
     return listFire;
 
 }
@@ -57,7 +60,7 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             yFire= rand()%mapSize;
             fire.x= xFire;
             fire.y= yFire; 
-            fire.state=1;
+            fire.state=2;
 
             listFire=insertAheadFire(fire, listFire); 
             
