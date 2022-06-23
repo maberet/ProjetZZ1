@@ -63,3 +63,35 @@ long long int MapToBinary(int ** map)
     }
     return binary;
 }
+
+void chargeNiveauFichier(char *nom_fichier, int ** monde, int nbrLigne){
+    FILE *fichier = NULL;
+    int valeur;
+    int ligne = -1;
+    int colonne = 0;
+
+    fichier = fopen(nom_fichier, "r");
+    if(fichier != NULL){
+        while(fscanf(fichier, "%d", &valeur) != EOF){
+            if(ligne == -1){
+                MAPSIZE = valeur;
+                if(MAPSIZE != nbrLigne){
+                    printf("PROBLEME DE DIMENSION\n");
+                    return;
+                }
+                ligne = 0;
+            }else{
+                map[ligne][colonne] = valeur;
+                colonne = colonne + 1;
+                if(colonne==MAPSIZE){
+                    ligne = ligne + 1;
+                    colonne = 0;
+                    if(ligne==MAPSIZE){
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    fclose(fichier);
+}
