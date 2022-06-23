@@ -212,6 +212,7 @@ void *eventLoop(void *arg){
             case MENU : manageMenu();break;
             case GAME : manageGame();break;
             case LOSE : manageLost();break;
+            case WON : manageLost();break;
             default:printf("game state fault");break;
         }
     }
