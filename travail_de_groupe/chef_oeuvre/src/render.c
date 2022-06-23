@@ -241,6 +241,25 @@ void drawPlayerWaterLevel(){
     }
 }
 
+void drawPlayerHP(){
+    int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE))/2;
+    SDL_Rect rect;
+    rect.h = borderWidth/player.HPMax;
+    rect.w = rect.h;
+    int count = player.currentHP;
+    for (int i=0; i<player.HPMax; i++){
+        rect.x = (i*rect.h);
+        rect.y = screenDimension.h - 3 * rect.h;
+        if (count){
+            count--;
+            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+        }
+    }
+}
+
 void drawScore(){
     SDL_Rect rect;
     rect.h = screenDimension.h/6;
@@ -257,6 +276,22 @@ void drawScore(){
     SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
+void drawTime(){
+    SDL_Rect rect;
+    rect.h = screenDimension.h/6;
+    rect.w = (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
+    rect.x = rect.w + (MAPSIZE * CELLSIZE);
+    rect.y = 0;
+    SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
+    rect.y += rect.h;
+    char str[10];
+    sprintf(str, "%d", UPDATETIME - (int)timer/1000 % UPDATETIME);
+    SDL_Color textColor = {237,222,17};
+    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);    
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawBackgroundSides();
@@ -264,7 +299,9 @@ void drawGame(){
     drawPlayer();
     drawFire();
     drawPlayerWaterLevel();
+    drawPlayerHP();
     drawScore();
+    drawTime();
     SDL_RenderPresent(renderer);
 }
 
@@ -356,7 +393,7 @@ void mainLoop(){
                     drawMenu();
                     break;
                 case GAME:
-                    if ((int)timer % 20 == 0){
+                    if ((int)timer/1000 % UPDATETIME == 0){
                         nextFire(fireList);
                     }
                     drawGame();
