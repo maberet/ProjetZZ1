@@ -31,11 +31,11 @@ listchainfire_t insertAheadFire(fire_t fire,listchainfire_t listFire)
         printf("problème d'allocation \n");
         exit(1);
     }
-    if (!searchFire(listFire,fire.x,fire.y)){
-    m->fire=fire;
-    m->next= listFire;
-    listFire=m;}
-
+    if ((!searchFire(listFire,fire.x,fire.y))&&(map[fire.x][fire.y]!=2)){
+            m->fire=fire;
+            m->next= listFire;
+            listFire=m;
+    }
     return listFire;
 
 }
@@ -227,4 +227,17 @@ listchainfire_t spreadFire (listchainfire_t listFire){
         listTemporary=listTemporary->next; 
     }
     return listFire;
+}
+
+booleen_t winGame(listchainfire_t listFire){
+    booleen_t win = true;
+    listchainfire_t listTemporary= listFire; 
+    
+    while (!emptyListFire( listTemporary)){
+        if ((listTemporary->fire).state!=0){
+            win= false;
+            break;
+        }
+    }
+    return win;
 }

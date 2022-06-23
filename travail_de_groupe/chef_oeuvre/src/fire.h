@@ -50,7 +50,7 @@ void readFapFromFile(char * filename);
 void nextFire(listchainfire_t );
 listchainfire_t probabilitySpreadFire( listchainfire_t, listchainfire_t);
 listchainfire_t spreadFire (listchainfire_t );
-
+booleen_t winGame(listchainfire_t );
 
 
 
