@@ -35,11 +35,26 @@ SDL_Texture * backgroundTexture;
 SDL_Surface * backgroundSidesSurface;
 SDL_Texture * backgroundSidesTexture;
 
+SDL_Surface * backgroundLostSurface;
+SDL_Texture * backgroundLostTexture;
+
 SDL_Surface * playButtonSurface;
 SDL_Texture * playButtonTexture;
 
 SDL_Surface * playButtonHoverSurface;
 SDL_Texture * playButtonHoverTexture;
+
+SDL_Surface * playAgainButtonSurface;
+SDL_Texture * playAgainButtonTexture;
+
+SDL_Surface * playAgainButtonHoverSurface;
+SDL_Texture * playAgainButtonHoverTexture;
+
+SDL_Surface * quitButtonSurface;
+SDL_Texture * quitButtonTexture;
+
+SDL_Surface * quitButtonHoverSurface;
+SDL_Texture * quitButtonHoverTexture;
 
 SDL_Surface * fireSurface;
 SDL_Texture * fireTexture;
@@ -334,11 +349,23 @@ void mainLoop(){
     backgroundSidesSurface = IMG_Load("Res/background_sides.png");
     backgroundSidesTexture = SDL_CreateTextureFromSurface(renderer, backgroundSidesSurface);
 
+    backgroundLostSurface = IMG_Load("Res/lostScreen.png");
+    backgroundLostTexture = SDL_CreateTextureFromSurface(renderer, backgroundLostSurface);
+
     playButtonSurface = IMG_Load("Res/play_button.png");
     playButtonTexture = SDL_CreateTextureFromSurface(renderer, playButtonSurface);
 
     playButtonHoverSurface = IMG_Load("Res/play_button_hover.png");
     playButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playButtonHoverSurface);
+
+    quitButtonSurface = IMG_Load("Res/buttonQuit.png");
+    quitButtonTexture = SDL_CreateTextureFromSurface(renderer, quitButtonSurface);
+
+    quitButtonHoverSurface = IMG_Load("Res/buttonQuitHover.png");
+    quitButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, quitButtonHoverSurface);
+
+    playAgainButtonSurface = IMG_Load("Res/buttonPlayAgain.png");
+    playAgainButtonTexture = SDL_CreateTextureFromSurface(renderer, playAgainButtonSurface);
 
     fireSurface = IMG_Load("Res/fire_spritesheet.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
@@ -354,6 +381,8 @@ void mainLoop(){
     
     scoreSurface = IMG_Load("Res/score.png");
     scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+    
+
 
     SDL_FreeSurface(grassSurface);
     SDL_FreeSurface(treeSurface);
@@ -369,6 +398,10 @@ void mainLoop(){
     SDL_FreeSurface(emptyBucketSurface);
     SDL_FreeSurface(filledBucketSurface);
     SDL_FreeSurface(scoreSurface);
+    SDL_FreeSurface(backgroundLostSurface);
+    SDL_FreeSurface(playAgainButtonSurface);
+    SDL_FreeSurface(quitButtonSurface);
+    SDL_FreeSurface(quitButtonHoverSurface);
 
 
     unsigned int a = SDL_GetTicks();
