@@ -241,6 +241,25 @@ void drawPlayerWaterLevel(){
     }
 }
 
+void drawPlayerHP(){
+    int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE))/2;
+    SDL_Rect rect;
+    rect.h = borderWidth/player.HPMax;
+    rect.w = rect.h;
+    int count = player.currentHP;
+    for (int i=0; i<player.HPMax; i++){
+        rect.x = (i*rect.h);
+        rect.y = screenDimension.h - 3 * rect.h;
+        if (count){
+            count--;
+            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+        }
+    }
+}
+
 void drawScore(){
     SDL_Rect rect;
     rect.h = screenDimension.h/6;
@@ -280,6 +299,7 @@ void drawGame(){
     drawPlayer();
     drawFire();
     drawPlayerWaterLevel();
+    drawPlayerHP();
     drawScore();
     drawTime();
     SDL_RenderPresent(renderer);
