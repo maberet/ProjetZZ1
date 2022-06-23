@@ -10,5 +10,6 @@ void printMap();
 void initMap();
 void writeMap(char* filename);
 long long int MapToBinary(int ** map);
+void chargeNiveauFichier(char *, int **, int);
 
 #endif

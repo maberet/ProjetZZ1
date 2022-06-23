@@ -241,6 +241,25 @@ void drawPlayerWaterLevel(){
     }
 }
 
+void drawPlayerHP(){
+    int borderWidth = (screenDimension.w - (MAPSIZE * CELLSIZE))/2;
+    SDL_Rect rect;
+    rect.h = borderWidth/player.HPMax;
+    rect.w = rect.h;
+    int count = player.currentHP;
+    for (int i=0; i<player.HPMax; i++){
+        rect.x = (i*rect.h);
+        rect.y = screenDimension.h - 3 * rect.h;
+        if (count){
+            count--;
+            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+        }
+    }
+}
+
 void drawScore(){
     SDL_Rect rect;
     rect.h = screenDimension.h/6;
@@ -250,7 +269,7 @@ void drawScore(){
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    sprintf(str, "%d", score);
+    //sprintf(str, "%d", score);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -266,7 +285,8 @@ void drawTime(){
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    sprintf(str, "%d", (int)timer/1000);
+    printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
+    sprintf(str, "%d", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -280,6 +300,7 @@ void drawGame(){
     drawPlayer();
     drawFire();
     drawPlayerWaterLevel();
+    drawPlayerHP();
     drawScore();
     drawTime();
     SDL_RenderPresent(renderer);
@@ -365,16 +386,16 @@ void mainLoop(){
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
             timer += delta;
-            printf("timer : %f\n", timer/1000);
+            printf("%d\n", (int)timer % 1000);
             b = a;
-            printf("fps : %f", 1000/delta);
             switch (gameState){
                 case MENU:
                     drawMenu();
                     break;
                 case GAME:
-                    if ((int)timer/1000 % 5 == 0){
+                    if ((int)timer % (UPDATETIME * 1000) < 10){
                         nextFire(fireList);
+                        fireList=spreadFire(fireList);
                     }
                     drawGame();
                     break;

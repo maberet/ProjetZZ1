@@ -31,11 +31,11 @@ listchainfire_t insertAheadFire(fire_t fire,listchainfire_t listFire)
         printf("problème d'allocation \n");
         exit(1);
     }
-    if (!searchFire(listFire,fire.x,fire.y)){
-    m->fire=fire;
-    m->next= listFire;
-    listFire=m;}
-
+    if ((!searchFire(listFire,fire.x,fire.y))&&(map[fire.x][fire.y]!=2)){
+            m->fire=fire;
+            m->next= listFire;
+            listFire=m;
+    }
     return listFire;
 
 }
@@ -55,7 +55,6 @@ listchainfire_t startFire(listchainfire_t listFire,int numberFire, int mapSize){
             xFire= rand()%mapSize;
 
             yFire= rand()%mapSize;
-            printf("xf:%d,yf:%d\n",xFire,yFire);
             fire.x= xFire;
             fire.y= yFire; 
             fire.state=1;
@@ -132,10 +131,9 @@ void travelFire(listchainfire_t listFire){
     listchainfire_t listTemporary=listFire;
 
     while(listTemporary!=NULL){
-        printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
+        //printf("x:%d,y:%d\n",(listTemporary->fire).x,(listTemporary->fire).y);
         listTemporary=listTemporary->next;
     }
-    //freeListFire(listTemporary);
 }
 
 void readFapFromFile(char * filename){
@@ -185,9 +183,61 @@ void nextFire(listchainfire_t listFire){
         else if ((pMedium<=probability)&&(probability<pStrong)){(listTemporary->fire).state=STRONG;}
         else {(listTemporary->fire).state=SPREAD;}
 
-        printf("%d %d\n", probability, state);
-        printf("%d %d %d %d\n", pDead, pSparkle, pMedium, pStrong);
-
         listTemporary=listTemporary->next;   
     }
 } 
+
+listchainfire_t probabilitySpreadFire( listchainfire_t listFire, listchainfire_t listTemporary){
+    int probability;
+    fire_t fire; 
+ 
+    probability= rand()%4;
+
+    if((probability==0)&&((listTemporary->fire).x+1<MAPSIZE)){fire.state=1;
+        fire.x=(listTemporary->fire).x+1;
+        fire.y=(listTemporary->fire).y;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==1)&&((listTemporary->fire).y+1<MAPSIZE)){fire.state=1;
+        fire.x=(listTemporary->fire).x;
+        fire.y=(listTemporary->fire).y+1;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==2)&&((listTemporary->fire).y-1>=0)){fire.state=1;
+        fire.x=(listTemporary->fire).x;
+        fire.y=(listTemporary->fire).y-1;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    if ((probability==3)&&((listTemporary->fire).x-1>=0)){fire.state=1;
+        fire.x=(listTemporary->fire).x-1;
+        fire.y=(listTemporary->fire).y;
+        listFire=insertAheadFire(fire,listFire);
+        }
+    return listFire;
+}
+
+listchainfire_t spreadFire (listchainfire_t listFire){
+    listchainfire_t listTemporary=fireList;
+    srand(time(NULL));
+    while (!emptyListFire(listTemporary)){
+        if ((listTemporary->fire).state==4){
+            
+            listFire=probabilitySpreadFire(listFire, listTemporary); 
+        }
+        listTemporary=listTemporary->next; 
+    }
+    return listFire;
+}
+
+booleen_t winGame(listchainfire_t listFire){
+    booleen_t win = true;
+    listchainfire_t listTemporary= listFire; 
+    
+    while (!emptyListFire( listTemporary)){
+        if ((listTemporary->fire).state!=0){
+            win= false;
+            break;
+        }
+    }
+    return win;
+}

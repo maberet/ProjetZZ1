@@ -12,6 +12,7 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_DisplayMode screenDimension;
 extern SDL_Rect buttonRect;
+extern float timer;
 
 void drawHover(int x, int y);
 void mainLoop();

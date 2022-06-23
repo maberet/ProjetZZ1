@@ -13,6 +13,7 @@
 #define STRONG 3
 #define SPREAD 4
 
+#define UPDATETIME 10
 
 
 typedef struct fire{
@@ -44,9 +45,12 @@ listchainfire_t deleteAheadFire(listchainfire_t);
 listchainfire_t deleteFire (listchainfire_t, int ,int );
 listchainfire_t freeListFire (listchainfire_t );
 listchainfire_t offFire (listchainfire_t, int,int );
-void travelFire(listchainfire_t listFire);
+void travelFire(listchainfire_t );
 void readFapFromFile(char * filename);
 void nextFire(listchainfire_t );
+listchainfire_t probabilitySpreadFire( listchainfire_t, listchainfire_t);
+listchainfire_t spreadFire (listchainfire_t );
+booleen_t winGame(listchainfire_t );
 
 
 
