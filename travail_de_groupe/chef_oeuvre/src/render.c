@@ -279,6 +279,12 @@ void drawPlayerHP(){
             count--;
             SDL_RenderCopy(renderer, heartTexture, &destRect, &rect);
         }
+        else {
+            SDL_SetTextureColorMod( heartTexture,0,0,0);
+            SDL_RenderCopy(renderer, heartTexture, &destRect, &rect);
+            SDL_SetTextureColorMod( heartTexture,255,255,255);
+
+        }
     }
 }
 
