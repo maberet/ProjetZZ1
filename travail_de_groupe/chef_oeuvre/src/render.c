@@ -143,7 +143,7 @@ void endSDL(){
     TTF_CloseFont(robotoFont);
     TTF_Quit();
     SDL_Quit();
-    if (!fireList){
+    if (gameState != WON){
         fireList = freeListFire(fireList);
     }
 }
@@ -404,7 +404,6 @@ void drawLost(){
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
-    SDL_RenderPresent(renderer);
 
     // draw score
     rect.h = screenDimension.h/12;
@@ -417,6 +416,7 @@ void drawLost(){
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderPresent(renderer);
 }
 
 void drawWon(){
@@ -429,6 +429,18 @@ void drawWon(){
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+
+    // draw score
+    rect.h = screenDimension.h/12;
+    rect.w = rect.h;
+    rect.x = screenDimension.w/2;
+    rect.y = screenDimension.h/2 - rect.h;
+    char str[10];
+    sprintf(str, "%d", player.score);
+    SDL_Color textColor = {237,222,17};
+    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_RenderPresent(renderer);
 }
 
