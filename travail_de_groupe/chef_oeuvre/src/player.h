@@ -34,5 +34,6 @@ int selectStateHover();
 void pourWater(int, int);
 void fillWater(int, int);
 int giveCaseBelowPosition(int, int);
+void updatePlayer();
 
 #endif

@@ -23,6 +23,7 @@
 
 #define MENU 0
 #define GAME 1
+#define LOSE 2
 
 extern int running;
 extern int gameState;

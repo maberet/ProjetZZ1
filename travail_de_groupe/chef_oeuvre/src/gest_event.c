@@ -53,7 +53,6 @@ void manageMenu(){
                     continue;
             }
     }
-    manageMovement();
     SDL_Delay(5);
 }
 
@@ -140,7 +139,7 @@ void manageGame(){
                     continue;
             }
     }
-    manageMovement();
+    updatePlayer();
     SDL_Delay(5);
 }
 
@@ -149,6 +148,7 @@ void *eventLoop(void *arg){
         switch(gameState){
             case MENU : manageMenu();break;
             case GAME : manageGame();break;
+            case LOSE : manageMenu();break;
             default:printf("game state fault");break;
         }
     }
