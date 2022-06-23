@@ -70,6 +70,9 @@ SDL_Texture * emptyBucketTexture;
 SDL_Surface * filledBucketSurface;
 SDL_Texture * filledBucketTexture;
 
+SDL_Surface * heartSurface;
+SDL_Texture * heartTexture;
+
 SDL_Surface * scoreSurface;
 SDL_Texture * scoreTexture;
 
@@ -263,16 +266,18 @@ void drawPlayerHP(){
     SDL_Rect rect;
     rect.h = borderWidth/player.HPMax;
     rect.w = rect.h;
+    SDL_Rect destRect;
+    destRect.w = 1024;
+    destRect.h = 1024;
+    destRect.x = destRect.w * (SDL_GetTicks()/200 % 4);
+    destRect.y = 0;
     int count = player.currentHP;
     for (int i=0; i<player.HPMax; i++){
         rect.x = (i*rect.h);
         rect.y = screenDimension.h - 3 * rect.h;
         if (count){
             count--;
-            SDL_RenderCopy(renderer, filledBucketTexture, NULL, &rect);
-        }
-        else {
-            SDL_RenderCopy(renderer, emptyBucketTexture, NULL, &rect);
+            SDL_RenderCopy(renderer, heartTexture, &destRect, &rect);
         }
     }
 }
@@ -400,6 +405,9 @@ void mainLoop(){
     
     scoreSurface = IMG_Load("Res/score.png");
     scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+    heartSurface = IMG_Load("Res/heart_spritesheet.png");
+    heartTexture = SDL_CreateTextureFromSurface(renderer, heartSurface);
     
 
 
@@ -422,6 +430,7 @@ void mainLoop(){
     SDL_FreeSurface(quitButtonSurface);
     SDL_FreeSurface(quitButtonHoverSurface);
     SDL_FreeSurface(playAgainButtonHoverSurface);
+    SDL_FreeSurface(heartSurface);
 
     playAgainButtonRect.x = (screenDimension.w * 700)/1920;
     playAgainButtonRect.y = (screenDimension.h * 615)/1080;
