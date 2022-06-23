@@ -56,6 +56,62 @@ void manageMenu(){
     SDL_Delay(5);
 }
 
+void manageLost(){
+    SDL_Event event;
+    while (SDL_PollEvent(&event)){
+            switch(event.type)
+            {   
+                case SDL_QUIT:
+                    running = 0;
+                    break;
+
+                case SDL_KEYUP:
+                    switch (event.key.keysym.sym)
+                    {
+                    case SDLK_ESCAPE:
+                        running = 0;
+                        continue;
+
+                    default:
+                        continue;
+                    }
+                    break;
+                
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym)
+                    {
+                    case SDLK_ESCAPE:
+                        running = 0;
+                        continue;
+
+                    default:
+                        continue;
+                    }
+                    break;
+                
+                case SDL_MOUSEMOTION:
+                    mousePosition.x = event.motion.x;
+                    mousePosition.y = event.motion.y;
+                    continue;
+
+
+                case SDL_MOUSEBUTTONDOWN:
+                    if (SDL_PointInRect(&mousePosition, &playAgainButtonRect)){
+                        initAll();
+                        gameState = GAME;
+                    }
+                    if (SDL_PointInRect(&mousePosition, &quitButtonRect)){
+                        running = 0;
+                    }
+                    break;
+
+                default:
+                    continue;
+            }
+    }
+    SDL_Delay(5);
+}
+
 void manageGame(){
     SDL_Event event;
     while (SDL_PollEvent(&event)){
@@ -148,7 +204,7 @@ void *eventLoop(void *arg){
         switch(gameState){
             case MENU : manageMenu();break;
             case GAME : manageGame();break;
-            case LOSE : manageMenu();break;
+            case LOSE : manageLost();break;
             default:printf("game state fault");break;
         }
     }

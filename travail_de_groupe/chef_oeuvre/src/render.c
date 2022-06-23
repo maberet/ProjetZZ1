@@ -10,6 +10,8 @@ TTF_Font *robotoFont;
 SDL_DisplayMode screenDimension;
 
 SDL_Rect buttonRect;
+SDL_Rect playAgainButtonRect;
+SDL_Rect quitButtonRect;
 
 SDL_Surface * grassSurface;
 SDL_Texture * grassTexture;
@@ -329,8 +331,9 @@ void drawLost(){
     rect.x = 0;
     rect.y = 0;
     SDL_RenderCopy(renderer, backgroundLostTexture, NULL, &rect);
-    SDL_RenderCopy(renderer, playAgainButtonTexture, NULL, &rect);
-    SDL_RenderCopy(renderer, quitButtonTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
+    SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
     SDL_RenderPresent(renderer);
 }
 
@@ -380,6 +383,9 @@ void mainLoop(){
     playAgainButtonSurface = IMG_Load("Res/buttonPlayAgain.png");
     playAgainButtonTexture = SDL_CreateTextureFromSurface(renderer, playAgainButtonSurface);
 
+    playAgainButtonHoverSurface = IMG_Load("Res/buttonPlayAgainHover.png");
+    playAgainButtonHoverTexture = SDL_CreateTextureFromSurface(renderer, playAgainButtonHoverSurface);
+
     fireSurface = IMG_Load("Res/fire_spritesheet.png");
     fireTexture = SDL_CreateTextureFromSurface(renderer, fireSurface);
 
@@ -415,7 +421,17 @@ void mainLoop(){
     SDL_FreeSurface(playAgainButtonSurface);
     SDL_FreeSurface(quitButtonSurface);
     SDL_FreeSurface(quitButtonHoverSurface);
+    SDL_FreeSurface(playAgainButtonHoverSurface);
 
+    playAgainButtonRect.x = (screenDimension.w * 700)/1920;
+    playAgainButtonRect.y = (screenDimension.h * 615)/1080;
+    playAgainButtonRect.w = (screenDimension.w * 400)/1920;
+    playAgainButtonRect.h = (screenDimension.h * 130)/1080;
+
+    quitButtonRect.x = playAgainButtonRect.x;
+    quitButtonRect.w = playAgainButtonRect.w;
+    quitButtonRect.y = (screenDimension.h * 887)/1080;
+    quitButtonRect.h = playAgainButtonRect.h;
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();

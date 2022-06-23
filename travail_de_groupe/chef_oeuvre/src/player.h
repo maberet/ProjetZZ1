@@ -35,5 +35,6 @@ void pourWater(int, int);
 void fillWater(int, int);
 int giveCaseBelowPosition(int, int);
 void updatePlayer();
+void initAll();
 
 #endif

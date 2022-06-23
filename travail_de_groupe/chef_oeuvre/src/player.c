@@ -207,4 +207,9 @@ void updatePlayer(){
     manageMovement();
 }
 
+void initAll(){
+    initFire();
+    initPlayer();
+}
+
 
