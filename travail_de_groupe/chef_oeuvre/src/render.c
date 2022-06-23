@@ -185,11 +185,6 @@ void drawFire(){
         rect.x = (cour->fire).x * CELLSIZE + (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2;
         rect.y = (cour->fire).y * CELLSIZE - rect.h/2;
 
-        srcRect.w = 15;
-        srcRect.h =24;
-        srcRect.x = step + srcRect.w * (SDL_GetTicks()/200 % loop);
-        srcRect.y= 0;
-
         switch ((cour->fire).state)
         {
             case SPARKLE:
@@ -215,6 +210,12 @@ void drawFire(){
             default:
                 break;
         }
+        
+        srcRect.w = 15;
+        srcRect.h = 24;
+        srcRect.x = step + srcRect.w * (SDL_GetTicks()/200 % loop);
+        srcRect.y= 0;
+
 
         SDL_RenderCopy(renderer, fireTexture, &srcRect, &rect);
         cour = cour->next;
