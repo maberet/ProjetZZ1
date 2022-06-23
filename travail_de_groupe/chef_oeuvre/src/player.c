@@ -47,76 +47,79 @@ void checkCollisionsFire(int dot1, int dot2){
         player.currentHP = player.currentHP - 1;
         player.invisible = 1;
         player.timeLastHitFire = (int)timer/1000;
-        printf("touche\n");
     }
 }
 
 int collisionsLeftPlayer(){
-    int collision = 0;
+    int collisionWindow = 0;
+    int collisionTree = 0;
+    int collisionWater = 0;
     int dotTopLeft = giveCaseBelowPosition(player.x, player.y);
     int dotDownLeft = giveCaseBelowPosition(player.x, player.y+player.h);
     int fireTopLeft = searchFire(fireList, getPositionXInMap(player.x), getPositionYInMap(player.y));
     int fireDownLeft = searchFire(fireList, getPositionXInMap(player.x), getPositionYInMap(player.y+player.h));
     //collision window
     if(player.x <= 0){
-        collision = 1;
+        collisionWindow = 1;
     }
     //collisions
-    collision = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, TREE);
-    collision = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, WATER);
+    collisionTree = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, TREE);
+    collisionWater = checkCollisionsTypeGround(dotTopLeft, dotDownLeft, WATER);
     checkCollisionsFire(fireTopLeft, fireDownLeft);
-    return collision;
+
+    return collisionWindow || collisionTree || collisionWater;
 }
 
 int collisionsRightPlayer(){
-    int collision = 0;
+    int collisionWindow = 0;
+    int collisionTree = 0;
+    int collisionWater = 0;
     int dotTopRight = giveCaseBelowPosition(player.x+player.w, player.y);
     int dotDownRight = giveCaseBelowPosition(player.x+player.w, player.y+player.h);
     int fireTopRight = searchFire(fireList, getPositionXInMap(player.x+player.w), getPositionYInMap(player.y));
     int fireDownRight = searchFire(fireList, getPositionXInMap(player.x+player.w), getPositionYInMap(player.y+player.h));
     //collision window
     if(player.x + player.w >= MAPSIZE * CELLSIZE){
-        collision = 1;
+        collisionWindow = 1;
     }
     //collisions
-    collision = checkCollisionsTypeGround(dotTopRight, dotDownRight, TREE);
-    collision = checkCollisionsTypeGround(dotTopRight, dotDownRight, WATER);
+    collisionTree = checkCollisionsTypeGround(dotTopRight, dotDownRight, TREE);
+    collisionWater = checkCollisionsTypeGround(dotTopRight, dotDownRight, WATER);
     checkCollisionsFire(fireTopRight, fireDownRight);
-    return collision;
+    return collisionWindow || collisionTree || collisionWater;
 }
 
-int collisionsUpPlayer(){
-    int collision = 0;
-    int dotTopRight = giveCaseBelowPosition(player.x+player.w, player.y);
-    int dotTopLeft = giveCaseBelowPosition(player.x, player.y);
-    int fireTopRight = searchFire(fireList, getPositionXInMap(player.x+player.w), getPositionYInMap(player.y));
-    int fireTopLeft = searchFire(fireList, getPositionXInMap(player.x), getPositionYInMap(player.y));
+int collisionsUpPlayer(int dot1, int dot2){
+    int collisionWindow = 0;
+    int collisionTree = 0;
+    int collisionWater = 0;
     //collision window
     if(player.y <= 0){
-        collision = 1;
+        collisionWindow = 1;
     }
     //collisions
-    collision = checkCollisionsTypeGround(dotTopRight, dotTopLeft, TREE);
-    collision = checkCollisionsTypeGround(dotTopRight, dotTopLeft, WATER);
-    checkCollisionsFire(fireTopRight, fireTopLeft);
-    return collision;
+    collisionTree = checkCollisionsTypeGround(dot1, dot2, TREE);
+    collisionWater = checkCollisionsTypeGround(dot1, dot2, WATER);
+    return collisionWindow || collisionTree || collisionWater;
 }
 
 int collisionsDownPlayer(){
-    int collision = 0;
+    int collisionWindow = 0;
+    int collisionTree = 0;
+    int collisionWater = 0;
     int dotDownRight = giveCaseBelowPosition(player.x+player.w, player.y+player.h);
     int dotDownLeft = giveCaseBelowPosition(player.x, player.y+player.h);
     int fireDownRight = searchFire(fireList, getPositionXInMap(player.x+player.w), getPositionYInMap(player.y+player.h));
     int fireDownLeft = searchFire(fireList, getPositionXInMap(player.x), getPositionYInMap(player.y+player.h));
     //collision window
     if(player.y + player.h >= MAPSIZE * CELLSIZE){
-        collision = 1;
+        collisionWindow = 1;
     }
     //collisions
-    collision = checkCollisionsTypeGround(dotDownRight, dotDownLeft, TREE);
-    collision = checkCollisionsTypeGround(dotDownRight, dotDownLeft, WATER);
+    collisionTree = checkCollisionsTypeGround(dotDownRight, dotDownLeft, TREE);
+    collisionWater = checkCollisionsTypeGround(dotDownRight, dotDownLeft, WATER);
     checkCollisionsFire(fireDownRight, fireDownLeft);
-    return collision;
+    return collisionWindow || collisionTree || collisionWater;
 }
 
 void moveRightPlayer(){
@@ -132,9 +135,7 @@ void moveLeftPlayer(){
 }
 
 void moveUpPlayer(){
-    if(!collisionsUpPlayer()){
-        player.y = player.y - player.speed;
-    }
+    player.y = player.y - player.speed;
 }
 
 void moveDownPlayer(){
@@ -144,10 +145,18 @@ void moveDownPlayer(){
 }
 
 void manageMovement(){
+    int dotTopRight = giveCaseBelowPosition(player.x+player.w, player.y);
+    int dotTopLeft = giveCaseBelowPosition(player.x, player.y);
+    int fireTopRight = searchFire(fireList, getPositionXInMap(player.x+player.w), getPositionYInMap(player.y));
+    int fireTopLeft = searchFire(fireList, getPositionXInMap(player.x), getPositionYInMap(player.y));
+
     if(keys[PLAYER_UP]){
-        moveUpPlayer();
-        player.isMoving = 1;
-        player.direction = PLAYER_UP;
+        if(!collisionsUpPlayer(dotTopRight, dotTopLeft)){
+            moveUpPlayer();
+            checkCollisionsFire(fireTopRight, fireTopLeft);
+            player.isMoving = 1;
+            player.direction = PLAYER_UP;
+        }
     }
     else if(keys[PLAYER_DOWN]){
         moveDownPlayer();
