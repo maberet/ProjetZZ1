@@ -266,7 +266,7 @@ void drawTime(){
     SDL_RenderCopy(renderer, scoreTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    sprintf(str, "%d", (int)timer/1000);
+    sprintf(str, "%d", UPDATETIME - (int)timer/1000 % UPDATETIME);
     SDL_Color textColor = {237,222,17};
     SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -373,7 +373,7 @@ void mainLoop(){
                     drawMenu();
                     break;
                 case GAME:
-                    if ((int)timer/1000 % 5 == 0){
+                    if ((int)timer/1000 % UPDATETIME == 0){
                         nextFire(fireList);
                     }
                     drawGame();
