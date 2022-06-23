@@ -20,7 +20,9 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 │   │   └── Animate
 │   ├── Beret
 │   │   ├── snakes 
-│   │   └── x_fenetre
+│   │   ├── x_fenetre
+|   |   ├── jeu_de_la_vie
+|   |   └── sprites
 │   └── Meyer  
 │       ├── x_fenetre
 │       ├── pave_de_serpents
@@ -28,5 +30,15 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
 │       └── animation_sprites
 └── travail_de_groupe   
     ├── chef_oeuvre   
+    |   ├── bin
+    |   |   └── [fichiers .o]   
+    |   ├── Res
+    |   |   └── [fichiers .png et .ttf]
+    |   ├── src
+    |   |   ├── [fichiers .c]
+    |   |   └── [fichiers .h]
+    |   ├── Makefile
+    |   ├── markov.txt
+    |   └── map.txt
     └── jeu_appren_par_renfo    
 ```
