@@ -2,7 +2,13 @@
 
 SDL_Point mousePosition;
 
-int keys[10];
+int keys[NBKEYS];
+
+void initKeys(){
+    for (int i =0; i < NBKEYS; i++){
+        keys[i] = 0;
+    }
+}
 
 void manageMenu(){
     SDL_Event event;
@@ -98,6 +104,7 @@ void manageLost(){
                 case SDL_MOUSEBUTTONDOWN:
                     if (SDL_PointInRect(&mousePosition, &playAgainButtonRect)){
                         initAll();
+                        initKeys();
                         gameState = GAME;
                     }
                     if (SDL_PointInRect(&mousePosition, &quitButtonRect)){
@@ -128,19 +135,19 @@ void manageGame(){
                         running = 0;
                         continue;
 
-                    case SDLK_UP:
+                    case SDLK_z:
                         keys[PLAYER_UP] = 0;
                         break;
                     
-                    case SDLK_DOWN:
+                    case SDLK_s:
                         keys[PLAYER_DOWN] = 0;
                         break;
 
-                    case SDLK_LEFT:
+                    case SDLK_q:
                         keys[PLAYER_LEFT] = 0;
                         break;
 
-                    case SDLK_RIGHT:
+                    case SDLK_d:
                         keys[PLAYER_RIGHT] = 0;
                         break;
 
@@ -156,19 +163,19 @@ void manageGame(){
                         running = 0;
                         continue;
                     
-                    case SDLK_UP:
+                    case SDLK_z:
                         keys[PLAYER_UP] = 1;
                         break;
 
-                    case SDLK_DOWN:
+                    case SDLK_s:
                         keys[PLAYER_DOWN] = 1;
                         break;
 
-                    case SDLK_LEFT:
+                    case SDLK_q:
                         keys[PLAYER_LEFT] = 1;
                         break;
 
-                    case SDLK_RIGHT:
+                    case SDLK_d:
                         keys[PLAYER_RIGHT] = 1;
                         break;
 

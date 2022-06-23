@@ -5,8 +5,10 @@
 #include "main.h"
 #include "render.h"
 
+#define NBKEYS 10
+
 extern SDL_Point mousePosition;
-extern int keys[10];
+extern int keys[NBKEYS];
 
 void *eventLoop(void *arg);
 
