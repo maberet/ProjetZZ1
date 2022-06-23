@@ -19,6 +19,9 @@ typedef struct player{
     int speed;
     int isMoving;
     int direction;
+    int HPMax;
+    int currentHP;
+    int invisible;
 } player_t;
 
 extern player_t player;
