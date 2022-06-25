@@ -6,7 +6,7 @@
 #include <math.h>
 #include <time.h>
 #define M_PI 3.14159265358979323846
-#define MAPSIZE 4
+#define MAPSIZE 20
 
 int running = 1;
 
@@ -101,13 +101,13 @@ float *** allocateAndInitiateQ(){
 
             if (i > 0 && i < MAPSIZE - 1 && j > 0 && j < MAPSIZE - 1){
                 for(k = 0; k < 4; k++){
-                    q[i][j][k] = 0;
+                    q[i][j][k] = -1;
                 }
             }
             else if (i == 0 && j == 0){
                 int kPossibleValues[2] = {0, 2};
                 for(k = 0; k < 2; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][3] = -INFINITY;
                 q[i][j][1] = -INFINITY;
@@ -115,7 +115,7 @@ float *** allocateAndInitiateQ(){
             else if (i == 0 && j == MAPSIZE - 1){
                 int kPossibleValues[2] = {1, 2};
                 for(k = 0; k < 2; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][0] = -INFINITY;
                 q[i][j][3] = -INFINITY;
@@ -123,7 +123,7 @@ float *** allocateAndInitiateQ(){
             else if (i == MAPSIZE - 1 && j == 0){
                 int kPossibleValues[2] = {0, 3};
                 for(k = 0; k < 2; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][1] = -INFINITY;
                 q[i][j][2] = -INFINITY;
@@ -131,7 +131,7 @@ float *** allocateAndInitiateQ(){
             else if (i == MAPSIZE - 1 && j == MAPSIZE - 1){
                 int kPossibleValues[2] = {1, 3};
                 for(k = 0; k < 2; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][0] = -INFINITY;
                 q[i][j][2] = -INFINITY;
@@ -139,28 +139,28 @@ float *** allocateAndInitiateQ(){
             else if (j == MAPSIZE - 1){
                 int kPossibleValues[3] = {1, 2, 3};
                 for(k = 0; k < 3 ;k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][0] = -INFINITY;
             }
             else if (i == MAPSIZE - 1){
                 int kPossibleValues[3] = {0, 1, 3};
                 for(k = 0; k < 3; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][2] = -INFINITY;
             }
             else if (j == 0){
                 int kPossibleValues[3] = {0, 2, 3};
                 for(k = 0; k < 3; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][1] = -INFINITY;
             }
             else if (i == 0){
                 int kPossibleValues[3] = {0, 1, 2};
                 for(k = 0; k < 3; k++){
-                    q[i][j][kPossibleValues[k]] = 0;
+                    q[i][j][kPossibleValues[k]] = -1;
                 }
                 q[i][j][3] = -INFINITY;
             }
@@ -241,6 +241,9 @@ int setReward(Ball_t * ball, int map[][MAPSIZE]){
     }
     else if (map[ball->y][ball->x] == 2){
         return 1;
+    }
+    else if (map[ball->y][ball->x] == 3){
+        return -2;
     }
     else{
         return -1;
@@ -324,12 +327,12 @@ int main(){
     srand(time(NULL));
 
     int map[MAPSIZE][MAPSIZE];
-    readMapFromFile("map2.txt", map);
+    readMapFromFile("map.txt", map);
     //printMap(map);
 
     float *** Q = allocateAndInitiateQ();
     
-    for (int i = 0; i < 100; i++){
+    for (int i = 0; i < 1000; i++){
         freePath(path);
         path = (path_t *)malloc(sizeof(path_t));
         ball.x = rand() % MAPSIZE;
@@ -340,7 +343,7 @@ int main(){
                 running = 0;
             }
             
-            int action = take_action(&ball, Q, 0.1);
+            int action = take_action(&ball, Q, 0.5);
             printf("[%d] Action: %d\n", i, action);
             int reward = setReward(&ball, map);
 
@@ -381,7 +384,7 @@ int main(){
             printf("found at final %d %d\n", ball.x, ball.y);
             running = 0;
         }
-        int action = take_action(&ball, Q, 0);
+        int action = take_action(&ball, Q, 0.1);
         printf("Action: %d\n", action);
         int reward = setReward(&ball, map);
         printf("Reward: %d\n", reward);
