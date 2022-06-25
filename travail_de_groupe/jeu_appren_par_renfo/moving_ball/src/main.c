@@ -10,6 +10,45 @@
 
 int running = 1;
 
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+
+
+void initSDL(){
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+    if(TTF_Init() == -1){
+        printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+        exit(1);
+    }
+    if(IMG_Init(IMG_INIT_PNG) < 0){
+        printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        exit(1);
+    }
+}
+
+void createWindow(){
+    window = SDL_CreateWindow("moving ball", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 800, SDL_WINDOW_SHOWN);
+    if(window == NULL){
+        printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(renderer == NULL){
+        printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+}
+
+void endSDL(){
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    IMG_Quit();
+    TTF_Quit();
+    SDL_Quit();
+}
 
 void readMapFromFile(char * filename, int map[][MAPSIZE]){
     FILE * fp;
@@ -45,6 +84,32 @@ void printMap(int map[][MAPSIZE]){
     }
 }
 
+void drawMap(SDL_Renderer * renderer, int map[][MAPSIZE], Ball_t * ball){
+    int i, j;
+    SDL_Rect rect = {0, 0, 800/MAPSIZE, 800/MAPSIZE};
+    for(i = 0; i < MAPSIZE; i++){
+        for(j = 0; j < MAPSIZE; j++){
+            if (i == ball->x && j == ball->y){
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_RenderFillRect(renderer, &rect);
+            }
+            else {
+                if (map[i][j] == 2){
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+                else {
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+            }
+            rect.x += 800/MAPSIZE;
+        }
+        rect.y += 800/MAPSIZE;
+        rect.x = 0;
+    }
+}
+
 #define GRAVITY 1
 
 int hitAngle;
@@ -68,26 +133,6 @@ void moveBall(Ball_t * ball, int choice){
     case 3:
         ball->y -= 1;
         break;
-    }
-}
-
-void drawMap(SDL_Renderer * renderer, int map[][MAPSIZE], Ball_t * ball){
-    int i, j;
-    for(i = 0; i < MAPSIZE; i++){
-        for(j = 0; j < MAPSIZE; j++){
-            if (i == ball->y && j == ball->x){
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderDrawPoint(renderer, j, i);
-            }
-            else if (map[i][j] == 1){
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                SDL_RenderDrawPoint(renderer, j, i);
-            }
-            else if (map[i][j] == 2){
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderDrawPoint(renderer, j, i);
-            }
-        }
     }
 }
 
@@ -280,6 +325,22 @@ void writeQ(float *** Q){
     fclose(fp);
 }
 
+void readQ(float *** Q){
+    int i, j, k;
+    FILE * fp = fopen("q.txt", "r");
+    for(i = 0; i < MAPSIZE; i++){
+        for(j = 0; j < MAPSIZE; j++){
+            for(k = 0; k < 4; k++){
+                fscanf(fp, "%f ", &Q[i][j][k]);
+            }
+            fscanf(fp, "\n");
+        }
+        fscanf(fp, "\n");
+    }
+    fflush(fp);
+    fclose(fp);
+}
+
 typedef struct path_t{
     int x;
     int y;
@@ -366,7 +427,7 @@ int main(){
             if (checkIfPointInPath(path, nextBall->x, nextBall->y)){
                 reward = -1;
             }
-            
+
             printf("Next Ball: %d, %d\n", nextBall->x, nextBall->y);
 
             int nextAction = argmax(Q[nextBall->y][nextBall->x],4);
@@ -382,23 +443,53 @@ int main(){
     //printQ(Q);
     writeQ(Q);
 
+    readQ(Q);
     // use Q after training
     ball.x = rand() % MAPSIZE;
     ball.y = rand() % MAPSIZE;
     // use Q
+
+    createWindow();
+
+    int nextIteration = 0;
     
     while (running){
-        if (map[ball.y][ball.x] == 2){
-            printf("found at final %d %d\n", ball.x, ball.y);
-            running = 0;
+        SDL_Event event;
+        while (SDL_PollEvent(&event)){
+            switch(event.type){
+                case SDL_QUIT:
+                    running = 0;
+                    break;
+                case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_ESCAPE){
+                        running = 0;
+                    }
+                    if (event.key.keysym.sym == SDLK_UP){
+                        nextIteration = 1;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-        int action = take_action(&ball, Q, 0.1);
-        printf("Action: %d\n", action);
-        int reward = setReward(&ball, map);
-        printf("Reward: %d\n", reward);
+        if (nextIteration){
+            nextIteration = 0;
+            SDL_RenderClear(renderer);
+            drawMap(renderer, map, &ball);
+            SDL_RenderPresent(renderer);
+            if (map[ball.y][ball.x] == 2){
+                printf("found at final %d %d\n", ball.x, ball.y);
+                running = 0;
+            }
+            int action = take_action(&ball, Q, 0);
+            printf("Action: %d\n", action);
+            int reward = setReward(&ball, map);
+            printf("Reward: %d\n", reward);
 
-        moveBall(&ball, action);
-        printf("Ball: %d %d\n", ball.x, ball.y);
-        fflush(stdout);
+            moveBall(&ball, action);
+            printf("Ball: %d %d\n", ball.x, ball.y);
+            fflush(stdout);
+            }
     }
+    endSDL();
 }
