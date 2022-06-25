@@ -148,6 +148,16 @@ void endSDL(){
     }
 }
 
+void drawString(char *text, int x, int y, int w, int h, int r, int g, int b, int a){
+    SDL_Color color = {r, g, b, a};
+    SDL_Surface *surface = TTF_RenderText_Solid(robotoFont, text, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Rect rect = {x, y, surface->w, surface->h};
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
+}
+
 void drawBackground(){
     SDL_Rect rect = {0, 0, screenDimension.w, screenDimension.h};
     SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
@@ -341,10 +351,7 @@ void drawScore(){
     rect.y += rect.h;
     char str[10];
     sprintf(str, "%d", player.score);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    drawString(str, rect.x, rect.y, (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2, screenDimension.h/6,237,222,17,255);
 }
 
 void drawTime(){
@@ -358,25 +365,19 @@ void drawTime(){
     char str[10];
     //printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
     sprintf(str, "%d", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);    
+    drawString(str, rect.x, rect.y, (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2, screenDimension.h/6,237,222,17,255);   
 }
 
 void drawFPS(){
     SDL_Rect rect;
-    rect.h = screenDimension.h/12;
-    rect.w = screenDimension.w/12;
-    rect.x = (screenDimension.w + (MAPSIZE * CELLSIZE)) / 2;
-    rect.y = screenDimension.h - rect.h;
+    int h = screenDimension.h/12;
+    int w = screenDimension.w/12;
+    int x = (screenDimension.w + (MAPSIZE * CELLSIZE)) / 2;
+    int y = screenDimension.h - rect.h;
 
     char str[10];
     sprintf(str, "%d", fps);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect); 
+    drawString(str, x, y, w, h,237,222,17,255);
 }
 
 void drawGame(){
@@ -412,11 +413,7 @@ void drawLost(){
     rect.y = screenDimension.h/2 - rect.h;
     char str[10];
     sprintf(str, "%d", player.score);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_RenderPresent(renderer);
+    drawString(str, rect.x, rect.y, rect.w, rect.h,237,222,17,255);
 }
 
 void drawWon(){
@@ -437,11 +434,7 @@ void drawWon(){
     rect.y = screenDimension.h/2 - rect.h;
     char str[10];
     sprintf(str, "%d", player.score);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_RenderPresent(renderer);
+    drawString(str, rect.x, rect.y, rect.w, rect.h,237,222,17,255);
 }
 
 void mainLoop(){
