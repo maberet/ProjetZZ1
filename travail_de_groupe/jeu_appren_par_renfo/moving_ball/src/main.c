@@ -342,6 +342,8 @@ int main(){
                 printf("%d : found at %d %d\n", i, ball.x, ball.y);
                 running = 0;
             }
+
+            insertPointToPath(&path, ball.x, ball.y);
             
             int action = take_action(&ball, Q, 0.5);
             printf("[%d] Action: %d\n", i, action);
@@ -357,8 +359,14 @@ int main(){
             nextBall->y = ball.y;
             nextBall->weight = ball.weight;
             nextBall->isGrounded = ball.isGrounded;
-            moveBall(nextBall, action);
 
+
+            moveBall(nextBall, action);
+            
+            if (checkIfPointInPath(path, nextBall->x, nextBall->y)){
+                reward = -1;
+            }
+            
             printf("Next Ball: %d, %d\n", nextBall->x, nextBall->y);
 
             int nextAction = argmax(Q[nextBall->y][nextBall->x],4);
