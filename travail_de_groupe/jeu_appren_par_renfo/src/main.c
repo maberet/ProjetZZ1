@@ -9,6 +9,7 @@ int main(){
     game_state = GAME;
     readMapFromFile("map.txt");
     printMap();
+    initPlayer();
 
     mainLoop();
 

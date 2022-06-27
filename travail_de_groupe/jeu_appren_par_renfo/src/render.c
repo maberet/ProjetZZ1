@@ -10,11 +10,33 @@ SDL_Rect rect;
 SDL_Rect sky;
 SDL_Rect ground;
 
-// ray casting variables
-float htexture;
-int r, mx, my, dof;
-double rx, ry, xo, yo, distT;
-double ra;
+int ** rays;
+int  raysListLength = 0;
+
+void initRays(){
+    int i;
+    rays = malloc(sizeof(int*) * NB_RAYS);
+    for (i = 0; i < NB_RAYS; i++){
+        rays[i] = malloc(sizeof(int) * 2);
+    }
+}
+
+void addRayToList(int x, int y){
+    if (raysListLength < NB_RAYS){
+        *rays[raysListLength] = x;
+        *(rays[raysListLength] + 1) = y;
+        raysListLength++;
+    }
+}
+
+void resetRayList(){
+    int i;
+    for (i = 0; i < NB_RAYS; i++){
+        *rays[i] = 0;
+        *(rays[i] + 1) = 0;
+    }
+    raysListLength = 0;
+}
 
 // end ray casting variables
 
@@ -59,6 +81,12 @@ void endSDL(){
 }
 
 void drawRays(int map[][MAP_WIDTH]){
+    // ray casting variables
+    float htexture;
+    int r, mx, my, dof;
+    double rx, ry, xo, yo, distT;
+    double ra;
+    resetRayList();
     ra = player.angle - DR * FOV_ANGLE/4;
     if (ra < 0) ra -= 2*pi;
     if (ra > 2*pi) ra -= 2*pi;
@@ -87,13 +115,12 @@ void drawRays(int map[][MAP_WIDTH]){
         while (dof < DOF){
             mx = (int)rx>>6;
             my = (int)ry>>6;
-            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT){
-                if (map[my][mx] == 1){
-                    hx = rx;
-                    hy = ry;
-                    disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
-                    dof = DOF;
-                }
+            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1){
+                
+                hx = rx;
+                hy = ry;
+                disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                dof = DOF;
             }
             else {
                 rx += xo;
@@ -118,16 +145,19 @@ void drawRays(int map[][MAP_WIDTH]){
             xo = BLOCK_SIZE;
             yo = -xo*nTan;
         }
+        if (ra == pi || ra == 0){
+            ry = player.y;
+            rx = player.x;
+            dof = DOF;
+        }
         while (dof < DOF){
             mx = (int)rx>>6;
             my = (int)ry>>6;
-            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT){
-                if (map[my][mx] == 1){
-                    vx = rx;
-                    vy = ry;
-                    disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
-                    dof = DOF;
-                }
+            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1){
+                vx = rx;
+                vy = ry;
+                disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                dof = DOF;
             }
             else {
                 rx += xo;
@@ -157,9 +187,9 @@ void drawRays(int map[][MAP_WIDTH]){
         float lineH = (screenDimension.h/2)/distT;
 
         rect.x = r;
-        rect.y = lineH;
+        rect.y = screenDimension.h/2 - lineH;
         rect.w = 1;
-        rect.h = lineH;
+        rect.h = (2 * screenDimension.w * lineH/200);
 
         if (disH < disV) {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -168,6 +198,10 @@ void drawRays(int map[][MAP_WIDTH]){
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         }
         SDL_RenderFillRect(renderer, &rect);
+
+        // draw the ray in the minimap
+        addRayToList(rx, ry);
+
     }
 }
 
@@ -184,18 +218,30 @@ void drawMap2D(int map[][MAP_WIDTH]){
                 SDL_RenderFillRect(renderer, &rect);
             }
             else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                SDL_RenderFillRect(renderer, &rect);
+                if (i == player.x/BLOCK_SIZE && j == player.y/BLOCK_SIZE){
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+                else {
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
             }
             rect.x += CELL_SIZE;
         }
         rect.y += CELL_SIZE;
         rect.x = 0;
     }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    for (i = 0; i < NB_RAYS; i++){
+        SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE , player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void drawGame(){
     SDL_RenderClear(renderer);
+    drawRays(map);
     drawMap2D(map);
     SDL_RenderPresent(renderer);
 }
@@ -204,6 +250,7 @@ void drawGame(){
 
 void mainLoop(){
     createWindow();
+    initRays();
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
