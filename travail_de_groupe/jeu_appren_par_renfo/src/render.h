@@ -9,7 +9,7 @@
 #define FPS_TO_GET 60
 #define CELL_SIZE 10
  
-#define DOF 8
+#define DOF MAP_WIDTH
 #define BLOCK_SIZE 64
 #define DR 0.0174533
 #define FOV_ANGLE 60
@@ -19,6 +19,7 @@
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
+extern SDL_DisplayMode screenDimension;
 
 
 void mainLoop();

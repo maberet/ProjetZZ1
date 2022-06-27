@@ -187,9 +187,9 @@ void drawRays(int map[][MAP_WIDTH]){
         float lineH = (screenDimension.h/2)/distT;
 
         rect.x = r;
-        rect.y = screenDimension.h/2 - lineH;
+        rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
         rect.w = 1;
-        rect.h = (2 * screenDimension.w * lineH/200);
+        rect.h = (2 * screenDimension.w * lineH/20);
 
         if (disH < disV) {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
