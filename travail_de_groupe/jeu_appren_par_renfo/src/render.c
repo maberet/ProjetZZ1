@@ -195,7 +195,7 @@ void drawRays(int map[][MAP_WIDTH]){
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         }
         else {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
         }
         SDL_RenderFillRect(renderer, &rect);
 
@@ -203,6 +203,20 @@ void drawRays(int map[][MAP_WIDTH]){
         addRayToList(rx, ry);
 
     }
+}
+
+void drawSkyAndGround(){
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer, NULL);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    sky.x = 0;
+    sky.y = 0;
+    sky.w = screenDimension.w;
+    sky.h = screenDimension.h/2 + player.viewAngle;
+    SDL_RenderFillRect(renderer, &sky);
+    
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void drawMap2D(int map[][MAP_WIDTH]){
@@ -241,6 +255,7 @@ void drawMap2D(int map[][MAP_WIDTH]){
 
 void drawGame(){
     SDL_RenderClear(renderer);
+    drawSkyAndGround();
     drawRays(map);
     drawMap2D(map);
     SDL_RenderPresent(renderer);
