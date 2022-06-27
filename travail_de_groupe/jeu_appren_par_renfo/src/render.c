@@ -15,7 +15,7 @@ int  raysListLength = 0;
 
 void initRays(){
     int i;
-    rays = malloc(sizeof(int*) * NB_RAYS);
+    rays = malloc(sizeof(int*) * 2 * NB_RAYS);
     for (i = 0; i < NB_RAYS; i++){
         rays[i] = malloc(sizeof(int) * 2);
     }
@@ -86,14 +86,18 @@ void drawRays(int map[][MAP_WIDTH]){
     int r, mx, my, dof;
     double rx, ry, xo, yo, distT;
     double ra;
+    mx = 0;
+    my = 0;
     resetRayList();
     ra = player.angle - DR * FOV_ANGLE/4;
     if (ra < 0) ra -= 2*pi;
     if (ra > 2*pi) ra -= 2*pi;
     for (r = 0; r<NB_RAYS; r++){
         // check horizontal rays
+        int foundTransparentWallH = 0;
+        int foundSolidWallH = 0;
         dof = 0;
-        float disH = 100000, hx = player.x, hy = player.y;
+        float disH = 100000, disH2 = 100000, hx = player.x, hy = player.y , hx2 = player.x, hy2 = player.y;
         float aTan = -1/tan(ra);
         if (ra > pi){ // looking up
             ry = (((int)player.y>>6)<<6) - 0.0001;
@@ -115,12 +119,23 @@ void drawRays(int map[][MAP_WIDTH]){
         while (dof < DOF){
             mx = (int)rx>>6;
             my = (int)ry>>6;
-            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1){
-                
-                hx = rx;
-                hy = ry;
-                disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
-                dof = DOF;
+            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT){
+                if (map[my][mx] == 1){
+                    hx = rx;
+                    hy = ry;
+                    disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    dof = DOF;
+                    foundSolidWallH = 1;
+                }
+                else {
+                    hx2 = rx;
+                    hy2 = ry;
+                    disH2 = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    foundTransparentWallH = 1;
+                    dof++;
+                    rx += xo;
+                    ry += yo;
+                }
             }
             else {
                 rx += xo;
@@ -131,7 +146,7 @@ void drawRays(int map[][MAP_WIDTH]){
 
         // check vertical rays
         dof = 0;
-        float disV = 100000, vx = player.x, vy = player.y;
+        float disV = 100000, disV2 = 100000 , vx = player.x, vy = player.y, vx2, vy2;
         float nTan = -tan(ra);
         if (ra > pi/2 && ra < 3*pi/2){ // looking left
             rx = (((int)player.x>>6)<<6) - 0.0001;
@@ -150,14 +165,28 @@ void drawRays(int map[][MAP_WIDTH]){
             rx = player.x;
             dof = DOF;
         }
+        int foundSolidWallV = 0;
+        int foundTransparentWallV = 0;
         while (dof < DOF){
             mx = (int)rx>>6;
             my = (int)ry>>6;
-            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1){
-                vx = rx;
-                vy = ry;
-                disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
-                dof = DOF;
+            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx]){
+                if (map[my][mx] == 1){
+                    vx = rx;
+                    vy = ry;
+                    disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    foundSolidWallV = 1;
+                    dof = DOF;
+                }
+                else {
+                    vx2 = rx;
+                    vy2 = ry;
+                    disV2 = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    foundTransparentWallV = 1;
+                    dof++;
+                    rx += xo;
+                    ry += yo;
+                }
             }
             else {
                 rx += xo;
@@ -165,16 +194,42 @@ void drawRays(int map[][MAP_WIDTH]){
                 dof++;
             }
         }
-        if (disH < disV) {
-            rx = hx;
-            ry = hy;
-            distT = disH;
+        
+        if (foundTransparentWallV){
+            if (disH < disV2){
+                rx = hx2;
+                ry = hy2;
+                distT = disH2;
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+            }
+            else {
+                rx = vx2;
+                ry = vy2;
+                distT = disV2;
+                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+            }
+            if (foundSolidWallV){
+                printf("found solid wall\n");
+                
+            }
         }
+
         else {
-            rx = vx;
-            ry = vy;
-            distT = disV;
+            if (disH < disV) {
+                rx = hx;
+                ry = hy;
+                distT = disH;
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            }
+            else {
+                rx = vx;
+                ry = vy;
+                distT = disV;
+                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+            }
         }
+
+
         ra = ra + ANGLE_INC/2;
         if (ra > 2*pi) ra -= 2*pi;
         if (ra < 0) ra += 2*pi;
@@ -186,19 +241,20 @@ void drawRays(int map[][MAP_WIDTH]){
         distT = distT * cos(ca);
         float lineH = (screenDimension.h/2)/distT;
 
+
         rect.x = r;
         rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
         rect.w = 1;
         rect.h = (2 * screenDimension.w * lineH/20);
 
-        if (disH < disV) {
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        if (foundTransparentWallV){
+            rect.h *= 1.75;
+            rect.y -= rect.h/3;
         }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-        }
-        SDL_RenderFillRect(renderer, &rect);
 
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+ 
         // draw the ray in the minimap
         addRayToList(rx, ry);
 

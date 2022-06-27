@@ -9,7 +9,7 @@
 #define FPS_TO_GET 60
 #define CELL_SIZE 10
  
-#define DOF MAP_WIDTH
+#define DOF 100
 #define BLOCK_SIZE 64
 #define DR 0.0174533
 #define FOV_ANGLE 60
