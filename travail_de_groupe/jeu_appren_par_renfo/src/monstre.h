@@ -1,5 +1,5 @@
-#ifndef MONSTER_H
-#define MONSTER_H
+#ifndef MONSTRE_H
+#define MONSTRE_H
 
 #include <stdlib.h>
 #include <time.h>
@@ -25,7 +25,7 @@ typedef struct  monster {
 
 extern monster_t monster;
 
-void  initMonster ()
+void  initMonster ();
 void readMarkovFromFile(char * filename);
 
 
