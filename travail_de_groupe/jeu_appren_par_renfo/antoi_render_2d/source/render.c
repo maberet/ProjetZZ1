@@ -17,6 +17,9 @@ SDL_Rect point_de_chute;
 int point_x_rand;
 int point_y_rand;
 
+int zone_canon = -1;
+int zone_chute = -1;
+
 void createWindow(){
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Couldn't create window.");
@@ -65,6 +68,33 @@ void initPointDeChute(){
     srand(time(NULL));
     point_x_rand = (int)rand()%terrain.w;
     point_y_rand = (int)rand()%(terrain.h/2);
+}
+
+
+int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
+    int z = -1;
+    // pdc = point de chute
+    int pdc_x = terrainX + point_x_rand;
+    int pdc_y = terrainY + terrainH/2 + point_y_rand;
+    //en haut à gauche => 1
+    if(point_x_rand>=0 && point_x_rand<terrainW/2 && pdc_y<terrainY+(3*terrainH)/4){
+        z = 1;
+    }
+    //en haut à droite => 2
+    /*else if(){
+        z = 2;
+    }
+    //en bas à gauche => 3
+    else if(point_x_rand>=0 && point_x_rand<terrainW/2 && ){
+        z = 3;
+    }
+    //en bas à droite => 4
+    */else{
+        z = -6;
+    }
+    printf("point_x_rand : %d, terrainW/2: %d\n", point_x_rand, terrainW/2);
+    printf("pdc_x : %d, pdc_y : %d, tX : %d, tY : %d\n", pdc_x, pdc_y, terrainX, terrainY);
+    return z;
 }
 
 void newCanon(){
@@ -190,18 +220,23 @@ void drawInformations(){
     int texte_width = 200;
     int texte_height = 40;
     char str[20];
-    char zone_canon[20] = "zone canon : ";
-    int zone_ca = 4;
+    char str2[20];
+    char zoneChuteChaine[20] = "zone chute :";
+    char zoneCanonChaine[20] = "zone canon :";
     drawString("informations :", window_width-texte_width, texte_height*0, texte_width, texte_height, 255, 255, 255, 255);
-    drawString("e : new ball", window_width-texte_width, texte_height*1, texte_width, texte_height, 255, 255, 255, 255);
-    drawString("posBallX", window_width-texte_width, texte_height*2, texte_width, texte_height, 255, 255, 255, 255);
-    drawString("zone de chute : %d", window_width-texte_width, texte_height*3, texte_width, texte_height, 255, 255, 255, 255);
+    drawString("e : new point chute", window_width-texte_width, texte_height*1, texte_width, texte_height, 255, 255, 255, 255);
+    sprintf(str2, "%d", zone_chute);
+    strcat(zoneChuteChaine, str2);
+    drawString(zoneChuteChaine, window_width-texte_width, texte_height*2, texte_width, texte_height, 255, 255, 255, 255);
     drawString("r : new canon", window_width-texte_width, texte_height*4, texte_width, texte_height, 255, 255, 255, 255);
-    drawString("position canon (%d, %d)", window_width-texte_width, texte_height*5, texte_width, texte_height, 255, 255, 255, 255);
+    sprintf(str, "%d", zone_canon);
+    strcat(zoneCanonChaine, str);
+    drawString(zoneCanonChaine, window_width-texte_width, texte_height*5, texte_width, texte_height, 255, 255, 255, 255);
+}
 
-    sprintf(str, "%d", zone_ca);
-    strcat(zone_canon, str);
-    drawString(zone_canon, window_width-texte_width, texte_height*6, texte_width, texte_height, 255, 255, 255, 255);
+void drawTrajectoireTopView(){
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    SDL_RenderDrawLine(renderer, terrain.x+canon.x, terrain.y+canon.y, point_de_chute.x, point_de_chute.y);
 }
 
 void drawBall(){
@@ -238,8 +273,7 @@ void drawBall(){
 void mainLoop(){
     createWindow();
     initCanon();
-    initPointDeChute(terrain);
-    //trouveZoneDeChute();
+    initPointDeChute();
 
     pthread_t eventThread;
     if (pthread_create(&eventThread, NULL, eventLoop, NULL) != 0){
@@ -255,12 +289,16 @@ void mainLoop(){
         drawTerrainTopView();
         drawCanonTopView();
         drawPointDeChuteTopView();
+        drawTrajectoireTopView();
+        initTerrain();
+        zone_canon = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
+        zone_chute = getZoneChute(terrain.x, terrain.y, terrain.w, terrain.h);
 
         //side view
         drawTerrainSideView();
         drawCanonSideView();
         drawPointDeChuteSideView();
-
+    
         //
         drawInformations();
        

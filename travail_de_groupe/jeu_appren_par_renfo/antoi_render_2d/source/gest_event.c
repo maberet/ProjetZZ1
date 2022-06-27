@@ -32,10 +32,12 @@ void manageGame(){
 
                     case SDLK_e:
                         initPointDeChute();
+                        zone_chute = getZoneChute(terrain.x, terrain.y, terrain.w, terrain.h);
                         break;
 
                     case SDLK_r:
                         newCanon();
+                        zone_canon = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
                         break;
                         
                     default:
