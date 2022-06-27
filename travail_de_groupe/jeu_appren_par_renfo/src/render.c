@@ -80,11 +80,38 @@ void endSDL(){
     SDL_Quit();
 }
 
+void drawRayColumn(float ra, float distT, int r, int isTransparent, int direction){
+    float ca = player.angle - ra;
+    if (ca < 0) ca += 2*pi;
+    if (ca > 2*pi) ca -= 2*pi;
+    distT = distT * cos(ca);
+
+    float lineH = (screenDimension.h/2)/distT;
+    rect.x = r;
+    rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
+    rect.w = 1;
+    rect.h = (2 * screenDimension.w * lineH/20);
+
+    if (isTransparent){
+        rect.h *= 0.75;
+        rect.y -= rect.h/3;
+    }
+    if (direction){
+        SDL_SetRenderDrawColor(renderer, 255 * (1 - isTransparent), 255, 0, 255 * (1 - isTransparent));
+    }
+    else {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255 * (1 - isTransparent));
+    }
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
+
+
 void drawRays(int map[][MAP_WIDTH]){
     // ray casting variables
     float htexture;
     int r, mx, my, dof;
-    double rx, ry, xo, yo, distT;
+    double rx, ry, rx2, ry2,  xo, yo, distT, distT2;
     double ra;
     mx = 0;
     my = 0;
@@ -194,23 +221,49 @@ void drawRays(int map[][MAP_WIDTH]){
                 dof++;
             }
         }
+
+        int direction, direction2;
         
         if (foundTransparentWallV){
             if (disH < disV2){
                 rx = hx2;
                 ry = hy2;
                 distT = disH2;
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                direction = 0;
             }
             else {
                 rx = vx2;
                 ry = vy2;
                 distT = disV2;
-                SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                direction = 1;
             }
             if (foundSolidWallV){
-                printf("found solid wall\n");
-                
+                if (disH < disV){
+                    rx2 = hx;
+                    ry2 = hy;
+                    distT2 = disH;
+                    direction2 = 0;
+                }
+                else {
+                    rx2 = vx;
+                    ry2 = vy;
+                    distT2 = disV;
+                    direction2 = 1;
+                }
+            }
+            if (foundSolidWallH){
+                if (disH < disV){
+                    rx2 = hx;
+                    ry2 = hy;
+                    distT2 = disH;
+                    direction2 = 0;
+                }
+                else {
+                    rx2 = vx;
+                    ry2 = vy;
+                    distT2 = disV;
+                    direction2 = 1;
+                }
             }
         }
 
@@ -219,13 +272,13 @@ void drawRays(int map[][MAP_WIDTH]){
                 rx = hx;
                 ry = hy;
                 distT = disH;
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                direction = 0;
             }
             else {
                 rx = vx;
                 ry = vy;
                 distT = disV;
-                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+                direction = 1;
             }
         }
 
@@ -234,27 +287,16 @@ void drawRays(int map[][MAP_WIDTH]){
         if (ra > 2*pi) ra -= 2*pi;
         if (ra < 0) ra += 2*pi;
 
-        // draw column
-        float ca = player.angle - ra;
-        if (ca < 0) ca += 2*pi;
-        if (ca > 2*pi) ca -= 2*pi;
-        distT = distT * cos(ca);
-        float lineH = (screenDimension.h/2)/distT;
-
-
-        rect.x = r;
-        rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
-        rect.w = 1;
-        rect.h = (2 * screenDimension.w * lineH/20);
-
+        // draw ray
+        drawRayColumn(ra, distT, r, foundTransparentWallV, direction);
         if (foundTransparentWallV){
-            rect.h *= 1.75;
-            rect.y -= rect.h/3;
+            if (foundSolidWallV){
+                drawRayColumn(ra, distT2, r, 0, direction2);
+            }
+            else {
+                drawRayColumn(ra, distT2, r, 0, direction);
+            }
         }
-
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
- 
         // draw the ray in the minimap
         addRayToList(rx, ry);
 
