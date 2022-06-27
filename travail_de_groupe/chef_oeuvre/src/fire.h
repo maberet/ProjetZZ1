@@ -13,7 +13,7 @@
 #define STRONG 3
 #define SPREAD 4
 
-#define UPDATETIME 5
+#define UPDATETIME 3
 
 
 typedef struct fire{
@@ -51,6 +51,7 @@ void nextFire(listchainfire_t );
 listchainfire_t probabilitySpreadFire( listchainfire_t, listchainfire_t);
 listchainfire_t spreadFire (listchainfire_t );
 booleen_t winGame(listchainfire_t );
+void burnTree (listchainfire_t listFire);
 
 
 

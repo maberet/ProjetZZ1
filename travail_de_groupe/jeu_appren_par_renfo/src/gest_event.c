@@ -34,7 +34,11 @@ void *EventLoop(void *arg){
     while(running){
         switch(game_state){
             case MENU : gestMenu();break;
+<<<<<<< HEAD
             //case GAME : gestGame();break;
+=======
+            case GAME : gestMenu();break;
+>>>>>>> main
             default:printf("game state fault");break;
         }
     }

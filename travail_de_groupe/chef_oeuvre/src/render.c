@@ -1,6 +1,7 @@
 #include "render.h"
 
 float timer = 0;
+int fps;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -111,6 +112,50 @@ void createWindow(){
 
     robotoFont = TTF_OpenFont("Res/Roboto-Black.ttf", 50);  
 
+}
+
+void endSDL(){
+    SDL_DestroyTexture(grassTexture);
+    SDL_DestroyTexture(treeTexture);
+    SDL_DestroyTexture(hoverTexture);
+    SDL_DestroyTexture(noHoverTexture);
+    SDL_DestroyTexture(playerTexture);
+    SDL_DestroyTexture(playerIdleTexture);
+    SDL_DestroyTexture(backgroundTexture);
+    SDL_DestroyTexture(backgroundSidesTexture);
+    SDL_DestroyTexture(backgroundLostTexture);
+    SDL_DestroyTexture(playButtonTexture);
+    SDL_DestroyTexture(playButtonHoverTexture);
+    SDL_DestroyTexture(playAgainButtonTexture);
+    SDL_DestroyTexture(playAgainButtonHoverTexture);
+    SDL_DestroyTexture(quitButtonTexture);
+    SDL_DestroyTexture(quitButtonHoverTexture);
+    SDL_DestroyTexture(fireTexture);
+    SDL_DestroyTexture(waterTexture);
+    SDL_DestroyTexture(emptyBucketTexture);
+    SDL_DestroyTexture(filledBucketTexture);
+    SDL_DestroyTexture(heartTexture);
+    SDL_DestroyTexture(scoreTexture);
+    SDL_DestroyTexture(nextFireTexture);
+    SDL_DestroyTexture(backgroundWonTexture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_CloseFont(robotoFont);
+    TTF_Quit();
+    SDL_Quit();
+    if (gameState != WON){
+        fireList = freeListFire(fireList);
+    }
+}
+
+void drawString(char *text, int x, int y, int w, int h, int r, int g, int b, int a){
+    SDL_Color color = {r, g, b, a};
+    SDL_Surface *surface = TTF_RenderText_Solid(robotoFont, text, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Rect rect = {x, y, surface->w, surface->h};
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 }
 
 void drawBackground(){
@@ -306,10 +351,7 @@ void drawScore(){
     rect.y += rect.h;
     char str[10];
     sprintf(str, "%d", player.score);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    drawString(str, rect.x, rect.y, (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2, screenDimension.h/6,237,222,17,255);
 }
 
 void drawTime(){
@@ -321,12 +363,21 @@ void drawTime(){
     SDL_RenderCopy(renderer, nextFireTexture, NULL, &rect);
     rect.y += rect.h;
     char str[10];
-    printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
+    //printf("%d\n", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
     sprintf(str, "%d", (UPDATETIME * 1000 - (int)timer % (UPDATETIME * 1000))/1000);
-    SDL_Color textColor = {237,222,17};
-    SDL_Surface * surface = TTF_RenderText_Solid(robotoFont, str, textColor);
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);    
+    drawString(str, rect.x, rect.y, (screenDimension.w - (MAPSIZE * CELLSIZE)) / 2, screenDimension.h/6,237,222,17,255);   
+}
+
+void drawFPS(){
+    SDL_Rect rect;
+    int h = screenDimension.h/12;
+    int w = screenDimension.w/12;
+    int x = (screenDimension.w + (MAPSIZE * CELLSIZE)) / 2;
+    int y = screenDimension.h - rect.h;
+
+    char str[10];
+    sprintf(str, "%d", fps);
+    drawString(str, x, y, w, h,237,222,17,255);
 }
 
 void drawGame(){
@@ -339,6 +390,7 @@ void drawGame(){
     drawPlayerHP();
     drawScore();
     drawTime();
+    drawFPS();
     SDL_RenderPresent(renderer);
 }
 
@@ -353,7 +405,15 @@ void drawLost(){
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
-    SDL_RenderPresent(renderer);
+
+    // draw score
+    rect.h = screenDimension.h/12;
+    rect.w = rect.h;
+    rect.x = screenDimension.w/2;
+    rect.y = screenDimension.h/2 - rect.h;
+    char str[10];
+    sprintf(str, "%d", player.score);
+    drawString(str, rect.x, rect.y, rect.w, rect.h,237,222,17,255);
 }
 
 void drawWon(){
@@ -366,7 +426,15 @@ void drawWon(){
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, quitButtonHoverTexture, NULL, &rect);
     SDL_RenderCopy(renderer, playAgainButtonHoverTexture, NULL, &rect);
-    SDL_RenderPresent(renderer);
+
+    // draw score
+    rect.h = screenDimension.h/12;
+    rect.w = rect.h;
+    rect.x = screenDimension.w/2;
+    rect.y = screenDimension.h/2 - rect.h;
+    char str[10];
+    sprintf(str, "%d", player.score);
+    drawString(str, rect.x, rect.y, rect.w, rect.h,237,222,17,255);
 }
 
 void mainLoop(){
@@ -488,8 +556,9 @@ void mainLoop(){
         a = SDL_GetTicks();
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
+            fps = 1000/delta;
             timer += delta;
-            printf("%d\n", (int)timer % 1000);
+            //printf("%d\n", (int)timer % 1000);
             b = a;
             switch (gameState){
                 case MENU:
@@ -520,6 +589,6 @@ void mainLoop(){
             // fait dormir le thread pour garder des ressources
             usleep(1000 * (1000/FPS_TO_GET - delta));
         }
-
     }
+    endSDL();
 } 
