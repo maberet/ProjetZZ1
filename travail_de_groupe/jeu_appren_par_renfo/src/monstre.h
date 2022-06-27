@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include "map.h"
 
 #define ANGRY 1 
 #define PEACEFULL 0 

@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "map.h"
+
 #define ENTITIES_UP 0
 #define ENTITIES_DOWN 1
 #define ENTITIES_LEFT 2

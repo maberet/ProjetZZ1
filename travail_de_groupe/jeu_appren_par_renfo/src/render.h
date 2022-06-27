@@ -4,6 +4,7 @@
 #include "main.h"
 #include "gest_event.h"
 #include "map.h"
+#include "player.h"
 
 #define FPS_TO_GET 60
 #define CELL_SIZE 10

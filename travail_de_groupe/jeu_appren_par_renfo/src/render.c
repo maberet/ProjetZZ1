@@ -14,7 +14,7 @@ SDL_Rect ground;
 float htexture;
 int r, mx, my, dof;
 double rx, ry, xo, yo, distT;
-double ra = player->angle - DR * FOV_ANGLE/4;
+double ra;
 
 // end ray casting variables
 
@@ -59,28 +59,29 @@ void endSDL(){
 }
 
 void drawRays(int map[][MAP_WIDTH]){
+    ra = player.angle - DR * FOV_ANGLE/4;
     if (ra < 0) ra -= 2*pi;
     if (ra > 2*pi) ra -= 2*pi;
     for (r = 0; r<NB_RAYS; r++){
         // check horizontal rays
         dof = 0;
-        float disH = 100000, hx = player->x, hy = player->y;
+        float disH = 100000, hx = player.x, hy = player.y;
         float aTan = -1/tan(ra);
         if (ra > pi){ // looking up
-            ry = (((int)player->y>>6)<<6) - 0.0001;
-            rx = (player->y - ry) * aTan + player->x;
+            ry = (((int)player.y>>6)<<6) - 0.0001;
+            rx = (player.y - ry) * aTan + player.x;
             yo = -BLOCK_SIZE;
             xo = -yo*aTan;
         }
         if (ra<pi){ // looking down
-            ry = (((int)player->y>>6)<<6) + BLOCK_SIZE;
-            rx = (player->y - ry) * aTan + player->x;
+            ry = (((int)player.y>>6)<<6) + BLOCK_SIZE;
+            rx = (player.y - ry) * aTan + player.x;
             yo = BLOCK_SIZE;
             xo = -yo*aTan;
         }
         if (ra == pi){
-            ry = player->y;
-            rx = player->x;
+            ry = player.y;
+            rx = player.x;
             dof = DOF;
         }
         while (dof < DOF){
@@ -90,7 +91,7 @@ void drawRays(int map[][MAP_WIDTH]){
                 if (map[my][mx] == 1){
                     hx = rx;
                     hy = ry;
-                    disH = sqrt((rx-player->x)*(rx-player->x) + (ry-player->y)*(ry-player->y));
+                    disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
                     dof = DOF;
                 }
             }
@@ -103,17 +104,17 @@ void drawRays(int map[][MAP_WIDTH]){
 
         // check vertical rays
         dof = 0;
-        float disV = 100000, vx = player->x, vy = player->y;
+        float disV = 100000, vx = player.x, vy = player.y;
         float nTan = -tan(ra);
         if (ra > pi/2 && ra < 3*pi/2){ // looking left
-            rx = (((int)player->x>>6)<<6) - 0.0001;
-            ry = player->y + (player->x - rx) * nTan;
+            rx = (((int)player.x>>6)<<6) - 0.0001;
+            ry = player.y + (player.x - rx) * nTan;
             xo = -BLOCK_SIZE;
             yo = -xo*nTan;
         }
         if (ra<pi/2 || ra > 3*pi/2){ // looking right
-            rx = (((int)player->x>>6)<<6) + BLOCK_SIZE;
-            ry = player->y + (player->x - rx) * nTan;
+            rx = (((int)player.x>>6)<<6) + BLOCK_SIZE;
+            ry = player.y + (player.x - rx) * nTan;
             xo = BLOCK_SIZE;
             yo = -xo*nTan;
         }
@@ -124,7 +125,7 @@ void drawRays(int map[][MAP_WIDTH]){
                 if (map[my][mx] == 1){
                     vx = rx;
                     vy = ry;
-                    disV = sqrt((rx-player->x)*(rx-player->x) + (ry-player->y)*(ry-player->y));
+                    disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
                     dof = DOF;
                 }
             }
@@ -149,7 +150,7 @@ void drawRays(int map[][MAP_WIDTH]){
         if (ra < 0) ra += 2*pi;
 
         // draw column
-        float ca = player->angle - ra;
+        float ca = player.angle - ra;
         if (ca < 0) ca += 2*pi;
         if (ca > 2*pi) ca -= 2*pi;
         distT = distT * cos(ca);

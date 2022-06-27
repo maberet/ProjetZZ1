@@ -13,7 +13,7 @@ void  initMonster (){
     monster.state= PEACEFULL;
     monster.healthPoint= 3; 
     monster.speed=1; 
-    monter.angle=0; 
+    monster.angle=0; 
     //monster.dammage
 
 }
