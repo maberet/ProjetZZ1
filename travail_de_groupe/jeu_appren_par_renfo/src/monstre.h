@@ -1,5 +1,5 @@
-#ifndef MONSTER_H
-#define MONSTER_H
+#ifndef MONSTRE_H
+#define MONSTRE_H
 
 #include <stdlib.h>
 #include <time.h>

@@ -1,16 +1,19 @@
-#include "monster.h"
+#include "monstre.h"
+#include "player.h"
 
 monster_t monster; 
 int markov[SIZEMARKOV][SIZEMARKOV]; 
 
 void  initMonster (){ 
 
-    monster.x= (rand()%((MAPSIZEX-3)/2)+16)*CELLSIZE;
-    monster.y= (rand()%(MAPSIZEY-2))*CELLSIZE;
+    srand(time(NULL)); 
+
+    monster.x= (rand()%((MAP_WIDTH-3)/2)+16)*BLOCK_SIZE;
+    monster.y= (rand()%(MAP_HEIGHT-2))*BLOCK_SIZE;
     monster.state= PEACEFULL;
     monster.healthPoint= 3; 
     monster.speed=1; 
-    monster.angle=0; 
+    monter.angle=0; 
     //monster.dammage
 
 }

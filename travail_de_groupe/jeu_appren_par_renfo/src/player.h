@@ -1,10 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#define PLAYER_UP 0
-#define PLAYER_DOWN 1
-#define PLAYER_LEFT 2
-#define PLAYER_RIGHT 3
+#define ENTITIES_UP 0
+#define ENTITIES_DOWN 1
+#define ENTITIES_LEFT 2
+#define ENTITIES_RIGHT 3
 
 typedef struct player{
     int x;
