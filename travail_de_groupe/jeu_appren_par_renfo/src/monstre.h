@@ -25,7 +25,7 @@ typedef struct  monster {
 
 extern monster_t monster;
 
-void  initMonster ()
+void  initMonster ();
 void readMarkovFromFile(char * filename);
 
 
