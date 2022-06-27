@@ -16,6 +16,7 @@
 
 #include "render.h"
 #include "gest_event.h"
+#include "ball.h"
 
 
 #define MENU 0
