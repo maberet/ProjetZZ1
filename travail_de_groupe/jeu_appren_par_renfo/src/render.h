@@ -14,7 +14,7 @@
 #define DR 0.0174533
 #define FOV_ANGLE 60
 #define pi 3.14159265358979323846
-#define NB_RAYS (screenDimension.w)
+#define NB_RAYS (screenDimension.w/40)
 #define ANGLE_INC ((DR * FOV_ANGLE) / NB_RAYS)
 
 extern SDL_Window *window;

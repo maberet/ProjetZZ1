@@ -64,6 +64,7 @@ void drawRays(int map[][MAP_WIDTH]){
     if (ra > 2*pi) ra -= 2*pi;
     for (r = 0; r<NB_RAYS; r++){
         // check horizontal rays
+        printf("ray %d\n", r);
         dof = 0;
         float disH = 100000, hx = player.x, hy = player.y;
         float aTan = -1/tan(ra);
@@ -102,6 +103,8 @@ void drawRays(int map[][MAP_WIDTH]){
             }
         }
 
+        printf("hx %f hy %f\n", hx, hy);
+
         // check vertical rays
         dof = 0;
         float disV = 100000, vx = player.x, vy = player.y;
@@ -117,6 +120,11 @@ void drawRays(int map[][MAP_WIDTH]){
             ry = player.y + (player.x - rx) * nTan;
             xo = BLOCK_SIZE;
             yo = -xo*nTan;
+        }
+        if (ra == pi || ra == 0){ // looking horizontally
+            rx = player.x;
+            ry = player.y;
+            dof = DOF;
         }
         while (dof < DOF){
             mx = (int)rx>>6;
@@ -135,6 +143,9 @@ void drawRays(int map[][MAP_WIDTH]){
                 dof++;
             }
         }
+
+        printf("vx %f vy %f\n", vx, vy);
+
         if (disH < disV) {
             rx = hx;
             ry = hy;
@@ -157,17 +168,18 @@ void drawRays(int map[][MAP_WIDTH]){
         float lineH = (screenDimension.h/2)/distT;
 
         rect.x = r;
-        rect.y = lineH;
+        rect.y = screenDimension.h/2 - lineH;
         rect.w = 1;
-        rect.h = lineH;
+        rect.h = (int)(2 * screenDimension.h * lineH/200);
 
         if (disH < disV) {
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_SetRenderDrawColor(renderer, 255, rand() % 255, 0, 255);
         }
         else {
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         }
         SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 }
 
@@ -196,7 +208,8 @@ void drawMap2D(int map[][MAP_WIDTH]){
 
 void drawGame(){
     SDL_RenderClear(renderer);
-    drawMap2D(map);
+    drawRays(map);
+    //drawMap2D(map);
     SDL_RenderPresent(renderer);
 }
 
