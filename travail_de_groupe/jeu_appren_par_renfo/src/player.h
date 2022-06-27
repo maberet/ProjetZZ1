@@ -12,9 +12,6 @@ typedef struct player{
     int speed;
     int isMoving;
     int direction;
-    int HPMax;
-    int currentHP;
-    int coins;
     float angle;
 } player_t;
 
