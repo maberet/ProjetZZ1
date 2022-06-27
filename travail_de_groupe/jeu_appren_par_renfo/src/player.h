@@ -20,4 +20,6 @@ typedef struct player{
 
 extern player_t player;
 
+void initPlayer();
+
 #endif
