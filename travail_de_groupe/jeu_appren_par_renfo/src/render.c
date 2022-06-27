@@ -4,11 +4,6 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 
 TTF_Font *RobotoFont;
-<<<<<<< HEAD
-
-void CreateWindow(){
-    SDL_DisplayMode ScreenDimension;
-=======
 SDL_DisplayMode screenDimension;
 
 SDL_Rect rect;
@@ -24,22 +19,15 @@ double ra = player->angle - DR * FOV_ANGLE/4;
 // end ray casting variables
 
 void createWindow(){
->>>>>>> main
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         printf("Couldn't create window.");
         exit(EXIT_FAILURE);
     }
 
-<<<<<<< HEAD
-    SDL_GetCurrentDisplayMode(0, &ScreenDimension);
-
-    window = SDL_CreateWindow("Game Of Life", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ScreenDimension.w, ScreenDimension.h, SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
-=======
     SDL_GetCurrentDisplayMode(0, &screenDimension);
 
     window = SDL_CreateWindow("Mat Le King", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenDimension.w, screenDimension.h, SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
->>>>>>> main
 
     if (window == NULL){
         printf("Couldn't create window");
