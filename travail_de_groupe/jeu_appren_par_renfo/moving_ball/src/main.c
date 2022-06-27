@@ -91,6 +91,7 @@ void drawMap(SDL_Renderer * renderer, int map[][MAPSIZE], Ball_t * ball){
     }
 }
 
+
 float *** allocateAndInitiateQ(){
     float *** q = malloc(sizeof(int **) * MAPSIZE);
     int i, j, k;
@@ -332,7 +333,7 @@ int main(){
 
     float *** Q = allocateAndInitiateQ();
     
-    for (int i = 0; i < 1000; i++){
+    for (int i = 0; i < 10; i++){
         freePath(path);
         path = (path_t *)malloc(sizeof(path_t));
         ball.x = rand() % MAPSIZE;
@@ -378,8 +379,29 @@ int main(){
     ball.x = rand() % MAPSIZE;
     ball.y = rand() % MAPSIZE;
     // use Q
+
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    if (SDL_Init(SDL_INIT_VIDEO) != 0){
+        printf("Couldn't create window.");
+        exit(EXIT_FAILURE);
+    }
+    window = SDL_CreateWindow("Test Apprentissage", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_RESIZABLE);
+    if (window == NULL){
+        printf("Couldn't create window");
+        exit(EXIT_FAILURE);
+    }
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == NULL){
+        printf("Couldn't create renderer.");
+        exit(EXIT_FAILURE);
+    }
     
     while (running){
+
+        //
+        drawMap(renderer, map, &ball);
+
         if (map[ball.y][ball.x] == 2){
             printf("found at final %d %d\n", ball.x, ball.y);
             running = 0;
@@ -393,4 +415,6 @@ int main(){
         printf("Ball: %d %d\n", ball.x, ball.y);
         fflush(stdout);
     }
+
+    
 }

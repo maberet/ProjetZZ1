@@ -6,8 +6,10 @@ int game_state;
 
 int main(){
     running = 1;
-    game_state = MENU;
+    game_state = GAME;
+    readMapFromFile("map.txt");
+    printMap();
 
-    MainLoop();
+    mainLoop();
 
 } 
