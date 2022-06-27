@@ -12,7 +12,7 @@
 #define DOF 100
 #define BLOCK_SIZE 64
 #define DR 0.0174533
-#define FOV_ANGLE 60
+#define FOV_ANGLE 80
 #define pi 3.14159265358979323846
 #define NB_RAYS (screenDimension.w)
 #define ANGLE_INC ((DR * FOV_ANGLE) / NB_RAYS)

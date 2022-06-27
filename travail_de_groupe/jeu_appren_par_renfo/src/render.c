@@ -6,12 +6,23 @@ SDL_Renderer *renderer;
 TTF_Font *RobotoFont;
 SDL_DisplayMode screenDimension;
 
+SDL_Rect destRect;
 SDL_Rect rect;
 SDL_Rect sky;
 SDL_Rect ground;
 
+SDL_Texture * netTexture;
+SDL_Texture * crowdTexture;
+
 int ** rays;
 int  raysListLength = 0;
+
+SDL_Texture * loadTexture(char * path) {
+    SDL_Surface * surface = IMG_Load(path);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    return texture;
+}
 
 void initRays(){
     int i;
@@ -80,7 +91,7 @@ void endSDL(){
     SDL_Quit();
 }
 
-void drawRayColumn(float ra, float distT, int r, int isTransparent, int direction){
+void drawRayColumn(float ra, float distT, int r, int isTransparent, int direction, float htexture){
     float ca = player.angle - ra;
     if (ca < 0) ca += 2*pi;
     if (ca > 2*pi) ca -= 2*pi;
@@ -92,24 +103,35 @@ void drawRayColumn(float ra, float distT, int r, int isTransparent, int directio
     rect.w = 1;
     rect.h = (2 * screenDimension.w * lineH/20);
 
+    destRect.x = htexture;
+    destRect.y = 0;
+    destRect.w = 1;
+    destRect.h = 64;
+
     if (isTransparent){
-        rect.h *= 0.75;
+        rect.h *= 1.75;
         rect.y -= rect.h/3;
-    }
-    if (direction){
-        SDL_SetRenderDrawColor(renderer, 255 * (1 - isTransparent), 255, 0, 255 * (1 - isTransparent));
+        SDL_RenderCopy(renderer, netTexture, &destRect, &rect);
+
     }
     else {
-        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255 * (1 - isTransparent));
+        if (direction){
+            SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
+            //SDL_SetRenderDrawColor(renderer, 255 * (1 - isTransparent), 255, 0, 255 * (1 - isTransparent));
+        }
+        else {
+            SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
+            //SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255 * (1 - isTransparent));
+        }
     }
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    //SDL_RenderFillRect(renderer, &rect);
+    //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 
 void drawRays(int map[][MAP_WIDTH]){
     // ray casting variables
-    float htexture;
+    float htexture, htexture2;
     int r, mx, my, dof;
     double rx, ry, rx2, ry2,  xo, yo, distT, distT2;
     double ra;
@@ -230,12 +252,14 @@ void drawRays(int map[][MAP_WIDTH]){
                 ry = hy2;
                 distT = disH2;
                 direction = 0;
+                htexture = (int)(rx)%BLOCK_SIZE;
             }
             else {
                 rx = vx2;
                 ry = vy2;
                 distT = disV2;
                 direction = 1;
+                htexture = (int)(ry)%BLOCK_SIZE;
             }
             if (foundSolidWallV){
                 if (disH < disV){
@@ -243,12 +267,14 @@ void drawRays(int map[][MAP_WIDTH]){
                     ry2 = hy;
                     distT2 = disH;
                     direction2 = 0;
+                    htexture2 = (int)(rx2)%BLOCK_SIZE;
                 }
                 else {
                     rx2 = vx;
                     ry2 = vy;
                     distT2 = disV;
                     direction2 = 1;
+                    htexture2 = (int)(ry2)%BLOCK_SIZE;
                 }
             }
             if (foundSolidWallH){
@@ -257,12 +283,14 @@ void drawRays(int map[][MAP_WIDTH]){
                     ry2 = hy;
                     distT2 = disH;
                     direction2 = 0;
+                    htexture2 = (int)(rx2)%BLOCK_SIZE;
                 }
                 else {
                     rx2 = vx;
                     ry2 = vy;
                     distT2 = disV;
                     direction2 = 1;
+                    htexture2 = (int)(ry2)%BLOCK_SIZE;
                 }
             }
         }
@@ -273,12 +301,14 @@ void drawRays(int map[][MAP_WIDTH]){
                 ry = hy;
                 distT = disH;
                 direction = 0;
+                htexture = (int)(rx)%BLOCK_SIZE;
             }
             else {
                 rx = vx;
                 ry = vy;
                 distT = disV;
                 direction = 1;
+                htexture = (int)(ry)%BLOCK_SIZE;
             }
         }
 
@@ -288,15 +318,15 @@ void drawRays(int map[][MAP_WIDTH]){
         if (ra < 0) ra += 2*pi;
 
         // draw ray
-        drawRayColumn(ra, distT, r, foundTransparentWallV, direction);
         if (foundTransparentWallV){
             if (foundSolidWallV){
-                drawRayColumn(ra, distT2, r, 0, direction2);
+                drawRayColumn(ra, distT2, r, 0, direction2  , htexture2);
             }
             else {
-                drawRayColumn(ra, distT2, r, 0, direction);
+                drawRayColumn(ra, distT2, r, 0, direction, htexture2);
             }
         }
+        drawRayColumn(ra, distT, r, foundTransparentWallV, direction, htexture);
         // draw the ray in the minimap
         addRayToList(rx, ry);
 
@@ -364,6 +394,9 @@ void drawGame(){
 void mainLoop(){
     createWindow();
     initRays();
+
+    netTexture = loadTexture("Res/net.png");
+    crowdTexture = loadTexture("Res/crowd.png");
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
