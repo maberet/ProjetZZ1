@@ -6,15 +6,84 @@ SDL_Renderer *renderer;
 TTF_Font *RobotoFont;
 SDL_DisplayMode screenDimension;
 
+SDL_Rect destRect;
 SDL_Rect rect;
 SDL_Rect sky;
 SDL_Rect ground;
 
-// ray casting variables
-float htexture;
-int r, mx, my, dof;
-double rx, ry, xo, yo, distT;
-double ra;
+SDL_Texture * netTexture;
+SDL_Texture * crowdTexture;
+
+int ** rays;
+int  raysListLength = 0;
+
+
+rayInfo_t raysListHead;
+
+float fps;
+
+SDL_Texture * loadTexture(char * path) {
+    SDL_Surface * surface = IMG_Load(path);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    return texture;
+}
+
+void addRayInfoToList(rayInfo_t * rayInfoHead, rayInfo_t * rayInfo) {
+    rayInfo->next = rayInfoHead->next;
+    rayInfoHead->next = rayInfo;
+}
+
+void freeRayInfoList(rayInfo_t * rayInfoHead) {
+    rayInfo_t * rayInfo = rayInfoHead->next;
+    while (rayInfo != NULL) {
+        //printf("freeing : %p\n", rayInfo);
+        rayInfo_t * next = rayInfo->next;
+        free(rayInfo);
+        rayInfo = next;
+    }
+}
+
+rayInfo_t * allocRayInfo(float ra, float distT, int r, int isTransparent, int direction, float htexture){
+    rayInfo_t * rayInfo = malloc(sizeof(rayInfo_t));
+    if (rayInfo == NULL) {
+        printf("Error: malloc failed\n");
+        exit(1);
+    }
+    rayInfo->ra = ra;
+    rayInfo->distT = distT;
+    rayInfo->r = r;
+    rayInfo->isTransparent = isTransparent;
+    rayInfo->direction = direction;
+    rayInfo->htexture = htexture;
+    rayInfo->next = NULL;
+    return rayInfo;
+}
+
+void initRays(){
+    int i;
+    rays = malloc(sizeof(int*) * 2 * NB_RAYS);
+    for (i = 0; i < NB_RAYS * 2; i++){
+        rays[i] = malloc(sizeof(int) * 2);
+    }
+}
+
+void addRayToList(int x, int y){
+    if (raysListLength < 2 * NB_RAYS){
+        *rays[raysListLength] = x;
+        *(rays[raysListLength] + 1) = y;
+        raysListLength++;
+    }
+}
+
+void resetRayList(){
+    int i;
+    for (i = 0; i < 2 * NB_RAYS; i++){
+        *rays[i] = 0;
+        *(rays[i] + 1) = 0;
+    }
+    raysListLength = 0;
+}
 
 // end ray casting variables
 
@@ -58,15 +127,71 @@ void endSDL(){
     SDL_Quit();
 }
 
-void drawRays(int map[][MAP_WIDTH]){
+
+void drawRayColumn(rayInfo_t * rayInfo){
+    float ca = player.angle - rayInfo->ra;
+    if (ca < 0) ca += 2*pi;
+    if (ca > 2*pi) ca -= 2*pi;
+    rayInfo->distT = rayInfo->distT * cos(ca);
+
+    float lineH = (screenDimension.h/2)/rayInfo->distT;
+    rect.x = rayInfo->r;
+    rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
+    rect.w = 1;
+    rect.h = (2 * screenDimension.w * lineH/20);
+
+    destRect.x = rayInfo->htexture;
+    destRect.y = 0;
+    destRect.w = 1;
+    destRect.h = 64;
+
+    if (rayInfo->isTransparent){
+        rect.h *= 1.75;
+        rect.y -= rect.h/3;
+        SDL_RenderCopy(renderer, netTexture, &destRect, &rect);
+
+    }
+    else {
+        destRect.x += + 64 * (SDL_GetTicks()/200 % 4);
+        if (rayInfo->direction){
+            SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
+        }
+        else {
+            SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
+        }
+    }
+}
+
+void drawRays(){
+    rayInfo_t * current = raysListHead.next;
+    while (current != NULL){
+        //printf("%p\n", current);
+        fflush(stdout);
+        drawRayColumn(current);
+        current = current->next;
+    }
+}
+
+void castRays(int map[][MAP_WIDTH]){
+    // ray casting variables
+    float htexture, htexture2;
+    int r, mx, my, dof;
+    double rx, ry, rx2, ry2,  xo, yo, distT, distT2;
+    double ra;
+    mx = 0;
+    my = 0;
+    resetRayList();
+    freeRayInfoList(&raysListHead);
+    raysListHead.next = NULL;
     ra = player.angle - DR * FOV_ANGLE/4;
     if (ra < 0) ra -= 2*pi;
     if (ra > 2*pi) ra -= 2*pi;
     for (r = 0; r<NB_RAYS; r++){
         // check horizontal rays
-        printf("ray %d\n", r);
+        //int foundTransparentWallH = 0;
+        int foundSolidWallH = 0;
         dof = 0;
-        float disH = 100000, hx = player.x, hy = player.y;
+        float disH = 100000, disH2 = 100000, hx = player.x, hy = player.y , hx2 = player.x, hy2 = player.y;
         float aTan = -1/tan(ra);
         if (ra > pi){ // looking up
             ry = (((int)player.y>>6)<<6) - 0.0001;
@@ -94,6 +219,16 @@ void drawRays(int map[][MAP_WIDTH]){
                     hy = ry;
                     disH = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
                     dof = DOF;
+                    foundSolidWallH = 1;
+                }
+                else {
+                    hx2 = rx;
+                    hy2 = ry;
+                    disH2 = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    //foundTransparentWallH = 1;
+                    dof++;
+                    rx += xo;
+                    ry += yo;
                 }
             }
             else {
@@ -103,11 +238,11 @@ void drawRays(int map[][MAP_WIDTH]){
             }
         }
 
-        printf("hx %f hy %f\n", hx, hy);
+        //printf("hx %f hy %f\n", hx, hy);
 
         // check vertical rays
         dof = 0;
-        float disV = 100000, vx = player.x, vy = player.y;
+        float disV = 100000, disV2 = 100000 , vx = player.x, vy = player.y, vx2, vy2;
         float nTan = -tan(ra);
         if (ra > pi/2 && ra < 3*pi/2){ // looking left
             rx = (((int)player.x>>6)<<6) - 0.0001;
@@ -121,20 +256,32 @@ void drawRays(int map[][MAP_WIDTH]){
             xo = BLOCK_SIZE;
             yo = -xo*nTan;
         }
-        if (ra == pi || ra == 0){ // looking horizontally
-            rx = player.x;
+        if (ra == pi || ra == 0){
             ry = player.y;
+            rx = player.x;
             dof = DOF;
         }
+        int foundSolidWallV = 0;
+        int foundTransparentWallV = 0;
         while (dof < DOF){
             mx = (int)rx>>6;
             my = (int)ry>>6;
-            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT){
+            if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx]){
                 if (map[my][mx] == 1){
                     vx = rx;
                     vy = ry;
                     disV = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    foundSolidWallV = 1;
                     dof = DOF;
+                }
+                else {
+                    vx2 = rx;
+                    vy2 = ry;
+                    disV2 = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
+                    foundTransparentWallV = 1;
+                    dof++;
+                    rx += xo;
+                    ry += yo;
                 }
             }
             else {
@@ -144,43 +291,139 @@ void drawRays(int map[][MAP_WIDTH]){
             }
         }
 
-        printf("vx %f vy %f\n", vx, vy);
+        int direction, direction2;
+        
+        if (foundTransparentWallV){
+            if (disH < disV2){
+                rx = hx2;
+                ry = hy2;
+                distT = disH2;
+                direction = 0;
+                htexture = (int)(rx)%BLOCK_SIZE;
+            }
+            else {
+                rx = vx2;
+                ry = vy2;
+                distT = disV2;
+                direction = 1;
+                htexture = (int)(ry)%BLOCK_SIZE;
+            }
+            if (foundSolidWallV){
+                if (disH < disV){
+                    rx2 = hx;
+                    ry2 = hy;
+                    distT2 = disH;
+                    direction2 = 0;
+                    htexture2 = (int)(rx2)%BLOCK_SIZE;
+                }
+                else {
+                    rx2 = vx;
+                    ry2 = vy;
+                    distT2 = disV;
+                    direction2 = 1;
+                    htexture2 = (int)(ry2)%BLOCK_SIZE;
+                }
+            }
+            if (foundSolidWallH){
+                if (disH < disV){
+                    rx2 = hx;
+                    ry2 = hy;
+                    distT2 = disH;
+                    direction2 = 0;
+                    htexture2 = (int)(rx2)%BLOCK_SIZE;
+                }
+                else {
+                    rx2 = vx;
+                    ry2 = vy;
+                    distT2 = disV;
+                    direction2 = 1;
+                    htexture2 = (int)(ry2)%BLOCK_SIZE;
+                }
+            }
+        }
 
-        if (disH < disV) {
-            rx = hx;
-            ry = hy;
-            distT = disH;
-        }
         else {
-            rx = vx;
-            ry = vy;
-            distT = disV;
+            if (disH < disV) {
+                rx = hx;
+                ry = hy;
+                distT = disH;
+                direction = 0;
+                htexture = (int)(rx)%BLOCK_SIZE;
+            }
+            else {
+                rx = vx;
+                ry = vy;
+                distT = disV;
+                direction = 1;
+                htexture = (int)(ry)%BLOCK_SIZE;
+            }
         }
+
+
         ra = ra + ANGLE_INC/2;
         if (ra > 2*pi) ra -= 2*pi;
         if (ra < 0) ra += 2*pi;
 
-        // draw column
-        float ca = player.angle - ra;
-        if (ca < 0) ca += 2*pi;
-        if (ca > 2*pi) ca -= 2*pi;
-        distT = distT * cos(ca);
-        float lineH = (screenDimension.h/2)/distT;
-
-        rect.x = r;
-        rect.y = screenDimension.h/2 - lineH;
-        rect.w = 1;
-        rect.h = (int)(2 * screenDimension.h * lineH/200);
-
-        if (disH < disV) {
-            SDL_SetRenderDrawColor(renderer, 255, rand() % 255, 0, 255);
+        // draw ray
+        rayInfo_t * column = allocRayInfo(ra, distT, r, foundTransparentWallV, direction, htexture);
+        addRayInfoToList(&raysListHead, column);
+        if (foundTransparentWallV){
+            if (foundSolidWallV){
+                rayInfo_t * column = allocRayInfo(ra, distT2, r, 0, direction2  , htexture2);
+                addRayInfoToList(&raysListHead, column);
+            }
+            else {
+                rayInfo_t * column = allocRayInfo(ra, distT2, r, 0, direction, htexture2);
+                addRayInfoToList(&raysListHead, column);
+            }
         }
-        else {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        }
+        // draw the ray in the minimap
+        addRayToList(rx, ry);
+        addRayToList(rx2, ry2);
+
+    }
+}
+
+void drawEnnemy(){
+    float ennemyAngle = atan2((ennemy.y + ennemy.w/2)  - (player.y + player.w/2) , (ennemy.x + ennemy.w/2) - (player.x + player.w/2));
+    if (ennemyAngle < 0) ennemyAngle += 2*pi;
+    if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
+    float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
+    float ennemyBaseWidth = BLOCK_SIZE;
+    float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
+    float ennemyDistanceY = ennemyDistance * fabs(sin(ennemyAngle - player.angle)) * BLOCK_SIZE;
+    float scaledEnnemyWidth = ennemyBaseWidth / sqrt(3);
+    int ennemyWidth = 50;
+    int ennemyHeight = 200;
+
+    //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
+
+
+    if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+        rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
+        rect.y = (screenDimension.h/2 + player.angle) -  MAP_WIDTH * ennemyDistance/200000;
+        rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
+        rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
+
+        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
+}
+
+void drawSkyAndGround(){
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer, NULL);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    sky.x = 0;
+    sky.y = 0;
+    sky.w = screenDimension.w;
+    sky.h = screenDimension.h/2 + player.viewAngle;
+    SDL_RenderFillRect(renderer, &sky);
+    
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void drawMap2D(int map[][MAP_WIDTH]){
@@ -189,14 +432,26 @@ void drawMap2D(int map[][MAP_WIDTH]){
     rect.h = CELL_SIZE;
     rect.x = 0;
     rect.y = 0;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    for (i = 0; i < raysListLength; i++){
+        SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE , player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
+    }
     for (i = 0; i < MAP_HEIGHT; i++){
         for (j = 0; j < MAP_WIDTH; j++){
-            if (map[i][j] == 1){
+            switch (map[i][j])
+            {
+            case 1:
                 SDL_SetRenderDrawColor(renderer, 5, 255, 255, 255);
                 SDL_RenderFillRect(renderer, &rect);
+                break;
+
+            case 2:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
+                SDL_RenderFillRect(renderer, &rect);
+                break;
             }
-            else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            if ((i == player.x/BLOCK_SIZE && j == player.y/BLOCK_SIZE) || (i == ennemy.x/BLOCK_SIZE && j == ennemy.y/BLOCK_SIZE)){
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
                 SDL_RenderFillRect(renderer, &rect);
             }
             rect.x += CELL_SIZE;
@@ -204,12 +459,36 @@ void drawMap2D(int map[][MAP_WIDTH]){
         rect.y += CELL_SIZE;
         rect.x = 0;
     }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
+
+void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int a){
+    SDL_Color color = {r, g, b, a};
+    SDL_Surface *text = TTF_RenderText_Solid(RobotoFont, str, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text);
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(text);
+    SDL_DestroyTexture(texture);
+}
+
+void drawFPS(){
+    char str[10];
+    sprintf(str, "%d", (int)fps);
+    drawString(str, screenDimension.w - 50, 0, 50, 50, 255, 255, 255, 255);
 }
 
 void drawGame(){
     SDL_RenderClear(renderer);
-    drawRays(map);
-    //drawMap2D(map);
+    drawSkyAndGround();
+    castRays(map);
+    drawEnnemy();
+    drawRays();
+    drawMap2D(map);
+    drawFPS();
     SDL_RenderPresent(renderer);
 }
 
@@ -217,6 +496,10 @@ void drawGame(){
 
 void mainLoop(){
     createWindow();
+    initRays();
+
+    netTexture = loadTexture("Res/net.png");
+    crowdTexture = loadTexture("Res/crowd.png");
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
@@ -233,6 +516,7 @@ void mainLoop(){
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
             //printf("fps: %f\n", 1000/delta);
+            fps = 1000/delta;
             b = a;
             switch (game_state){
                 case MENU:
