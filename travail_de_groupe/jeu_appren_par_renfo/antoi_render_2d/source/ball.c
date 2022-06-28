@@ -9,6 +9,12 @@ void  initBall (){
 
 }
 
+
+double f(int x, float xc, float yc, float xf, float yf, float xt, float yt){
+    double returnValue = yf * ((x - xc)/(xf - xc)) * ((x - xt)/(xf - xt)) + yc * ((x - xf)/(xc - xf)) * ((x - xt)/(xc - xt)) + yt * ((x - xc)/(xt - xc)) * ((x - xf)/(xt - xf));
+    return returnValue;
+}
+
 void laGrange (float beta[3],float Z[3]){ // y , x 
     printf("x canon : %f, x chute : %f, x filet : %f\n", Z[0], Z[1], Z[2]);
     printf("y canon : %f, y chute : %f, y filet : %f\n", beta[0], beta[1], beta[2]);
@@ -40,6 +46,9 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     float setUp[2][3];
     float distance= (float)(yDropPoint-canon.y);
 
+
+    printf("test : %f\n", y);
+
     trajectory[0][0]=canon.y;
     trajectory[0][1]=canon.x;
 
@@ -65,7 +74,7 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     
     laGrange(setUp[1],setUp[0]); //laGrange(y, x);
 
-    printf("coef a:%f; coef b:%f; coef c:%f\n", coefLagrange.a, coefLagrange.b, coefLagrange.c);
+    //printf("coef a:%f; coef b:%f; coef c:%f\n", coefLagrange.a, coefLagrange.b, coefLagrange.c);
 
     float step= distance / (NUMBERPOINT-1);
 
