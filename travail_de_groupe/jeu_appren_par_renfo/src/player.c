@@ -30,6 +30,30 @@ void initPlayer(){
     player.viewAngle = 0;
 }
 
+void hitBall(){
+    //printf("map edges: %d %d\n",  BLOCK_SIZE * MAP_WIDTH/2,  BLOCK_SIZE *MAP_HEIGHT/2);
+    //printf("ray1: %d %d\n", ray1[0], ray1[1]);
+    int angleMin = RD * atan2((MAP_WIDTH/2)*BLOCK_SIZE - player.x, player.y);
+    int angleMax = 90 + RD * atan2((MAP_WIDTH/2)*BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
+    int currAngle = (int) ((player.angle) * RD +90) %360;
+    //printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360 );
+    printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
+    if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2))/BLOCK_SIZE < HIT_RANGE){
+        if (currAngle < angleMax && currAngle > angleMin){
+            printf("hit\n");
+            if (player.isHitting){
+                ball.x = player.x;
+                ball.y = player.y;
+            }
+           printf("valid hit\n");
+        }
+        else {
+            printf("unvalid hit\n");
+        }
+    }
+    //}
+}
+
 void manageMovement(){
     float x_increment = (Keys[0] - Keys[2]) * player.deltax + (Keys[3] - Keys[1]) * sin(player.angle);
     float y_increment = (Keys[0] - Keys[2]) * player.deltay + (Keys[1] - Keys[3]) * cos(player.angle);
@@ -45,4 +69,5 @@ void manageMovement(){
 
 void managePlayer(){
     manageMovement();
+    hitBall();
 }
