@@ -13,6 +13,7 @@ SDL_Rect ground;
 
 SDL_Texture * netTexture;
 SDL_Texture * crowdTexture;
+SDL_Texture * playerTexture;
 
 int ** rays;
 int  raysListLength = 0;
@@ -405,10 +406,12 @@ void drawEnnemy(){
         rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
         rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
 
+        destRect.x = 0;
+        destRect.y = 0;
+        destRect.w = 64;
+        destRect.h = 64;
         //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
 }
 
@@ -500,6 +503,7 @@ void mainLoop(){
 
     netTexture = loadTexture("Res/net.png");
     crowdTexture = loadTexture("Res/crowd.png");
+    playerTexture = loadTexture("Res/player_sprite.png");
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
