@@ -10,5 +10,6 @@
 extern int Keys[NB_KEYS];
 
 void *EventLoop(void *arg);
+void initKeys();
 
 #endif 

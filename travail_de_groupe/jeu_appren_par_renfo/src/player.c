@@ -3,16 +3,16 @@
 player_t player;
 
 void initPlayer(){
-    player.x= 4*BLOCK_SIZE;
-    player.y= 4*BLOCK_SIZE;
+    player.x= 6*BLOCK_SIZE;
+    player.y= 6*BLOCK_SIZE;
     player.speed = 1;
     player.isMoving = 0;
     player.HPMax = 3;
     player.currentHP = player.HPMax;
     player.coins = 0;
     player.angle=0;
-    player.deltax = cos(player.angle);
-    player.deltay = -sin(player.angle);
+    player.deltax = 0;
+    player.deltay = 1;
     player.viewAngle = 0;
 }
 

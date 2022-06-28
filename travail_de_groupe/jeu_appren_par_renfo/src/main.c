@@ -10,6 +10,7 @@ int main(){
     readMapFromFile("map.txt");
     printMap();
     initPlayer();
+    initKeys();
 
     mainLoop();
 

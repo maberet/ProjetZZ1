@@ -3,6 +3,14 @@
 
 int Keys[NB_KEYS];
 
+void initKeys(){
+    int i;
+    for(i = 0; i < NB_KEYS; i++)
+    {
+        Keys[i] = 0;
+    }
+}
+
 void gestMenu(){
     SDL_Event event;
     while (SDL_PollEvent(&event)){

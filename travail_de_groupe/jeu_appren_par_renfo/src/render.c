@@ -29,13 +29,13 @@ SDL_Texture * loadTexture(char * path) {
 void initRays(){
     int i;
     rays = malloc(sizeof(int*) * 2 * NB_RAYS);
-    for (i = 0; i < NB_RAYS; i++){
+    for (i = 0; i < NB_RAYS * 2; i++){
         rays[i] = malloc(sizeof(int) * 2);
     }
 }
 
 void addRayToList(int x, int y){
-    if (raysListLength < NB_RAYS){
+    if (raysListLength < 2 * NB_RAYS){
         *rays[raysListLength] = x;
         *(rays[raysListLength] + 1) = y;
         raysListLength++;
@@ -44,7 +44,7 @@ void addRayToList(int x, int y){
 
 void resetRayList(){
     int i;
-    for (i = 0; i < NB_RAYS; i++){
+    for (i = 0; i < 2 * NB_RAYS; i++){
         *rays[i] = 0;
         *(rays[i] + 1) = 0;
     }
@@ -332,6 +332,7 @@ void drawRays(int map[][MAP_WIDTH]){
         drawRayColumn(ra, distT, r, foundTransparentWallV, direction, htexture);
         // draw the ray in the minimap
         addRayToList(rx, ry);
+        addRayToList(rx2, ry2);
 
     }
 }
@@ -378,7 +379,7 @@ void drawMap2D(int map[][MAP_WIDTH]){
         rect.x = 0;
     }
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    for (i = 0; i < NB_RAYS; i++){
+    for (i = 0; i < raysListLength; i++){
         SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE , player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
