@@ -17,6 +17,8 @@ SDL_Texture * crowdTexture;
 int ** rays;
 int  raysListLength = 0;
 
+float fps;
+
 SDL_Texture * loadTexture(char * path) {
     SDL_Surface * surface = IMG_Load(path);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -115,6 +117,7 @@ void drawRayColumn(float ra, float distT, int r, int isTransparent, int directio
 
     }
     else {
+        destRect.x += + 64 * (SDL_GetTicks()/400 % 4);
         if (direction){
             SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
             //SDL_SetRenderDrawColor(renderer, 255 * (1 - isTransparent), 255, 0, 255 * (1 - isTransparent));
@@ -381,11 +384,31 @@ void drawMap2D(int map[][MAP_WIDTH]){
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
+void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int a){
+    SDL_Color color = {r, g, b, a};
+    SDL_Surface *text = TTF_RenderText_Solid(RobotoFont, str, color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, text);
+    rect.x = x;
+    rect.y = y;
+    rect.w = w;
+    rect.h = h;
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_FreeSurface(text);
+    SDL_DestroyTexture(texture);
+}
+
+void drawFPS(){
+    char str[10];
+    sprintf(str, "%d", (int)fps);
+    drawString(str, screenDimension.w - 50, 0, 50, 50, 255, 255, 255, 255);
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
     drawRays(map);
     drawMap2D(map);
+    drawFPS();
     SDL_RenderPresent(renderer);
 }
 
@@ -413,6 +436,7 @@ void mainLoop(){
         delta = (a - b);
         if (delta > 1000/FPS_TO_GET){
             //printf("fps: %f\n", 1000/delta);
+            fps = 1000/delta;
             b = a;
             switch (game_state){
                 case MENU:
