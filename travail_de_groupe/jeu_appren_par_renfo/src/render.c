@@ -163,12 +163,24 @@ void drawRayColumn(rayInfo_t * rayInfo){
     }
 }
 
-void drawRays(){
+void drawVerticalRays(){
     rayInfo_t * current = raysListHead.next;
     while (current != NULL){
         //printf("%p\n", current);
-        fflush(stdout);
-        drawRayColumn(current);
+        if (current->direction){
+            drawRayColumn(current);
+        }
+        current = current->next;
+    }
+}
+
+void drawHorizentalRays(){
+    rayInfo_t * current = raysListHead.next;
+    while (current != NULL){
+        //printf("%p\n", current);
+        if (!current->direction){
+            drawRayColumn(current);
+        }
         current = current->next;
     }
 }
@@ -402,15 +414,15 @@ void drawEnnemy(){
 
     if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
-        rect.y = (screenDimension.h/2 + player.angle) -  MAP_WIDTH * ennemyDistance/200000;
         rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
         rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
+        rect.y = (screenDimension.h/2 + player.viewAngle) - rect.h/5;
 
         destRect.x = 0;
         destRect.y = 0;
         destRect.w = 64;
         destRect.h = 64;
-        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
         SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
 }
@@ -488,8 +500,9 @@ void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
     castRays(map);
+    drawHorizentalRays();
     drawEnnemy();
-    drawRays();
+    drawVerticalRays();
     drawMap2D(map);
     drawFPS();
     SDL_RenderPresent(renderer);
