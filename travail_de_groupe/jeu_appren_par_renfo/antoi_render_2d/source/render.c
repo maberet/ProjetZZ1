@@ -8,7 +8,11 @@ int window_height = 700;
 TTF_Font *robotoFont;
 
 int zoom = 40;
+//terrain devrait etre un .c et .h comme canon
+// on aurait un SDL_Rect en terrain TopView et SideView
+//là mélange bizarre mais fonctionnel
 SDL_Rect terrain;
+SDL_Rect drawerTerrainSideView;
 
 SDL_Rect filet;
 SDL_Rect canon_rect;
@@ -64,7 +68,6 @@ void initTerrain(){
 }
 
 void initPointDeChute(){
-    initTerrain();
     srand(time(NULL));
     point_x_rand = (int)rand()%terrain.w;
     point_y_rand = (int)rand()%(terrain.h/2);
@@ -73,7 +76,6 @@ void initPointDeChute(){
 int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
     int z = -1;
     // pdc = point de chute
-    int pdc_x = terrainX + point_x_rand;
     int pdc_y = terrainY + terrainH/2 + point_y_rand;
     //en haut à gauche => 1
     if(point_x_rand>=0 && point_x_rand<terrainW/2 && pdc_y<terrainY+(3*terrainH)/4){
@@ -95,7 +97,6 @@ int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
 }
 
 void newCanon(){
-    initTerrain();
     srand(time(NULL));
     canon.x = (int)rand()%terrain.w;
     canon.y = (int)rand()%(terrain.h/2);
@@ -112,9 +113,6 @@ void drawString(char *text, int x, int y, int w, int h, int r, int g, int b, int
 }
 
 void drawTerrainTopView(){
-    //terrain
-    initTerrain();
-
     //filet
     filet.x = terrain.x;
     filet.h = 4;
@@ -145,21 +143,20 @@ void drawTerrainTopView(){
 
 void drawTerrainSideView(){
     //terrain
-    //PAS BIEN A CHANGE !!!!!!!!!!!!!!!
-    terrain.x = terrain.x + terrain.w + 50;
-    terrain.y = terrain.y + terrain.h; 
-    terrain.h = 4;
-    terrain.w = 13.40 * zoom;
+    drawerTerrainSideView.x = terrain.x + terrain.w + 50;
+    drawerTerrainSideView.y = terrain.y + terrain.h; 
+    drawerTerrainSideView.h = 4;
+    drawerTerrainSideView.w = 13.40 * zoom;
 
     //filet
     filet.w = 4;
-    filet.x = terrain.x + terrain.w/2 - filet.w/2;
+    filet.x = drawerTerrainSideView.x + drawerTerrainSideView.w/2 - filet.w/2;
     filet.h = -1.55 * zoom;
-    filet.y = terrain.y; 
+    filet.y = drawerTerrainSideView.y; 
     
     //terrain en blanc
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &terrain);
+    SDL_RenderFillRect(renderer, &drawerTerrainSideView);
 
     //filet en vert
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
@@ -194,8 +191,8 @@ void drawCanonSideView(){
     //canon 
     canon_rect.w = canon.length; 
     canon_rect.h = canon.height;
-    canon_rect.x = terrain.x + canon.y;
-    canon_rect.y = terrain.y - canon.height;
+    canon_rect.x = drawerTerrainSideView.x + canon.y;
+    canon_rect.y = drawerTerrainSideView.y - canon.height;
 
     //canon en noir
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -206,8 +203,8 @@ void drawPointDeChuteSideView(){
     //point de chute de la balle
     point_de_chute.w = 5;
     point_de_chute.h = 5;
-    point_de_chute.x = terrain.x + terrain.w/2 + point_y_rand;
-    point_de_chute.y = terrain.y;
+    point_de_chute.x = drawerTerrainSideView.x + drawerTerrainSideView.w/2 + point_y_rand;
+    point_de_chute.y = drawerTerrainSideView.y;
 
     //point de chute de la balle
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
@@ -259,11 +256,7 @@ void drawBall(){
     }
 
     //draw hero mana
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    for(i=0; i<hero.mana; i++){
-        SDL_RenderFillRect(renderer, &rect_mana);
-        rect_mana.x = rect_mana.x + rect_mana.w + 20;
-    }*/
+    */
     
 }
 
@@ -271,6 +264,7 @@ void drawBall(){
 void mainLoop(){
     createWindow();
     initCanon();
+    initTerrain();
     initPointDeChute();
 
     pthread_t eventThread;
@@ -288,7 +282,6 @@ void mainLoop(){
         drawCanonTopView();
         drawPointDeChuteTopView();
         drawTrajectoireTopView();
-        initTerrain();
         zone_canon = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
         zone_chute = getZoneChute(terrain.x, terrain.y, terrain.w, terrain.h);
 
