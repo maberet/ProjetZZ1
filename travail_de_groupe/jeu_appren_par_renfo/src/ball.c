@@ -37,7 +37,7 @@ float defineAngle (canon_t canon, int xDropPoint, int yDropPoint){
 
 void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     int i; 
-    int setUp[2][3]; 
+    float setUp[2][3]; 
     float distance= (float)(yDropPoint-canon.y);
 
     trajectory[0][0]=canon.y;
@@ -46,11 +46,11 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     trajectory[NUMBERPOINT-1][0]=yDropPoint;
     trajectory[NUMBERPOINT-1][1]=0;
 
-    setUp[0][0]=canon.y; 
+    setUp[0][0]=(float)canon.y; 
     setUp[0][1]=0; 
-    setUp[1][0]=yDropPoint;
+    setUp[1][0]=(float)yDropPoint;
     setUp[1][1]=0;
-    setUp[2][0]=(int)(13,40/2);// distance du filet dans le repère de frappe 
+    setUp[2][0]=(13.40/2);// distance du filet dans le repère de frappe 
     setUp[2][1]=1.65; /// hauteur du filet 
     
     laGrange(setUp[0],setUp[1]);

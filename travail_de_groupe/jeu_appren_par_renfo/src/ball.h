@@ -35,6 +35,6 @@ extern int trajectory[NUMBERPOINT][2];
 void  initBall();
 void laGrange (float beta[3],float Z[3]);
 float defineAngle (canon_t ,int ,int );
-void calculationTrajectory(canon_t ,float , int, int);
+void calculationTrajectory(canon_t , int, int);
 
 #endif 
