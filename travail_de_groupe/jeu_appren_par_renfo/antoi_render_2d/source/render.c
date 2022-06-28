@@ -70,7 +70,6 @@ void initPointDeChute(){
     point_y_rand = (int)rand()%(terrain.h/2);
 }
 
-
 int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
     int z = -1;
     // pdc = point de chute
@@ -81,19 +80,17 @@ int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
         z = 1;
     }
     //en haut à droite => 2
-    /*else if(){
+    else if(point_x_rand>=terrainW/2 && point_x_rand<=terrainW && pdc_y<terrainY+(3*terrainH)/4){
         z = 2;
     }
     //en bas à gauche => 3
-    else if(point_x_rand>=0 && point_x_rand<terrainW/2 && ){
+    else if(point_x_rand>=0 && point_x_rand<terrainW/2 && pdc_y>=terrainY+(3*terrainH)/4){
         z = 3;
     }
     //en bas à droite => 4
-    */else{
-        z = -6;
+    else{
+        z = 4;
     }
-    printf("point_x_rand : %d, terrainW/2: %d\n", point_x_rand, terrainW/2);
-    printf("pdc_x : %d, pdc_y : %d, tX : %d, tY : %d\n", pdc_x, pdc_y, terrainX, terrainY);
     return z;
 }
 
@@ -148,6 +145,7 @@ void drawTerrainTopView(){
 
 void drawTerrainSideView(){
     //terrain
+    //PAS BIEN A CHANGE !!!!!!!!!!!!!!!
     terrain.x = terrain.x + terrain.w + 50;
     terrain.y = terrain.y + terrain.h; 
     terrain.h = 4;
