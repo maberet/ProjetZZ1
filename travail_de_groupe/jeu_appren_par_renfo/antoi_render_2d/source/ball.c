@@ -1,144 +1,87 @@
 #include "ball.h"
 
-ball_t ball;  
-laGrange_t coefLagrange; 
-int trajectory[NUMBERPOINT][2]; 
-int trajectoireAntoine[20][2];
+ball_t ball;
+int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
-void  initBall (){ 
-
-
+void initBall()
+{
 }
 
-
-double f(int x, float xc, float yc, float xf, float yf, float xt, float yt){
-    double returnValue = yf * ((x - xc)/(xf - xc)) * ((x - xt)/(xf - xt)) + yc * ((x - xf)/(xc - xf)) * ((x - xt)/(xc - xt)) + yt * ((x - xc)/(xt - xc)) * ((x - xf)/(xt - xf));
-    return returnValue;
-}
-
-void laGrange (float beta[3],float Z[3]){ // y , x 
-    printf("x canon : %f, x chute : %f, x filet : %f\n", Z[0], Z[1], Z[2]);
-    printf("y canon : %f, y chute : %f, y filet : %f\n", beta[0], beta[1], beta[2]);
-
-    coefLagrange.a= Z[0]/((beta[0]-beta[1])*(beta[0]-beta[2]))
-                +Z[1]/((beta[1]-beta[0])*(beta[1]-beta[2]))
-                +Z[2]/((beta[2]-beta[0])*(beta[2]-beta[1]));
-
-    coefLagrange.b= -(Z[0]*(beta[1]+beta[2]))/((beta[0]-beta[1])*(beta[0]-beta[2]))
-                -(Z[1]*(beta[0]+beta[2]))/((beta[1]-beta[0])*(beta[1]-beta[2]))
-                -(Z[2]*(beta[0]+beta[1]))/((beta[2]-beta[0])*(beta[2]-beta[1]));
-
-    coefLagrange.c= (Z[0]*beta[1]*beta[2])/((beta[0]-beta[1])*(beta[0]-beta[2]))
-                +(Z[1]*beta[0]*beta[2])/((beta[1]-beta[0])*(beta[1]-beta[2]))
-                +(Z[2]*beta[0]*beta[1])/((beta[2]-beta[0])*(beta[2]-beta[1]));
-}
-
-float defineAngle (canon_t canon, int xDropPoint, int yDropPoint){
+float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
+{
     float distance;
     float angleSin;
-    distance= sqrtf( powf((float)(xDropPoint-canon.x),2)+powf((float)(yDropPoint-canon.y),2)); 
-    angleSin = asinf(distance/(xDropPoint-canon.x));
+    distance = sqrtf(powf((float)(xDropPoint - canonX), 2) + powf((float)(yDropPoint - canonY), 2));
+    angleSin = asinf(distance / (xDropPoint - canonX));
     return angleSin;
 }
 
-
-void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
-    int i; 
-    float setUp[2][3];
-    float distance= (float)(yDropPoint-canon.y);
-
-
-    //printf("test : %f\n", y);
-
-    trajectory[0][0]=canon.y;
-    trajectory[0][1]=canon.x;
-
-    trajectory[NUMBERPOINT-1][0]=yDropPoint;
-    trajectory[NUMBERPOINT-1][1]=xDropPoint;
-
-    setUp[1][0]=(float)canon.y; 
-    setUp[0][0]=canon.x; 
-    setUp[1][1]=(float)yDropPoint;
-    setUp[0][1]=xDropPoint;
-    //setUp[0][2]=(13.40/2);// distance du filet dans le repère de frappe
-    //filet X
-    //terrain.w = 5.20 * zoom;
-    // setUp[0][2] = terrain.x + terrain.w + 50 + (13.40 * zoom)/2 -2;
-    setUp[0][2] = 50 + 5.20 * 40 + 50 + (13.40 * 40)/2 - 2;
-
-    //filet Y
-    // drawerTerrainSideView.y - 1,55 * zoom
-    // drawerTerrainSideView.y = terrain.y + terrain.h;
-    //terrain.h = 13.40 * zoom 
-    //setUp[1][2] = 1.55*40; /// hauteur du filet 
-    setUp[1][2] = 50 + 13.40  * 40 - 3.55 * 40;
-    
-    laGrange(setUp[1],setUp[0]); //laGrange(y, x);
-
-    //printf("coef a:%f; coef b:%f; coef c:%f\n", coefLagrange.a, coefLagrange.b, coefLagrange.c);
-
-    float step= distance / (NUMBERPOINT-1);
-
-    for (i=1; i<NUMBERPOINT-1; i++){
-        trajectory[i][0]=(int)((float)canon.y + i*step); 
-        trajectory[i][1]=(int)(coefLagrange.c+
-                    coefLagrange.b*((float)canon.y + i*step)+
-                    coefLagrange.a*(powf((float)canon.y + i*step,2)));
-    }
-}
-
-//output of Lagrange interpolation method is obtained in yp
-//xp is interpolation point given by user
-//xd : x depart
-//yd : y depart
-//xt : x target
-//yt : y target
-// DONNE UN POINT
-int calculTrajectoireAntoine(float xp, int xd, int yd, int xf, int yf, int xt, int yt){
-    float x[100], y[100], yp=0, p;
-    int i,j,n;
+/*
+ * Fonction qui prend une valeur de x et 3 points. Elle
+ * renvoie la coordonnée y liée à la valeur de x sur la
+ * courbe passant par les 3 points.
+ * Valeur de x : float xp
+ * Point n°1 (départ) : int xd, int yd
+ * Point n°2 (filet ) : int xf, int yf
+ * Point n°3 (target) : int xt, int yt
+ */
+int lagrangeInterpolation(float xp, int xd, int yd, int xf, int yf, int xt, int yt)
+{
+    float x[4], y[4], yp = 0, p;
+    int i, j, n;
+    // nombre de points pour trouver la courbe
     n = 3;
-
+    // coordonnées x des 3 points
     x[1] = xd;
     x[2] = xf;
     x[3] = xt;
-
+    // coordonnées y des 3 points
     y[1] = yd;
     y[2] = yf;
     y[3] = yt;
-
-    /* Implementing Lagrange Interpolation */
-    for(i=1;i<=n;i++)
+    // implementation de l'interpolation de Lagrange
+    for (i = 1; i <= n; i++)
     {
-        p=1;
-        for(j=1;j<=n;j++)
+        p = 1;
+        for (j = 1; j <= n; j++)
         {
-            if(i!=j)
+            if (i != j)
             {
-                p = p* (xp - x[j])/(x[i] - x[j]);
+                p = p * (xp - x[j]) / (x[i] - x[j]);
             }
         }
         yp = yp + p * y[i];
     }
-    printf("Interpolated value at %.3f is %.3f.\n", xp, yp);
+    // affichage pouvant servir
+    // printf("Interpolated value at %.3f is %.3f.\n", xp, yp);
+    // valeur de y associée à xp sur la courbe
     return yp;
 }
 
-// utilise calculTrajectoireAntoine pour 
-// calculer une liste de point a tracer
-
-void calculTrajectoireAntoine2(int xd, int yd, int xf, int yf, int xt, int yt){
-    // on calcule 20 points
-    
-    int pas_de_temps = (xt-xd)/19;
+/*
+ * Fonction qui prend en paramètres 3 points et retourne met dans le
+ * tableau à 2 dimensions trajectoireAntoine la liste des points de
+ * la courbe qui passe par ces 3 points. Le pas de temps est defini
+ * par NUMBERPOINT_TRAJEC.
+ */
+void calculTrajectoireAntoine2(int xd, int yd, int xf, int yf, int xt, int yt)
+{
+    // pas de temps
+    int pas_de_temps = (xt - xd) / (NUMBERPOINT_TRAJEC - 1);
     int i;
-    for (i=0; i<19; i++){
-        // x
-        trajectoireAntoine[i][0] = (int)(xd + i*pas_de_temps);
-        // y
-        trajectoireAntoine[i][1] = calculTrajectoireAntoine(trajectoireAntoine[i][0], xd, yd, xf, yf, xt, yt);
-    }  
+    // point de départ
+    trajectoireAntoine[0][0] = xd;
+    trajectoireAntoine[0][1] = yd;
+    // on cherche les pas de temps pour tous les pas de temps
+    // sauf départ et arrivée
+    for (i = 1; i < NUMBERPOINT_TRAJEC - 1; i++)
+    {
+        // calcul du x
+        trajectoireAntoine[i][0] = (int)(xd + i * pas_de_temps);
+        // calcul du y
+        trajectoireAntoine[i][1] = lagrangeInterpolation(trajectoireAntoine[i][0], xd, yd, xf, yf, xt, yt);
+    }
+    // point d'arrivée
+    trajectoireAntoine[NUMBERPOINT_TRAJEC - 1][0] = xt;
+    trajectoireAntoine[NUMBERPOINT_TRAJEC - 1][1] = yt;
 }
-
-
-
