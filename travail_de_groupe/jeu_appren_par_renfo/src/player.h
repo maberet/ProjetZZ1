@@ -9,6 +9,8 @@
 #define ENTITIES_LEFT 2
 #define ENTITIES_RIGHT 3
 
+#define HIT_RANGE 2
+
 #define MOVEMENT_SPEED 2
 typedef struct player{
     float x;
@@ -17,6 +19,7 @@ typedef struct player{
     int w;
     int speed;
     int isMoving;
+    int isHitting;
     int direction;
     int HPMax;
     int currentHP;

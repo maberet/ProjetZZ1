@@ -18,6 +18,8 @@ SDL_Texture * playerTexture;
 int ** rays;
 int  raysListLength = 0;
 
+int * ray1;
+int * ray2;
 
 rayInfo_t raysListHead;
 
@@ -67,6 +69,10 @@ void initRays(){
     for (i = 0; i < NB_RAYS * 2; i++){
         rays[i] = malloc(sizeof(int) * 2);
     }
+}
+
+int isRaysListEmpty(){
+    return raysListLength == 0;
 }
 
 void addRayToList(int x, int y){
@@ -391,6 +397,21 @@ void castRays(int map[][MAP_WIDTH]){
             }
         }
         // draw the ray in the minimap
+        if (r == 0){
+            //printf("%d %d\n", (int)rx, (int)ry);
+            ray1[0] = (int)rx;
+            ray1[1] = (int)ry;
+            //printf("ray1 %d %d\n", ray1[0], ray1[1]);
+            //printf("ray2 %d %d\n", ray2[0], ray2[1]);
+        }
+        if (r == NB_RAYS - 1){
+            //printf("%d %d\n", (int)rx, (int)ry);
+            ray2[0] = (int)rx;
+            ray2[1] = (int)ry;
+            printf("ray1 %d %d\n", ray1[0]/BLOCK_SIZE, ray1[1]/BLOCK_SIZE);
+            printf("ray2 %d %d\n", ray2[0]/BLOCK_SIZE, ray2[1]/BLOCK_SIZE);
+        }
+        //printf("raylistlength %d\n", raysListLength);
         addRayToList(rx, ry);
         addRayToList(rx2, ry2);
 
@@ -410,7 +431,7 @@ void drawEnnemy(){
     int ennemyHeight = 200;
 
     //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
-
+    //printf("%f\n", player.angle * RD);
 
     if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
@@ -422,7 +443,7 @@ void drawEnnemy(){
         destRect.y = 0;
         destRect.w = 64;
         destRect.h = 64;
-        printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
         SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
 }
@@ -449,7 +470,7 @@ void drawBall(){
         destRect.y = 0;
         destRect.w = 64;
         destRect.h = 64;
-        printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
         SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
 }
@@ -545,6 +566,9 @@ void mainLoop(){
     netTexture = loadTexture("Res/net.png");
     crowdTexture = loadTexture("Res/crowd.png");
     playerTexture = loadTexture("Res/player_sprite.png");
+
+    ray1 = malloc(sizeof(int) * 2);
+    ray2 = malloc(sizeof(int) * 2);
 
     unsigned int a = SDL_GetTicks();
     unsigned int b = SDL_GetTicks();
