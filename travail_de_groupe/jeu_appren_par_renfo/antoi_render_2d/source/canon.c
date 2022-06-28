@@ -8,7 +8,7 @@ void initCanon(){
     canon.length = 20;
     canon.x = 100;
     canon.y = 20;
-    canon.zone = 1;
+    canon.zone = -1;
 }
 
 int getZone(int terrainX, int terrainY, int terrainW, int terrainH){

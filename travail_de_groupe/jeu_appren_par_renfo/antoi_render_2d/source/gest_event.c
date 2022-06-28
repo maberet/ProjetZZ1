@@ -37,7 +37,7 @@ void manageGame(){
 
                     case SDLK_r:
                         newCanon();
-                        zone_canon = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
+                        canon.zone = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
                         break;
                         
                     default:

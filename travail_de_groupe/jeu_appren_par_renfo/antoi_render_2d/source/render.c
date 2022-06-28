@@ -12,16 +12,18 @@ int zoom = 40;
 // on aurait un SDL_Rect en terrain TopView et SideView
 //là mélange bizarre mais fonctionnel
 SDL_Rect terrain;
-SDL_Rect drawerTerrainSideView;
+SDL_Rect drawerTerrainSideView; // drawerTerrain pour les deux vues
 
 SDL_Rect filet;
-SDL_Rect canon_rect;
+//drawerFilet
+
+//canon est un .c
+SDL_Rect drawerCanon;
+
+//point de chute devrait etre un .c et .h
 SDL_Rect point_de_chute;
+SDL_Rect drawerPointDeChute;
 
-int point_x_rand;
-int point_y_rand;
-
-int zone_canon = -1;
 int zone_chute = -1;
 
 void createWindow(){
@@ -68,25 +70,27 @@ void initTerrain(){
 }
 
 void initPointDeChute(){
+    point_de_chute.w = 5;
+    point_de_chute.h = 5;
     srand(time(NULL));
-    point_x_rand = (int)rand()%terrain.w;
-    point_y_rand = (int)rand()%(terrain.h/2);
+    point_de_chute.x = (int)rand()%terrain.w; 
+    point_de_chute.y = (int)rand()%(terrain.h/2);
 }
 
 int getZoneChute(int terrainX, int terrainY, int terrainW, int terrainH){
     int z = -1;
     // pdc = point de chute
-    int pdc_y = terrainY + terrainH/2 + point_y_rand;
+    int pdc_y = terrainY + terrainH/2 + point_de_chute.y;
     //en haut à gauche => 1
-    if(point_x_rand>=0 && point_x_rand<terrainW/2 && pdc_y<terrainY+(3*terrainH)/4){
+    if(point_de_chute.x<terrainW/2 && pdc_y<terrainY+(3*terrainH)/4){
         z = 1;
     }
     //en haut à droite => 2
-    else if(point_x_rand>=terrainW/2 && point_x_rand<=terrainW && pdc_y<terrainY+(3*terrainH)/4){
+    else if(point_de_chute.x>=terrainW/2 && pdc_y<terrainY+(3*terrainH)/4){
         z = 2;
     }
     //en bas à gauche => 3
-    else if(point_x_rand>=0 && point_x_rand<terrainW/2 && pdc_y>=terrainY+(3*terrainH)/4){
+    else if(point_de_chute.x<terrainW/2 && pdc_y>=terrainY+(3*terrainH)/4){
         z = 3;
     }
     //en bas à droite => 4
@@ -165,50 +169,50 @@ void drawTerrainSideView(){
 
 void drawCanonTopView(){
     //canon 
-    canon_rect.w = canon.width; 
-    canon_rect.h = canon.length;
-    canon_rect.x = terrain.x + canon.x;
-    canon_rect.y = terrain.y + canon.y;
+    drawerCanon.w = canon.width; 
+    drawerCanon.h = canon.length;
+    drawerCanon.x = terrain.x + canon.x;
+    drawerCanon.y = terrain.y + canon.y;
 
     //canon en noir
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &canon_rect);
+    SDL_RenderFillRect(renderer, &drawerCanon);
 }
 
 void drawPointDeChuteTopView(){
     //point de chute de la balle
-    point_de_chute.w = 5;
-    point_de_chute.h = 5;
-    point_de_chute.x = (int)terrain.x + point_x_rand;
-    point_de_chute.y = (int)terrain.y + terrain.h/2 + point_y_rand;
+    drawerPointDeChute.x = terrain.x + point_de_chute.x;
+    drawerPointDeChute.y = terrain.y + terrain.h/2 + point_de_chute.y;
+    drawerPointDeChute.w = point_de_chute.w;
+    drawerPointDeChute.h = point_de_chute.h;
 
     //point de chute de la balle
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderFillRect(renderer, &point_de_chute);
+    SDL_RenderFillRect(renderer, &drawerPointDeChute);
 }
 
 void drawCanonSideView(){
     //canon 
-    canon_rect.w = canon.length; 
-    canon_rect.h = canon.height;
-    canon_rect.x = drawerTerrainSideView.x + canon.y;
-    canon_rect.y = drawerTerrainSideView.y - canon.height;
+    drawerCanon.w = canon.length; 
+    drawerCanon.h = canon.height;
+    drawerCanon.x = drawerTerrainSideView.x + canon.y;
+    drawerCanon.y = drawerTerrainSideView.y - canon.height;
 
     //canon en noir
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &canon_rect);
+    SDL_RenderFillRect(renderer, &drawerCanon);
 }
 
 void drawPointDeChuteSideView(){
     //point de chute de la balle
-    point_de_chute.w = 5;
-    point_de_chute.h = 5;
-    point_de_chute.x = drawerTerrainSideView.x + drawerTerrainSideView.w/2 + point_y_rand;
-    point_de_chute.y = drawerTerrainSideView.y;
+    drawerPointDeChute.x = drawerTerrainSideView.x + drawerTerrainSideView.w/2 + point_de_chute.y;
+    drawerPointDeChute.y = drawerTerrainSideView.y;
+    drawerPointDeChute.w = point_de_chute.w;
+    drawerPointDeChute.h = point_de_chute.h;
 
     //point de chute de la balle
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderFillRect(renderer, &point_de_chute);
+    SDL_RenderFillRect(renderer, &drawerPointDeChute);
 }
 
 void drawInformations(){
@@ -224,14 +228,14 @@ void drawInformations(){
     strcat(zoneChuteChaine, str2);
     drawString(zoneChuteChaine, window_width-texte_width, texte_height*2, texte_width, texte_height, 255, 255, 255, 255);
     drawString("r : new canon", window_width-texte_width, texte_height*4, texte_width, texte_height, 255, 255, 255, 255);
-    sprintf(str, "%d", zone_canon);
+    sprintf(str, "%d", canon.zone);
     strcat(zoneCanonChaine, str);
     drawString(zoneCanonChaine, window_width-texte_width, texte_height*5, texte_width, texte_height, 255, 255, 255, 255);
 }
 
 void drawTrajectoireTopView(){
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderDrawLine(renderer, terrain.x+canon.x, terrain.y+canon.y, point_de_chute.x, point_de_chute.y);
+    SDL_RenderDrawLine(renderer, terrain.x+canon.x, terrain.y+canon.y, drawerPointDeChute.x, drawerPointDeChute.y);
 }
 
 void drawBall(){
@@ -282,7 +286,7 @@ void mainLoop(){
         drawCanonTopView();
         drawPointDeChuteTopView();
         drawTrajectoireTopView();
-        zone_canon = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
+        canon.zone = getZone(terrain.x, terrain.y, terrain.w, terrain.h);
         zone_chute = getZoneChute(terrain.x, terrain.y, terrain.w, terrain.h);
 
         //side view
