@@ -12,6 +12,7 @@
 #define DOF 100
 #define BLOCK_SIZE 64
 #define DR 0.0174533
+#define RD 57.2958
 #define FOV_ANGLE 120
 #define pi 3.14159265358979323846
 #define NB_RAYS (screenDimension.w)
@@ -31,6 +32,8 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_DisplayMode screenDimension;
 
+extern int * ray1;
+extern int * ray2;
 
 void mainLoop();
 
