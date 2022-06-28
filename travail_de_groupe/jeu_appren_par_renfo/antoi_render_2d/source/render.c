@@ -251,7 +251,7 @@ void drawTrajectoireSideView(){
     );
 
     for(int i=0; i<NUMBERPOINT-1; i++){
-        printf("point %d (%d, %d)\n", i, trajectory[i][0], trajectory[i][1]);
+        //printf("point %d (%d, %d)\n", i, trajectory[i][0], trajectory[i][1]);
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         SDL_RenderDrawLine(renderer, trajectory[i][0], trajectory[i][1], trajectory[i+1][0], trajectory[i+1][1]);
     }
