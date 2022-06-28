@@ -13,10 +13,6 @@ void laGrange (float beta[3],float Z[3]){ // y , x
     printf("x canon : %f, x chute : %f, x filet : %f\n", Z[0], Z[1], Z[2]);
     printf("y canon : %f, y chute : %f, y filet : %f\n", beta[0], beta[1], beta[2]);
 
-    beta[0] =-beta[0];
-    beta[1] =-beta[1];
-    beta[2] =-beta[2];
-
     coefLagrange.a= Z[0]/((beta[0]-beta[1])*(beta[0]-beta[2]))
                 +Z[1]/((beta[1]-beta[0])*(beta[1]-beta[2]))
                 +Z[2]/((beta[2]-beta[0])*(beta[2]-beta[1]));
@@ -38,6 +34,7 @@ float defineAngle (canon_t canon, int xDropPoint, int yDropPoint){
     return angleSin;
 }
 
+
 void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     int i; 
     float setUp[2][3];
@@ -58,7 +55,6 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     //terrain.w = 5.20 * zoom;
     // setUp[0][2] = terrain.x + terrain.w + 50 + (13.40 * zoom)/2 -2;
     setUp[0][2] = 50 + 5.20 * 40 + 50 + (13.40 * 40)/2 - 2;
-    //setUp[0][2] = 0;
 
     //filet Y
     // drawerTerrainSideView.y - 1,55 * zoom
@@ -66,7 +62,6 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     //terrain.h = 13.40 * zoom 
     //setUp[1][2] = 1.55*40; /// hauteur du filet 
     setUp[1][2] = 50 + 13.40  * 40 - 3.55 * 40;
-    //setUp[1][2] = 0;
     
     laGrange(setUp[1],setUp[0]); //laGrange(y, x);
 
@@ -80,5 +75,4 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
                     coefLagrange.b*((float)canon.y + i*step)+
                     coefLagrange.a*(powf((float)canon.y + i*step,2)));
     }
-
 }

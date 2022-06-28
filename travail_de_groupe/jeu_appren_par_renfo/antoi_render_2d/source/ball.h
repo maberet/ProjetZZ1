@@ -7,7 +7,7 @@
 #include <math.h>
 #include "canon.h"
 
-#define NUMBERPOINT 300
+#define NUMBERPOINT 200
 
 typedef enum {
  false,true
