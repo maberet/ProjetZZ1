@@ -93,7 +93,7 @@ void gestGame(){
 
 
                     default:
-                        continue;
+                        break;
                     }
 
                 case SDL_KEYDOWN:
@@ -114,10 +114,13 @@ void gestGame(){
                         case SDLK_q:
                             Keys[1] = 0;
                             continue;
+
+                        default:
+                            break;
                     }
 
                 default:
-                    continue;
+                    break;
 
                 
             }

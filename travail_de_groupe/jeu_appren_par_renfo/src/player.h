@@ -26,6 +26,7 @@ typedef struct player{
 } player_t;
 
 extern player_t player;
+extern player_t ennemy;
 
 void initPlayer();
 void managePlayer();

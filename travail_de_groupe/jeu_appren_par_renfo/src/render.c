@@ -117,22 +117,17 @@ void drawRayColumn(float ra, float distT, int r, int isTransparent, int directio
 
     }
     else {
-        destRect.x += + 64 * (SDL_GetTicks()/400 % 4);
+        destRect.x += + 64 * (SDL_GetTicks()/200 % 4);
         if (direction){
             SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
-            //SDL_SetRenderDrawColor(renderer, 255 * (1 - isTransparent), 255, 0, 255 * (1 - isTransparent));
         }
         else {
             SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
-            //SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255 * (1 - isTransparent));
         }
     }
-    //SDL_RenderFillRect(renderer, &rect);
-    //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
-
-void drawRays(int map[][MAP_WIDTH]){
+void castRays(int map[][MAP_WIDTH]){
     // ray casting variables
     float htexture, htexture2;
     int r, mx, my, dof;
@@ -146,7 +141,7 @@ void drawRays(int map[][MAP_WIDTH]){
     if (ra > 2*pi) ra -= 2*pi;
     for (r = 0; r<NB_RAYS; r++){
         // check horizontal rays
-        int foundTransparentWallH = 0;
+        //int foundTransparentWallH = 0;
         int foundSolidWallH = 0;
         dof = 0;
         float disH = 100000, disH2 = 100000, hx = player.x, hy = player.y , hx2 = player.x, hy2 = player.y;
@@ -183,7 +178,7 @@ void drawRays(int map[][MAP_WIDTH]){
                     hx2 = rx;
                     hy2 = ry;
                     disH2 = sqrt((rx-player.x)*(rx-player.x) + (ry-player.y)*(ry-player.y));
-                    foundTransparentWallH = 1;
+                    //foundTransparentWallH = 1;
                     dof++;
                     rx += xo;
                     ry += yo;
@@ -337,6 +332,34 @@ void drawRays(int map[][MAP_WIDTH]){
     }
 }
 
+void drawEnnemy(){
+    float ennemyAngle = atan2(ennemy.y - player.y, ennemy.x - player.x);
+    if (ennemyAngle < 0) ennemyAngle += 2*pi;
+    if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
+    float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
+    float ennemyBaseWidth = BLOCK_SIZE;
+    float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
+    float ennemyDistanceY = ennemyDistance * fabs(sin(ennemyAngle - player.angle)) * BLOCK_SIZE;
+    float scaledEnnemyWidth = ennemyBaseWidth / sqrt(3);
+    int ennemyWidth = 50;
+    int ennemyHeight = 200;
+
+    printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
+
+
+    if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+        rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
+        rect.y = (screenDimension.h/2 + player.angle) -  MAP_WIDTH * ennemyDistance/200000;
+        rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
+        rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
+
+        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    }
+}
+
 void drawSkyAndGround(){
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderFillRect(renderer, NULL);
@@ -357,30 +380,32 @@ void drawMap2D(int map[][MAP_WIDTH]){
     rect.h = CELL_SIZE;
     rect.x = 0;
     rect.y = 0;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    for (i = 0; i < raysListLength; i++){
+        SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE , player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
+    }
     for (i = 0; i < MAP_HEIGHT; i++){
         for (j = 0; j < MAP_WIDTH; j++){
-            if (map[i][j] == 1){
+            switch (map[i][j])
+            {
+            case 1:
                 SDL_SetRenderDrawColor(renderer, 5, 255, 255, 255);
                 SDL_RenderFillRect(renderer, &rect);
+                break;
+
+            case 2:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
+                SDL_RenderFillRect(renderer, &rect);
+                break;
             }
-            else {
-                if (i == player.x/BLOCK_SIZE && j == player.y/BLOCK_SIZE){
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-                    SDL_RenderFillRect(renderer, &rect);
-                }
-                else {
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderFillRect(renderer, &rect);
-                }
+            if ((i == player.x/BLOCK_SIZE && j == player.y/BLOCK_SIZE) || (i == ennemy.x/BLOCK_SIZE && j == ennemy.y/BLOCK_SIZE)){
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_RenderFillRect(renderer, &rect);
             }
             rect.x += CELL_SIZE;
         }
         rect.y += CELL_SIZE;
         rect.x = 0;
-    }
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    for (i = 0; i < raysListLength; i++){
-        SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE , player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
@@ -407,9 +432,10 @@ void drawFPS(){
 void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
-    drawRays(map);
+    castRays(map);
     drawMap2D(map);
     drawFPS();
+    drawEnnemy();
     SDL_RenderPresent(renderer);
 }
 
