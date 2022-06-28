@@ -1,0 +1,63 @@
+Projet ZZ1
+Apprentissage par renforcement
+Groupe : 5
+Membres : Taha Belkhiri, Marc Beret et Antoine Meyer
+
+Définition apprentissage par renforcement :
+Programme/agent/système qui réalise une suite d'actions et après un certain laps de temps, qui évalue la qualité de l'état atteint. On remonte alors dans la liste des actions réalisées et on augmente(si éval. finale favorable) leur probabilité de réalisation ou on la diminue (défavorable). 
+
+But :
+Apprendre à un programme à prendre des décisions. 
+
+Besoins :
+- un environnement 
+- des actions/perceptions dans cet environnement
+- un agent
+
+Problèmes :
+- nombre de simulations très important
+- réglage de ξ est laborieux et assez dépendant du problème
+
+Suites décroissantes de limite nulle :
+Choix parmis 3 suites.
+
+[4.2.2 La formule de mise à jour]
+Formule de mise à jour avec forme de suite : Un+1 = Un + ξ × (a−Un) avec 0<ξ<1
+Etendu du résultat à une suite de réalisations d'une variable aléatoire :
+- suite de variables aléatoires (An), identiquement distribuées en fonction de n et admettant une même espérance A,
+- suite de variables aléatoires (Un) par Un+1 = Un + ξ × (An−Un),
+- suite des espérances des variables Un par Vn = E(Un).
+Choix de ξ :
+- ξ petit (proche de 0) => fluctuations de faible amplitude
+- ξ grand (proche de 1) => convergence rapide
+- => trouver un compromis et expliquer notre choix !
+
+[4.3 Apprentissage par renforcement]
+Mécanisme :Z
+1 - regarder le monde
+2 - choisir une action
+3 - percevoir une récompense
+4 - faire un retour d'expérience pour améliorer les choix
+
+[4.4 Qualité d'une action ou d'un état]
+
+
+
+
+IDEES :
+- jeu de société
+- un jeu avec un petit plateau, un personnage entre, tue un monstre, recupere une cle et sort du plateau. Là le jeu recommence mais le monstre a apprit comment il s'est fait tué. Donc au 2eme tour, il va tenter d'autres moves pour mieux survivre. Tuer le monstre devient donc de + en + compliqué surtout si le joueur si prend de la même manière.
+- jeu tower defense où l'algorithme doit défendre des monstres lancés par le joueur.
+- une fée soigne et assiste un héro. Elle lui donne de la vie, du mana avec un apprentissage pour être le meilleur soutien possible.
+
+- village avec des pnjs dedans.
+- pnj1_pablo : protege la fontaine
+- pnj1_ 
+
+- joueur : clic sur la fontaine , elle perd 3 HP
+
+- il y a un hero il a de la vie, de l'argent, de la mana, de l'attaque, de la défense. Il y a un marchand avec des potions, des épées, etc. Et c'est le marchand, connaissant les stats du héro, qui lui donne un item au hasard qui correspond le mieux a la situation du hero.
+
+
+
+

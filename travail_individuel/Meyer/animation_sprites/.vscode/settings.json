@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "render.h": "c",
+        "stdlib.h": "c",
+        "event.h": "c"
+    }
+}
