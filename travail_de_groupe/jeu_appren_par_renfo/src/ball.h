@@ -5,8 +5,9 @@
 #include <time.h>
 #include <stdio.h>
 #include <math.h>
+#include "canon.h"
 
-extern float coefLagrange[3]; 
+
 #define NUMBERPOINT 5
 
 typedef enum {
@@ -28,6 +29,8 @@ typedef struct laGrange{
 }laGrange_t; 
 
 extern ball_t ball;
+extern laGrange_t coefLagrange; 
+extern int trajectory[NUMBERPOINT][2]; 
 
 void  initBall();
 void laGrange (float beta[3],float Z[3]);
