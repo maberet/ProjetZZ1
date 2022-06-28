@@ -7,6 +7,10 @@ player_t ennemy;
 void initPlayer(){
     player.x= 6*BLOCK_SIZE;
     player.y= 6*BLOCK_SIZE;
+    player.h = 2 * BLOCK_SIZE;
+    player.w = 2 * BLOCK_SIZE;
+    ennemy.h = 2 * BLOCK_SIZE;
+    ennemy.w = 2 * BLOCK_SIZE;
     ennemy.x = 20 * BLOCK_SIZE;
     ennemy.y = 15 * BLOCK_SIZE;
     player.speed = 1;

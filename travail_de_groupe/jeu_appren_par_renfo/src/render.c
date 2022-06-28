@@ -17,6 +17,9 @@ SDL_Texture * crowdTexture;
 int ** rays;
 int  raysListLength = 0;
 
+
+rayInfo_t raysListHead;
+
 float fps;
 
 SDL_Texture * loadTexture(char * path) {
@@ -24,6 +27,37 @@ SDL_Texture * loadTexture(char * path) {
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
     return texture;
+}
+
+void addRayInfoToList(rayInfo_t * rayInfoHead, rayInfo_t * rayInfo) {
+    rayInfo->next = rayInfoHead->next;
+    rayInfoHead->next = rayInfo;
+}
+
+void freeRayInfoList(rayInfo_t * rayInfoHead) {
+    rayInfo_t * rayInfo = rayInfoHead->next;
+    while (rayInfo != NULL) {
+        //printf("freeing : %p\n", rayInfo);
+        rayInfo_t * next = rayInfo->next;
+        free(rayInfo);
+        rayInfo = next;
+    }
+}
+
+rayInfo_t * allocRayInfo(float ra, float distT, int r, int isTransparent, int direction, float htexture){
+    rayInfo_t * rayInfo = malloc(sizeof(rayInfo_t));
+    if (rayInfo == NULL) {
+        printf("Error: malloc failed\n");
+        exit(1);
+    }
+    rayInfo->ra = ra;
+    rayInfo->distT = distT;
+    rayInfo->r = r;
+    rayInfo->isTransparent = isTransparent;
+    rayInfo->direction = direction;
+    rayInfo->htexture = htexture;
+    rayInfo->next = NULL;
+    return rayInfo;
 }
 
 void initRays(){
@@ -93,24 +127,25 @@ void endSDL(){
     SDL_Quit();
 }
 
-void drawRayColumn(float ra, float distT, int r, int isTransparent, int direction, float htexture){
-    float ca = player.angle - ra;
+
+void drawRayColumn(rayInfo_t * rayInfo){
+    float ca = player.angle - rayInfo->ra;
     if (ca < 0) ca += 2*pi;
     if (ca > 2*pi) ca -= 2*pi;
-    distT = distT * cos(ca);
+    rayInfo->distT = rayInfo->distT * cos(ca);
 
-    float lineH = (screenDimension.h/2)/distT;
-    rect.x = r;
+    float lineH = (screenDimension.h/2)/rayInfo->distT;
+    rect.x = rayInfo->r;
     rect.y = (screenDimension.h/2 + player.viewAngle) - lineH;
     rect.w = 1;
     rect.h = (2 * screenDimension.w * lineH/20);
 
-    destRect.x = htexture;
+    destRect.x = rayInfo->htexture;
     destRect.y = 0;
     destRect.w = 1;
     destRect.h = 64;
 
-    if (isTransparent){
+    if (rayInfo->isTransparent){
         rect.h *= 1.75;
         rect.y -= rect.h/3;
         SDL_RenderCopy(renderer, netTexture, &destRect, &rect);
@@ -118,12 +153,22 @@ void drawRayColumn(float ra, float distT, int r, int isTransparent, int directio
     }
     else {
         destRect.x += + 64 * (SDL_GetTicks()/200 % 4);
-        if (direction){
+        if (rayInfo->direction){
             SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
         }
         else {
             SDL_RenderCopy(renderer, crowdTexture, &destRect, &rect);
         }
+    }
+}
+
+void drawRays(){
+    rayInfo_t * current = raysListHead.next;
+    while (current != NULL){
+        //printf("%p\n", current);
+        fflush(stdout);
+        drawRayColumn(current);
+        current = current->next;
     }
 }
 
@@ -136,6 +181,8 @@ void castRays(int map[][MAP_WIDTH]){
     mx = 0;
     my = 0;
     resetRayList();
+    freeRayInfoList(&raysListHead);
+    raysListHead.next = NULL;
     ra = player.angle - DR * FOV_ANGLE/4;
     if (ra < 0) ra -= 2*pi;
     if (ra > 2*pi) ra -= 2*pi;
@@ -191,7 +238,7 @@ void castRays(int map[][MAP_WIDTH]){
             }
         }
 
-        printf("hx %f hy %f\n", hx, hy);
+        //printf("hx %f hy %f\n", hx, hy);
 
         // check vertical rays
         dof = 0;
@@ -318,15 +365,18 @@ void castRays(int map[][MAP_WIDTH]){
         if (ra < 0) ra += 2*pi;
 
         // draw ray
+        rayInfo_t * column = allocRayInfo(ra, distT, r, foundTransparentWallV, direction, htexture);
+        addRayInfoToList(&raysListHead, column);
         if (foundTransparentWallV){
             if (foundSolidWallV){
-                drawRayColumn(ra, distT2, r, 0, direction2  , htexture2);
+                rayInfo_t * column = allocRayInfo(ra, distT2, r, 0, direction2  , htexture2);
+                addRayInfoToList(&raysListHead, column);
             }
             else {
-                drawRayColumn(ra, distT2, r, 0, direction, htexture2);
+                rayInfo_t * column = allocRayInfo(ra, distT2, r, 0, direction, htexture2);
+                addRayInfoToList(&raysListHead, column);
             }
         }
-        drawRayColumn(ra, distT, r, foundTransparentWallV, direction, htexture);
         // draw the ray in the minimap
         addRayToList(rx, ry);
         addRayToList(rx2, ry2);
@@ -335,7 +385,7 @@ void castRays(int map[][MAP_WIDTH]){
 }
 
 void drawEnnemy(){
-    float ennemyAngle = atan2(ennemy.y - player.y, ennemy.x - player.x);
+    float ennemyAngle = atan2((ennemy.y + ennemy.w/2)  - (player.y + player.w/2) , (ennemy.x + ennemy.w/2) - (player.x + player.w/2));
     if (ennemyAngle < 0) ennemyAngle += 2*pi;
     if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
     float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
@@ -346,7 +396,7 @@ void drawEnnemy(){
     int ennemyWidth = 50;
     int ennemyHeight = 200;
 
-    printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
+    //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
 
 
     if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
@@ -435,9 +485,10 @@ void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
     castRays(map);
+    drawEnnemy();
+    drawRays();
     drawMap2D(map);
     drawFPS();
-    drawEnnemy();
     SDL_RenderPresent(renderer);
 }
 

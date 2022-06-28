@@ -17,6 +17,16 @@
 #define NB_RAYS (screenDimension.w)
 #define ANGLE_INC ((DR * FOV_ANGLE) / NB_RAYS)
 
+typedef struct rayInfo{
+    float ra;
+    float distT;
+    int r;
+    int isTransparent;
+    int direction; 
+    float htexture;
+    struct rayInfo * next;
+} rayInfo_t;
+
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_DisplayMode screenDimension;

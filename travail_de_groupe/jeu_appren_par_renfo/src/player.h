@@ -13,6 +13,8 @@
 typedef struct player{
     float x;
     float y;
+    int h;
+    int w;
     int speed;
     int isMoving;
     int direction;
