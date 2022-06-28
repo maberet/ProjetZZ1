@@ -238,6 +238,25 @@ void drawTrajectoireTopView(){
     SDL_RenderDrawLine(renderer, terrain.x+canon.x, terrain.y+canon.y, drawerPointDeChute.x, drawerPointDeChute.y);
 }
 
+void drawTrajectoireSideView(){
+    canon_t canon_trajectoire_sideview;
+    canon_trajectoire_sideview.y = drawerTerrainSideView.x + canon.y;
+    canon_trajectoire_sideview.x = drawerTerrainSideView.y;
+
+    drawerPointDeChute.y = terrain.y + terrain.h; 
+
+    calculationTrajectory(canon_trajectoire_sideview,
+                        drawerPointDeChute.y,
+                        drawerPointDeChute.x
+    );
+
+    for(int i=0; i<NUMBERPOINT-1; i++){
+        printf("point %d (%d, %d)\n", i, trajectory[i][0], trajectory[i][1]);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_RenderDrawLine(renderer, trajectory[i][0], trajectory[i][1], trajectory[i+1][0], trajectory[i+1][1]);
+    }
+}
+
 void drawBall(){
     /*int i;
     SDL_Rect rect_life;
@@ -293,6 +312,7 @@ void mainLoop(){
         drawTerrainSideView();
         drawCanonSideView();
         drawPointDeChuteSideView();
+        drawTrajectoireSideView();
     
         //
         drawInformations();
