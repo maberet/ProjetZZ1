@@ -50,7 +50,7 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
     float distance= (float)(yDropPoint-canon.y);
 
 
-    printf("test : %f\n", y);
+    //printf("test : %f\n", y);
 
     trajectory[0][0]=canon.y;
     trajectory[0][1]=canon.x;
