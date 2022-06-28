@@ -427,6 +427,33 @@ void drawEnnemy(){
     }
 }
 
+void drawBall(){
+    float ballAngle = atan2((ball.y + ball.w/2)  - (player.y + player.w/2) , (ball.x + ball.w/2) - (player.x + player.w/2));
+    if (ballAngle < 0) ballAngle += 2*pi;
+    if (ballAngle > 2*pi) ballAngle -= 2*pi;
+    float ballDistance = sqrt((ball.x - player.x)*(ball.x - player.x) + (ball.y - player.y)*(ball.y - player.y)) * BLOCK_SIZE;
+    float ballBaseWidth = BLOCK_SIZE/2;
+    float ballDistanceX = ballDistance * cos(ballAngle - player.angle) * BLOCK_SIZE;
+    float ballDistanceY = ballDistance * fabs(sin(ballAngle - player.angle)) * BLOCK_SIZE;
+    float scaledBallWidth = ballBaseWidth / sqrt(3);
+    int ballWidth = 25;
+    int ballHeight = 25;
+
+    if (ballAngle >= player.angle - (FOV_ANGLE)/2 * DR && ballAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+        rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
+        rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
+        rect.h = (ballHeight * screenDimension.h)/(ballDistance/BLOCK_SIZE);
+        rect.y = (screenDimension.h/2 + player.viewAngle) - rect.h/5;
+
+        destRect.x = 0;
+        destRect.y = 0;
+        destRect.w = 64;
+        destRect.h = 64;
+        printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h); 
+        SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
+    }
+}
+
 void drawSkyAndGround(){
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderFillRect(renderer, NULL);
@@ -503,6 +530,7 @@ void drawGame(){
     drawHorizentalRays();
     drawEnnemy();
     drawVerticalRays();
+    drawBall();
     drawMap2D(map);
     drawFPS();
     SDL_RenderPresent(renderer);
