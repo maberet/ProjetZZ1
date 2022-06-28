@@ -119,6 +119,18 @@ void gestGame(){
                             break;
                     }
 
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT){
+                        player.isHitting = 1;
+                    }
+                    break;
+                
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button == SDL_BUTTON_LEFT){
+                        player.isHitting = 0;
+                    }
+                    break;
+
                 default:
                     break;
 

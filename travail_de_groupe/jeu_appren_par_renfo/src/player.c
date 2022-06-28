@@ -6,6 +6,9 @@ player_t ennemy;
 
 player_t ball;
 
+int * landingPoint;
+int * lastHitPoint;
+
 void initPlayer(){
     player.x= 6*BLOCK_SIZE;
     player.y= 6*BLOCK_SIZE;
@@ -28,6 +31,33 @@ void initPlayer(){
     player.deltax = 0;
     player.deltay = 1;
     player.viewAngle = 0;
+    ball.isHit = 0;
+    ball.speed = 0;
+    ball.angle = -pi;
+}
+
+int * generateLandingPoint(){
+    int * landingPoint = malloc(sizeof(int) * 2);
+    int randomLength = rand() % (int)(MAP_WIDTH*BLOCK_SIZE - player.x);
+    int randomPointX = randomLength * cos(player.angle) + player.x;
+    int randomPointY = randomLength * sin(player.angle) + player.y;
+    landingPoint[0] = randomPointX/BLOCK_SIZE;
+    landingPoint[1] = randomPointY/BLOCK_SIZE;
+    printf("landing point: %d %d\n", landingPoint[0], landingPoint[1]);
+    return landingPoint;
+}
+
+int * allocLastHitPoint(){
+    int * lastHitPoint = malloc(sizeof(int) * 2);
+    lastHitPoint[0] = 0;
+    lastHitPoint[1] = 0;
+    return lastHitPoint;
+}
+
+void freeIntList(int * list){
+    if (list != NULL){
+        free(list);
+    }
 }
 
 void hitBall(){
@@ -36,14 +66,24 @@ void hitBall(){
     int angleMin = RD * atan2((MAP_WIDTH/2)*BLOCK_SIZE - player.x, player.y);
     int angleMax = 90 + RD * atan2((MAP_WIDTH/2)*BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
     int currAngle = (int) ((player.angle) * RD +90) %360;
-    //printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360 );
+    //printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
     printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2))/BLOCK_SIZE < HIT_RANGE){
         if (currAngle < angleMax && currAngle > angleMin){
             printf("hit\n");
+            freeIntList(landingPoint);
+            freeIntList(lastHitPoint);
+            lastHitPoint = allocLastHitPoint();
+            landingPoint = generateLandingPoint();
             if (player.isHitting){
+                lastHitPoint[0] = player.x;
+                lastHitPoint[1] = player.h;
                 ball.x = player.x;
                 ball.y = player.y;
+                ball.z = player.h;
+                ball.angle = player.angle;
+                ball.speed = HIT_FORCE;
+                ball.isHit = 1;
             }
            printf("valid hit\n");
         }
@@ -53,6 +93,16 @@ void hitBall(){
     }
     //}
 }
+
+void updateBall(){
+    ball.x = ball.x + ball.speed * cos(ball.angle);
+    ball.y = ball.y + ball.speed * sin(ball.angle);
+    if (ball.isHit){
+        ball.z = lagrangeInterpolation(ball.x, lastHitPoint[0], lastHitPoint[1], 15 , 2*player.h, landingPoint[0], 0);
+    }
+    printf("ball position: %f %f %f\n", ball.x/BLOCK_SIZE, ball.y/BLOCK_SIZE, ball.z/BLOCK_SIZE);
+}
+
 
 void manageMovement(){
     float x_increment = (Keys[0] - Keys[2]) * player.deltax + (Keys[3] - Keys[1]) * sin(player.angle);
@@ -70,4 +120,5 @@ void manageMovement(){
 void managePlayer(){
     manageMovement();
     hitBall();
+    updateBall();
 }
