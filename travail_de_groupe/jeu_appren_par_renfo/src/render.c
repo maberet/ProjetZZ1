@@ -14,6 +14,7 @@ SDL_Rect ground;
 SDL_Texture * netTexture;
 SDL_Texture * crowdTexture;
 SDL_Texture * playerTexture;
+SDL_Texture * ballTexture;
 
 int ** rays;
 int  raysListLength = 0;
@@ -439,10 +440,31 @@ void drawEnnemy(){
         rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
         rect.y = (screenDimension.h/2 + player.viewAngle) - rect.h/5;
 
+        
         destRect.x = 0;
         destRect.y = 0;
         destRect.w = 64;
         destRect.h = 64;
+        float angleSum = ennemyAngle + player.angle;
+        printf("player angle %f\n", player.angle * RD);
+        printf("ennemy angle %f\n", ennemyAngle * RD);
+        if (angleSum > 2*pi) angleSum -= 2*pi;
+        if (angleSum < 0) angleSum += 2*pi;
+
+        printf("sum: %f\n", angleSum * RD);
+
+        if (angleSum > 5*pi/3 && angleSum <= pi/3){
+            destRect.x = 2 * destRect.w;
+        }
+        else if (angleSum > pi/3 && angleSum <= 2*pi/3){
+            destRect.x = 3 * destRect.w;
+        }
+        else if (angleSum > 2*pi/3 && angleSum <= 4*pi/3){
+            destRect.x = 0 * destRect.w;
+        }
+        else if (angleSum > 4*pi/3 && angleSum <= 5*pi/3){
+            destRect.x = 1 * destRect.w;
+        }
         //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
         SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
