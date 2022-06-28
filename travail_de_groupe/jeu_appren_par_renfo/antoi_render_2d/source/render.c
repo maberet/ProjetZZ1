@@ -239,22 +239,47 @@ void drawTrajectoireTopView(){
 }
 
 void drawTrajectoireSideView(){
-    canon_t canon_trajectoire_sideview;
+    /*canon_t canon_trajectoire_sideview;
     canon_trajectoire_sideview.y = drawerTerrainSideView.x + canon.y;
-    canon_trajectoire_sideview.x = drawerTerrainSideView.y;
+    canon_trajectoire_sideview.x = drawerTerrainSideView.y;*/
 
-    drawerPointDeChute.y = terrain.y + terrain.h; 
+    /*drawerPointDeChute.y = terrain.y + terrain.h; 
 
     calculationTrajectory(canon_trajectoire_sideview,
                         drawerPointDeChute.y,
                         drawerPointDeChute.x
-    );
+    );*/
 
-    for(int i=0; i<NUMBERPOINT-1; i++){
+
+    //int resultatAntoine = 0;
+    //resultatAntoine = calculTrajectoireAntoine(75.0, 0, 0, 50, 60, 100, 0);
+    /*calculTrajectoireAntoine2(0, -200, 50, 60, 100, -200);
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[5][0], trajectoireAntoine[5][1]);
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[6][0], trajectoireAntoine[6][1]);
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[7][0], trajectoireAntoine[7][1]);*/
+
+    calculTrajectoireAntoine2(
+        terrain.x + terrain.w + 50 + canon.y, //x depart
+        terrain.y + terrain.h, //y depart
+        terrain.x + terrain.w + 50 + terrain.h/2, //x filet
+        terrain.y + terrain.h - 100, //y filet
+        drawerTerrainSideView.x + drawerTerrainSideView.w/2 + point_de_chute.y, // x target
+        terrain.y + terrain.h); // y target
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[5][0], trajectoireAntoine[5][1]);
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[6][0], trajectoireAntoine[6][1]);
+    printf("trajAntoinX : %d; trajAntoinY : %d\n", trajectoireAntoine[7][0], trajectoireAntoine[7][1]);
+
+    for(int i=0; i<18; i++){
         //printf("point %d (%d, %d)\n", i, trajectory[i][0], trajectory[i][1]);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        SDL_RenderDrawLine(renderer, trajectory[i][0], trajectory[i][1], trajectory[i+1][0], trajectory[i+1][1]);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+        SDL_RenderDrawLine(renderer, trajectoireAntoine[i][0], trajectoireAntoine[i][1], trajectoireAntoine[i+1][0], trajectoireAntoine[i+1][1]);
+        //SDL_RenderDrawLine(renderer, trajectory[i][0], trajectory[i][1], trajectory[i+1][0], trajectory[i+1][1]);
     }
+
+
+  
+
+
 }
 
 void drawBall(){

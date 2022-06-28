@@ -3,6 +3,7 @@
 ball_t ball;  
 laGrange_t coefLagrange; 
 int trajectory[NUMBERPOINT][2]; 
+int trajectoireAntoine[20][2];
 
 void  initBall (){ 
 
@@ -85,3 +86,59 @@ void calculationTrajectory(canon_t canon, int xDropPoint, int yDropPoint){
                     coefLagrange.a*(powf((float)canon.y + i*step,2)));
     }
 }
+
+//output of Lagrange interpolation method is obtained in yp
+//xp is interpolation point given by user
+//xd : x depart
+//yd : y depart
+//xt : x target
+//yt : y target
+// DONNE UN POINT
+int calculTrajectoireAntoine(float xp, int xd, int yd, int xf, int yf, int xt, int yt){
+    float x[100], y[100], yp=0, p;
+    int i,j,n;
+    n = 3;
+
+    x[1] = xd;
+    x[2] = xf;
+    x[3] = xt;
+
+    y[1] = yd;
+    y[2] = yf;
+    y[3] = yt;
+
+    /* Implementing Lagrange Interpolation */
+    for(i=1;i<=n;i++)
+    {
+        p=1;
+        for(j=1;j<=n;j++)
+        {
+            if(i!=j)
+            {
+                p = p* (xp - x[j])/(x[i] - x[j]);
+            }
+        }
+        yp = yp + p * y[i];
+    }
+    printf("Interpolated value at %.3f is %.3f.\n", xp, yp);
+    return yp;
+}
+
+// utilise calculTrajectoireAntoine pour 
+// calculer une liste de point a tracer
+
+void calculTrajectoireAntoine2(int xd, int yd, int xf, int yf, int xt, int yt){
+    // on calcule 20 points
+    
+    int pas_de_temps = (xt-xd)/19;
+    int i;
+    for (i=0; i<19; i++){
+        // x
+        trajectoireAntoine[i][0] = (int)(xd + i*pas_de_temps);
+        // y
+        trajectoireAntoine[i][1] = calculTrajectoireAntoine(trajectoireAntoine[i][0], xd, yd, xf, yf, xt, yt);
+    }  
+}
+
+
+
