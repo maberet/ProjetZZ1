@@ -746,7 +746,7 @@ void drawBall()
         rect.x = screenDimension.w / 2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance / BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h) / (ballDistance / BLOCK_SIZE);
-        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - rect.h / 5 - 1.5 * tan(ballViewAngle) * ballDistance;
+        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - sqrt(3) * tan(ballViewAngle) * ballDistance;
         //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
 
         destRect.x = 0;

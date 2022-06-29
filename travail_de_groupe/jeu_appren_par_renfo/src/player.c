@@ -99,7 +99,7 @@ void hitBall()
                 ball.y = player.y;
                 ball.z = player.h;*/
                 ball.angle = player.angle;
-                ball.speed = HIT_FORCE;
+                ball.speed = 2 * HIT_FORCE;
                 ball.z = player.h;
                 ball.isHit = 1;
             }
