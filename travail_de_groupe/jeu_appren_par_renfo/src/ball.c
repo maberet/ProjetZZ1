@@ -25,7 +25,7 @@ float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
  * Point n°2 (filet ) : int xf, int yf
  * Point n°3 (target) : int xt, int yt
  */
-int lagrangeInterpolation(float xp, int xd, int yd, int xf, int yf, int xt, int yt)
+float lagrangeInterpolation(float xp, int xd, int yd, int xf, int yf, int xt, int yt)
 {
     float x[4], y[4], yp = 0, p;
     int i, j, n;
