@@ -12,6 +12,8 @@ SDL_Rect sky;
 SDL_Rect ground;
 
 SDL_Texture *netTexture;
+SDL_Texture *netEdgeLeftTexture;
+SDL_Texture *netEdgeRightTexture;
 SDL_Texture *crowdTexture;
 SDL_Texture *playerTexture;
 SDL_Texture *ballTexture;
@@ -52,7 +54,7 @@ void freeRayInfoList(rayInfo_t *rayInfoHead)
     }
 }
 
-rayInfo_t *allocRayInfo(float ra, float distT, int r, int isTransparent, int direction, float htexture)
+rayInfo_t *allocRayInfo(float ra, float distT, int r, int isTransparent, int direction, float htexture, int rx, int ry)
 {
     rayInfo_t *rayInfo = malloc(sizeof(rayInfo_t));
     if (rayInfo == NULL)
@@ -66,6 +68,8 @@ rayInfo_t *allocRayInfo(float ra, float distT, int r, int isTransparent, int dir
     rayInfo->isTransparent = isTransparent;
     rayInfo->direction = direction;
     rayInfo->htexture = htexture;
+    rayInfo->rx = rx;
+    rayInfo->ry = ry;
     rayInfo->next = NULL;
     return rayInfo;
 }
@@ -176,7 +180,17 @@ void drawRayColumn(rayInfo_t *rayInfo)
     {
         rect.h *= 1.2;
         // rect.y -= rect.h/3;
-        SDL_RenderCopy(renderer, netTexture, &destRect, &rect);
+        if (map[rayInfo->ry/BLOCK_SIZE][rayInfo->rx/BLOCK_SIZE] == 3){
+            SDL_RenderCopy(renderer, netEdgeLeftTexture, &destRect, &rect);
+        }
+        
+        if (map[rayInfo->ry/BLOCK_SIZE][rayInfo->rx/BLOCK_SIZE] == 4){
+            SDL_RenderCopy(renderer, netEdgeRightTexture, &destRect, &rect);
+        }
+
+        else {
+            SDL_RenderCopy(renderer, netTexture, &destRect, &rect);
+        }
     }
     else
     {
@@ -446,18 +460,18 @@ void castRays(int map[][MAP_WIDTH])
             ra += 2 * pi;
 
         // draw ray
-        rayInfo_t *column = allocRayInfo(ra, distT, r, foundTransparentWallV, direction, htexture);
+        rayInfo_t *column = allocRayInfo(ra, distT, r, foundTransparentWallV, direction, htexture, rx, ry);
         addRayInfoToList(&raysListHead, column);
         if (foundTransparentWallV)
         {
             if (foundSolidWallV)
             {
-                rayInfo_t *column = allocRayInfo(ra, distT2, r, 0, direction2, htexture2);
+                rayInfo_t *column = allocRayInfo(ra, distT2, r, 0, direction2, htexture2, rx2, ry2);
                 addRayInfoToList(&raysListHead, column);
             }
             else
             {
-                rayInfo_t *column = allocRayInfo(ra, distT2, r, 0, direction, htexture2);
+                rayInfo_t *column = allocRayInfo(ra, distT2, r, 0, direction, htexture2, rx2, ry2);
                 addRayInfoToList(&raysListHead, column);
             }
         }
@@ -979,10 +993,18 @@ void drawGame()
     SDL_RenderClear(renderer);
     drawSkyAndGround();
     castRays(map);
-    drawHorizentalRays();
-    drawEnnemy();
-    drawVerticalRays();
-    drawBall();
+    if (ball.x < MAP_WIDTH * BLOCK_SIZE/2){
+        drawHorizentalRays();
+        drawEnnemy();
+        drawVerticalRays();
+        drawBall();
+    }
+    else {
+        drawHorizentalRays();
+        drawBall();
+        drawVerticalRays();
+        drawEnnemy();
+    }
     drawMap2D(map);
     drawFPS();
     drawInfosPlayer();
@@ -999,6 +1021,8 @@ void mainLoop()
     crowdTexture = loadTexture("Res/crowd.png");
     playerTexture = loadTexture("Res/player_sprite.png");
     ballTexture = loadTexture("Res/ball_sprite.png");
+    netEdgeLeftTexture = loadTexture("Res/netLeft.png");
+    netEdgeRightTexture = loadTexture("Res/netRight.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
@@ -1030,6 +1054,7 @@ void mainLoop()
                 break;
             case GAME:
                 drawGame();
+                managePlayer();
                 break;
             }
         }

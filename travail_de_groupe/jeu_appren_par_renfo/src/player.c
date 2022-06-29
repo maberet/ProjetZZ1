@@ -19,7 +19,7 @@ void initPlayer()
     ennemy.x = 25 * BLOCK_SIZE;
     ennemy.y = 5 * BLOCK_SIZE;
     ennemy.angle = -pi;
-    player.speed = 1;
+    player.speed = 100;
     player.isMoving = 0;
     player.HPMax = 3;
     player.currentHP = player.HPMax;
@@ -67,6 +67,22 @@ void freeIntList(int *list)
 
 void hitBall()
 {
+<<<<<<< HEAD
+=======
+    // printf("map edges: %d %d\n",  BLOCK_SIZE * MAP_WIDTH/2,  BLOCK_SIZE *MAP_HEIGHT/2);
+    // printf("ray1: %d %d\n", ray1[0], ray1[1]);
+    int fermetureAngle = 2;
+    //int angleMin = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, player.y);
+    //int angleMax = 90 + RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
+    
+
+    
+    //int currAngle = (int)((player.angle) * RD + 90) % 360;
+    //printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
+    //printf("angle min: %d\n", angleMin);
+    //printf("angle max: %d\n", angleMax);
+    //printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
+>>>>>>> 0383eb7e8ec1fcd92d8fd2c6846d5e9ab2d08f17
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
     {
         int rxWall, ryWall;
@@ -74,16 +90,25 @@ void hitBall()
 
         int rxNet, ryNet;
         float distanceNet;
+        if (player.isHitting)
+        {
         castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
         //printf("rayWall: %d %d\n", rxWall/BLOCK_SIZE, ryWall/BLOCK_SIZE);
         //printf("distanceWall: %f\n", distanceWall);
 
+<<<<<<< HEAD
         //printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
         //printf("distanceNet: %f\n", distanceNet);
         if (rxWall > MAP_WIDTH/2)
         {
 
             if (player.isHitting)
+=======
+        printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
+        printf("distanceNet: %f\n", distanceNet);
+            // printf("hit\n");
+            if (rxWall > MAP_WIDTH/2)
+>>>>>>> 0383eb7e8ec1fcd92d8fd2c6846d5e9ab2d08f17
             {
                 
                 freeIntList(lastHitPoint);
