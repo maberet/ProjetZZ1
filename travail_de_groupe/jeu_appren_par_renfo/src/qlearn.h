@@ -10,7 +10,11 @@
 
 #define M_PI 3.14159265358979323846
 
-#define LEARN_RATE 0.9
+#define LEARN_RATE 0.8
+#define DISCOUNT 0.5
+
+
+
 
 #define NUMBER_ZONE_SHOOTER 4
 #define NUMBER_ZONE_RECEIVER 4
