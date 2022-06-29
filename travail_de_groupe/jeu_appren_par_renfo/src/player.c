@@ -63,10 +63,12 @@ void hitBall()
     // printf("ray1: %d %d\n", ray1[0], ray1[1]);
     int fermetureAngle = 2;
     int angleMin = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, player.y);
-    int angleMax = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
+    int angleMax = 25 + RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
     int currAngle = (int)((player.angle) * RD + 90) % 360;
-    // printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
-    // printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
+    printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
+    printf("angle min: %d\n", angleMin);
+    printf("angle max: %d\n", angleMax);
+    //printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
     {
         if (currAngle < angleMax && currAngle > angleMin)
