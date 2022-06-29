@@ -8,15 +8,15 @@ int *lastHitPoint;
 
 void initPlayer()
 {
-    player.x = 6 * BLOCK_SIZE;
-    player.y = 6 * BLOCK_SIZE;
+    player.x = 3 * BLOCK_SIZE;
+    player.y = 5 * BLOCK_SIZE;
     player.h = 2 * BLOCK_SIZE;
     player.w = 2 * BLOCK_SIZE;
     player.angle = 0;
     ennemy.h = 2 * BLOCK_SIZE;
     ennemy.w = 2 * BLOCK_SIZE;
-    ennemy.x = 20 * BLOCK_SIZE;
-    ennemy.y = 10 * BLOCK_SIZE;
+    ennemy.x = 25 * BLOCK_SIZE;
+    ennemy.y = 5 * BLOCK_SIZE;
     ennemy.angle = -pi;
     player.speed = 1;
     player.isMoving = 0;
