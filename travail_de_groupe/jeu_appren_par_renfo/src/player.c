@@ -154,6 +154,8 @@ void manageMovement()
             player.y += y_increment * MOVEMENT_SPEED;
         }
     }
+    printf("newpos_x:%f, newpos_y:%f - ", newpos_x, newpos_y);
+    printf("pX:%f, pY:%f\n", player.x, player.y);
 }
 
 void managePlayer()

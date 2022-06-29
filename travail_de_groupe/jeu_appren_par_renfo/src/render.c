@@ -10,6 +10,7 @@ SDL_Rect destRect;
 SDL_Rect rect;
 SDL_Rect sky;
 SDL_Rect ground;
+SDL_Rect racket;
 
 int showHub = 0;
 
@@ -21,6 +22,7 @@ SDL_Texture *playerTexture;
 SDL_Texture *ballTexture;
 SDL_Texture *skyTexture;
 SDL_Texture *groundTexture;
+SDL_Texture *racketTexture;
 
 int **rays;
 int raysListLength = 0;
@@ -908,6 +910,10 @@ void drawSkyAndGround()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
+void drawRacket(){
+    //todo
+}
+
 void drawMap2D(int map[][MAP_WIDTH])
 {
     int i, j;
@@ -1034,10 +1040,12 @@ void drawGame()
         drawVerticalWalls();
         drawEnnemy();
         drawHorizentalWalls();
+        //draw point de chute de la balle
         drawBall();
         drawVerticalNet();
     }
     drawMap2D(map);
+    drawRacket();
     //affiche le hub
     if(showHub){
         drawHub();
@@ -1059,6 +1067,7 @@ void mainLoop()
     netEdgeRightTexture = loadTexture("Res/netRight.png");
     skyTexture = loadTexture("Res/sky.png");
     groundTexture = loadTexture("Res/ground.png");
+    racketTexture = loadTexture("Res/racket.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
