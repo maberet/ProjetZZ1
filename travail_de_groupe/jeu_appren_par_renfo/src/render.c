@@ -563,7 +563,7 @@ void drawEnnemy()
     }
 }
 
-void castSingleRay(float *distance, int *returnX, int *returnY)
+void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet)
 {
     // ray casting variables
     float htexture, htexture2;
@@ -573,7 +573,7 @@ void castSingleRay(float *distance, int *returnX, int *returnY)
     mx = 0;
     my = 0;
     raysListHead.next = NULL;
-    ra = player.angle;
+    ra = angle;
     if (ra < 0)
         ra -= 2 * pi;
     if (ra > 2 * pi)
@@ -608,13 +608,26 @@ void castSingleRay(float *distance, int *returnX, int *returnY)
     {
         mx = (int)rx >> 6;
         my = (int)ry >> 6;
-        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1)
+        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT)
         {
-            hx = rx;
-            hy = ry;
-            disH = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
-            dof = DOF;
-            foundSolidWallH = 1;
+            if (map[my][mx] == 1)
+            {
+                hx = rx;
+                hy = ry;
+                disH = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                dof = DOF;
+                foundSolidWallH = 1;
+            }
+            else
+            {
+                hx2 = rx;
+                hy2 = ry;
+                disH2 = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                // foundTransparentWallH = 1;
+                dof++;
+                rx += xo;
+                ry += yo;
+            }
         }
         else
         {
@@ -650,16 +663,32 @@ void castSingleRay(float *distance, int *returnX, int *returnY)
         rx = player.x;
         dof = DOF;
     }
+    int foundSolidWallV = 0;
+    int foundTransparentWallV = 0;
     while (dof < DOF)
     {
         mx = (int)rx >> 6;
         my = (int)ry >> 6;
-        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx] == 1)
+        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx])
         {
-            vx = rx;
-            vy = ry;
-            disV = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
-            dof = DOF;
+            if (map[my][mx] == 1)
+            {
+                vx = rx;
+                vy = ry;
+                disV = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                foundSolidWallV = 1;
+                dof = DOF;
+            }
+            else
+            {
+                vx2 = rx;
+                vy2 = ry;
+                disV2 = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                foundTransparentWallV = 1;
+                dof++;
+                rx += xo;
+                ry += yo;
+            }
         }
         else
         {
@@ -669,27 +698,95 @@ void castSingleRay(float *distance, int *returnX, int *returnY)
         }
     }
 
-    int direction;
+    int direction, direction2;
 
-    if (disH < disV)
+    if (foundTransparentWallV)
     {
-        rx = hx;
-        ry = hy;
-        distT = disH;
-        direction = 0;
-        htexture = (int)(rx) % BLOCK_SIZE;
+        if (disH < disV2)
+        {
+            rx = hx2;
+            ry = hy2;
+            distT = disH2;
+            distT2 = disV2;
+            direction = 0;
+            htexture = (int)(rx) % BLOCK_SIZE;
+        }
+        else
+        {
+            rx = vx2;
+            ry = vy2;
+            distT = disV2;
+            direction = 1;
+            htexture = (int)(ry) % BLOCK_SIZE;
+        }
+        if (foundSolidWallV)
+        {
+            if (disH < disV)
+            {
+                rx2 = hx;
+                ry2 = hy;
+                distT2 = disH;
+                direction2 = 0;
+                htexture2 = (int)(rx2) % BLOCK_SIZE;
+            }
+            else
+            {
+                rx2 = vx;
+                ry2 = vy;
+                distT2 = disV;
+                direction2 = 1;
+                htexture2 = (int)(ry2) % BLOCK_SIZE;
+            }
+        }
+        if (foundSolidWallH)
+        {
+            if (disH < disV)
+            {
+                rx2 = hx;
+                ry2 = hy;
+                distT2 = disH;
+                direction2 = 0;
+                htexture2 = (int)(rx2) % BLOCK_SIZE;
+            }
+            else
+            {
+                rx2 = vx;
+                ry2 = vy;
+                distT2 = disV;
+                direction2 = 1;
+                htexture2 = (int)(ry2) % BLOCK_SIZE;
+            }
+        }
     }
+
     else
     {
-        rx = vx;
-        ry = vy;
-        distT = disV;
-        direction = 1;
-        htexture = (int)(ry) % BLOCK_SIZE;
+        if (disH < disV)
+        {
+            rx = hx;
+            ry = hy;
+            distT = disH;
+            direction = 0;
+            htexture = (int)(rx) % BLOCK_SIZE;
+        }
+        else
+        {
+            rx = vx;
+            ry = vy;
+            distT = disV;
+            direction = 1;
+            htexture = (int)(ry) % BLOCK_SIZE;
+        }
     }
-    *distance = distT;
-    *returnX = (int)rx;
-    *returnY = (int)ry;
+
+    *returnXWall = (int)rx2;
+    *returnYWall = (int)ry2;
+    *distanceWall = distT2;
+    
+    *returnXNet = (int)rx;
+    *returnYNet = (int)ry2;
+    *distanceNet = (int)distT2;
+
 }
 
 int isAngleInRange(float angle, float min, float max)
@@ -747,14 +844,14 @@ void drawBall()
         rect.w = (ballWidth * screenDimension.w) / (ballDistance / BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h) / (ballDistance / BLOCK_SIZE);
         rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - sqrt(3) * tan(ballViewAngle) * ballDistance;
-        //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
-
-        destRect.x = 0;
-        destRect.y = 0;
-        destRect.w = 64;
-        destRect.h = 64;
         // printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
-        SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
+
+        destRect.x = 32 * (SDL_GetTicks() / 150 % 4);
+        destRect.y = 0;
+        destRect.w = 32;
+        destRect.h = 32;
+        // printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
+        SDL_RenderCopy(renderer, ballTexture, &destRect, &rect);
     }
 }
 
@@ -901,6 +998,7 @@ void mainLoop()
     netTexture = loadTexture("Res/net.png");
     crowdTexture = loadTexture("Res/crowd.png");
     playerTexture = loadTexture("Res/player_sprite.png");
+    ballTexture = loadTexture("Res/ball_sprite.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
