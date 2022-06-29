@@ -40,7 +40,7 @@ void initPlayer(){
 
 int * generateLandingPoint(){
     int * landingPoint = malloc(sizeof(int) * 2);
-    int randomLength = rand() % (int)(MAP_WIDTH*BLOCK_SIZE - player.x);
+    int randomLength = rand() % (int)((MAP_WIDTH/2)*BLOCK_SIZE) + (MAP_WIDTH/2)*BLOCK_SIZE;
     int randomPointX = randomLength * cos(player.angle) + player.x;
     int randomPointY = randomLength * sin(player.angle) + player.y;
     landingPoint[0] = randomPointX/BLOCK_SIZE;
@@ -50,7 +50,7 @@ int * generateLandingPoint(){
 }
 
 int * allocLastHitPoint(){
-    int * lastHitPoint = malloc(sizeof(int) * 2);
+    int * lastHitPoint = (int *)malloc(sizeof(int) * 2);
     lastHitPoint[0] = 0;
     lastHitPoint[1] = 0;
     return lastHitPoint;
@@ -73,16 +73,16 @@ void hitBall(){
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2))/BLOCK_SIZE < HIT_RANGE){
         if (currAngle < angleMax && currAngle > angleMin){
             //printf("hit\n");
-            freeIntList(landingPoint);
-            freeIntList(lastHitPoint);
-            lastHitPoint = allocLastHitPoint();
-            landingPoint = generateLandingPoint();
             if (player.isHitting){
-                lastHitPoint[0] = player.x;
+                freeIntList(landingPoint);
+                freeIntList(lastHitPoint);
+                lastHitPoint = allocLastHitPoint();
+                landingPoint = generateLandingPoint();
+                lastHitPoint[0] = ball.x;
                 lastHitPoint[1] = player.h;
-                ball.x = player.x;
+                /*ball.x = player.x;
                 ball.y = player.y;
-                ball.z = player.h;
+                ball.z = player.h;*/
                 ball.angle = player.angle;
                 ball.speed = HIT_FORCE;
                 ball.isHit = 1;
@@ -100,9 +100,22 @@ void updateBall(){
     ball.x = ball.x + ball.speed * cos(ball.angle);
     ball.y = ball.y + ball.speed * sin(ball.angle);
     if (ball.isHit){
-        ball.z = lagrangeInterpolation(ball.x, lastHitPoint[0], lastHitPoint[1], 15 , 2*player.h, landingPoint[0], 0);
+        // landingPoint est déjà / BLOCK_SIZE de base
+        ball.z = lagrangeInterpolation(ball.x/BLOCK_SIZE, lastHitPoint[0]/BLOCK_SIZE, lastHitPoint[1]/BLOCK_SIZE, 15 , 2*player.h/BLOCK_SIZE, landingPoint[0], 0);
+        if(ball.z > 0){
+            printf("param. lagrange : xp=%f, xd=%d, yd=%d, xf=%d, yf=%d, xt=%d, yt=%d\n",
+                ball.x/BLOCK_SIZE,
+                lastHitPoint[0]/BLOCK_SIZE,
+                lastHitPoint[1]/BLOCK_SIZE,
+                15,
+                2*player.h/BLOCK_SIZE,
+                landingPoint[0],
+                0
+            );
+            printf("ballZ: %f\n", ball.z);
+        }
+        
     }
-    //printf("ball position: %f %f %f\n", ball.x/BLOCK_SIZE, ball.y/BLOCK_SIZE, ball.z);
 }
 
 

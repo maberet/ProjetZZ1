@@ -451,7 +451,7 @@ void drawEnnemy(){
         if (angleSum > 2*pi) angleSum -= 2*pi;
         if (angleSum < 0) angleSum += 2*pi;
 
-        printf("sum: %f\n", angleSum * RD);
+        //printf("sum: %f\n", angleSum * RD);
 
         if (angleSum > 5*pi/3 && angleSum <= pi/3){
             destRect.x = 2 * destRect.w;
@@ -486,8 +486,8 @@ void drawBall(){
     float angleMax = player.angle + (FOV_ANGLE)/2 * DR;
 
 
-    printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
-    printf("limit angles: %f %f\n", angleMin, angleMax);
+    //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin, angleMax);
     if (ballAngle >= angleMin && ballAngle <= angleMax){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
@@ -572,6 +572,46 @@ void drawFPS(){
     drawString(str, screenDimension.w - 50, 0, 50, 50, 255, 255, 255, 255);
 }
 
+void drawInfosPlayer(){
+    char str_x_player[10];
+    char str_y_player[10];
+    char str_z_player[10];
+    char str_playerX[20] = "playerX:";
+    char str_playerY[20] = "playerY:";
+    char str_playerZ[20] = "playerZ:";
+
+    sprintf(str_x_player, "%d", (int)player.x);
+    strcat(str_playerX, str_x_player);
+    sprintf(str_y_player, "%d", (int)player.y);
+    strcat(str_playerY, str_y_player);
+    sprintf(str_z_player, "%d", (int)player.z);
+    strcat(str_playerZ, str_z_player);
+
+    drawString(str_playerX, screenDimension.w - 120, 50, 100, 50, 255, 255, 255, 255);
+    drawString(str_playerY, screenDimension.w - 120, 100, 100, 50, 255, 255, 255, 255);
+    drawString(str_playerZ, screenDimension.w - 120, 150, 100, 50, 255, 255, 255, 255);
+}
+
+void drawInfosBall(){
+    char str_x_ball[10];
+    char str_y_ball[10];
+    char str_z_ball[10];
+    char str_ballX[20] = "ballX/BS:";
+    char str_ballY[20] = "ballY:";
+    char str_ballZ[20] = "ballZ:";
+
+    sprintf(str_x_ball, "%d", (int)ball.x/BLOCK_SIZE);
+    strcat(str_ballX, str_x_ball);
+    sprintf(str_y_ball, "%d", (int)ball.y);
+    strcat(str_ballY, str_y_ball);
+    sprintf(str_z_ball, "%d", (int)ball.z);
+    strcat(str_ballZ, str_z_ball);
+
+    drawString(str_ballX, screenDimension.w - 120, 200, 100, 50, 255, 255, 255, 255);
+    drawString(str_ballY, screenDimension.w - 120, 250, 100, 50, 255, 255, 255, 255);
+    drawString(str_ballZ, screenDimension.w - 120, 300, 100, 50, 255, 255, 255, 255);
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
@@ -582,6 +622,8 @@ void drawGame(){
     drawBall();
     drawMap2D(map);
     drawFPS();
+    drawInfosPlayer();
+    drawInfosBall();
     SDL_RenderPresent(renderer);
 }
 
