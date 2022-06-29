@@ -421,8 +421,8 @@ void castRays(int map[][MAP_WIDTH]){
 
 void drawEnnemy(){
     float ennemyAngle = atan2((ennemy.y + ennemy.w/2)  - (player.y + player.w/2) , (ennemy.x + ennemy.w/2) - (player.x + player.w/2));
-    if (ennemyAngle < 0) ennemyAngle += 2*pi;
-    if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
+    //if (ennemyAngle < 0) ennemyAngle += 2*pi;
+    //if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
     float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
     float ennemyBaseWidth = BLOCK_SIZE;
     float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
@@ -430,11 +430,29 @@ void drawEnnemy(){
     float scaledEnnemyWidth = ennemyBaseWidth / sqrt(3);
     int ennemyWidth = 50;
     int ennemyHeight = 200;
+    float angleMin = player.angle - (FOV_ANGLE * DR)/2;
+    //if (angleMin > 2*pi) angleMin -= 2*pi;
+    float angleMax = player.angle + (FOV_ANGLE * DR)/2;
+    //if (angleMax < 0) angleMax += 2*pi;
+    if (angleMin < 0){
+        angleMin += 2*pi;
+        angleMax += 2*pi;
+    }
+    if (angleMax > 2*pi){
+        angleMax -= 2*pi;
+        angleMin -= 2*pi;
+        //ballAngle -= 2*pi;
+    }
+    if (angleMax > 0 && angleMin > 0 && ennemyAngle < 0){
+        ennemyAngle += 2*pi;
+    }
 
+    //printf("ennemy angle: %f player angle: %f\n", ennemyAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
     //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
     //printf("%f\n", player.angle * RD);
 
-    if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+    if (ennemyAngle >= angleMin && ennemyAngle <= angleMax){
         //printf("player angle %f\n", player.angle * RD);
         //printf("ennemy angle %f\n", ennemyAngle * RD);
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
@@ -470,10 +488,15 @@ void drawEnnemy(){
     }
 }
 
+int isAngleInRange(float angle, float min, float max){
+
+    return ((angle >= min && angle <= max)) || ((angle >= max && angle <= min));
+}
+
 void drawBall(){
-    float ballAngle = atan2((ball.y + ball.w/2)  - (player.y + player.w/2) , (ball.x + ball.w/2) - (player.x + player.w/2));
-    if (ballAngle < 0) ballAngle += 2*pi;
-    if (ballAngle > 2*pi) ballAngle -= 2*pi;
+    float ballAngle = atan2(ball.y  - player.y, ball.x  - player.x);
+    //if (ballAngle < 0) ballAngle += 2*pi;
+    //if (ballAngle > 2*pi) ballAngle -= 2*pi;
     float ballDistance = sqrt((ball.x - player.x)*(ball.x - player.x) + (ball.y - player.y)*(ball.y - player.y)) * BLOCK_SIZE;
     float ballBaseWidth = BLOCK_SIZE/2;
     float ballDistanceX = ballDistance * cos(ballAngle - player.angle) * BLOCK_SIZE;
@@ -481,13 +504,33 @@ void drawBall(){
     float scaledBallWidth = ballBaseWidth / sqrt(3);
     int ballWidth = 25;
     int ballHeight = 25;
-    float angleMin = player.angle - (FOV_ANGLE)/2 * DR;
+    float angleMin = player.angle - (FOV_ANGLE * DR)/2;
+    //if (angleMin > 2*pi) angleMin -= 2*pi;
+    float angleMax = player.angle + (FOV_ANGLE * DR)/2;
+    //if (angleMax < 0) angleMax += 2*pi;
+    if (angleMin < 0){
+        angleMin += 2*pi;
+        angleMax += 2*pi;
+    }
+    if (angleMax > 2*pi){
+        angleMax -= 2*pi;
+        angleMin -= 2*pi;
+        //ballAngle -= 2*pi;
+    }
+    if (angleMax > 0 && angleMin > 0 && ballAngle < 0){
+        ballAngle += 2*pi;
+    }
+        
 
-    float angleMax = player.angle + (FOV_ANGLE)/2 * DR;
-
-
+<<<<<<< HEAD
     //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
     //printf("limit angles: %f %f\n", angleMin, angleMax);
+=======
+    //if (angleMax > 2*pi) angleMax -= 2*pi;
+    //printf("is playing in range %d\n", isAngleInRange(ballAngle, angleMin, angleMax));
+    //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
+>>>>>>> 0eb821b2c8bfe4be52ba9cd900a7693a89f35968
     if (ballAngle >= angleMin && ballAngle <= angleMax){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
