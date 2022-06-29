@@ -14,6 +14,7 @@ int main(){
     //printMap();
     initPlayer();
     initKeys();
+    initBall();
 
     mainLoop();
 

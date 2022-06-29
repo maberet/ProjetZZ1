@@ -5,7 +5,7 @@
 
 
 #define MAP_WIDTH 31
-#define MAP_HEIGHT 17
+#define MAP_HEIGHT 10
 
 
 extern int map[MAP_HEIGHT][MAP_WIDTH];

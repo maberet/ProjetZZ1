@@ -1,10 +1,7 @@
 #include "player.h"
 
 player_t player;
-
 player_t ennemy;
-
-player_t ball;
 
 int *landingPoint;
 int *lastHitPoint;
@@ -21,10 +18,6 @@ void initPlayer()
     ennemy.x = 20 * BLOCK_SIZE;
     ennemy.y = 10 * BLOCK_SIZE;
     ennemy.angle = -pi;
-    ball.h = 0.5 * BLOCK_SIZE;
-    ball.w = 0.5 * BLOCK_SIZE;
-    ball.x = 10 * BLOCK_SIZE;
-    ball.y = 10 * BLOCK_SIZE;
     player.speed = 1;
     player.isMoving = 0;
     player.HPMax = 3;
@@ -34,10 +27,6 @@ void initPlayer()
     player.deltax = 1;
     player.deltay = 0;
     player.viewAngle = 0;
-    ball.z = player.h/BLOCK_SIZE;
-    ball.isHit = 0;
-    ball.speed = 0;
-    ball.angle = -pi;
 }
 
 int *generateLandingPoint()
