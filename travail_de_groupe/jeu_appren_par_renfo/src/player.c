@@ -75,11 +75,17 @@ void hitBall()
             {
                 freeIntList(landingPoint);
                 freeIntList(lastHitPoint);
-                int rx, ry;
-                float distance;
-                castSingleRay(&distance, &rx, &ry);
-                printf("ray: %d %d\n", rx/BLOCK_SIZE, ry/BLOCK_SIZE);
-                printf("distance: %f\n", distance/BLOCK_SIZE);
+                int rxMur, ryMur;
+                int rxFilet, ryFilet;
+                float distanceMur;
+                float distanceFilet;
+                castSingleRay(&distanceMur, &distanceFilet, &rxMur, &ryMur, &rxFilet, &ryFilet);
+                printf("ray: x=%d y=%d\n", rx/BLOCK_SIZE, ry/BLOCK_SIZE);
+                printf("distance entre joueur et mur: %f\n", distanceMur/BLOCK_SIZE);
+                printf("distance entre joueur et filet : %f\n", distanceFilet/BLOCK_SIZE);
+                printf("distance entre le filet et le mur : %f", distanceMur - distanceFilet);
+                //tirer une valeur avec generateLandingPoint()  entre distanceFilet et distanceFilet + distance entre filet et mur;
+
                 lastHitPoint = allocLastHitPoint();
                 landingPoint = generateLandingPoint();
                 lastHitPoint[0] = ball.x;
