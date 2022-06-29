@@ -993,10 +993,18 @@ void drawGame()
     SDL_RenderClear(renderer);
     drawSkyAndGround();
     castRays(map);
-    drawHorizentalRays();
-    drawEnnemy();
-    drawVerticalRays();
-    drawBall();
+    if (ball.x < MAP_WIDTH * BLOCK_SIZE/2){
+        drawHorizentalRays();
+        drawEnnemy();
+        drawVerticalRays();
+        drawBall();
+    }
+    else {
+        drawHorizentalRays();
+        drawBall();
+        drawVerticalRays();
+        drawEnnemy();
+    }
     drawMap2D(map);
     drawFPS();
     drawInfosPlayer();
@@ -1046,6 +1054,7 @@ void mainLoop()
                 break;
             case GAME:
                 drawGame();
+                managePlayer();
                 break;
             }
         }

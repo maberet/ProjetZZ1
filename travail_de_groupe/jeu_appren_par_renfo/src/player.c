@@ -18,7 +18,7 @@ void initPlayer()
     ennemy.x = 25 * BLOCK_SIZE;
     ennemy.y = 5 * BLOCK_SIZE;
     ennemy.angle = -pi;
-    player.speed = 1;
+    player.speed = 100;
     player.isMoving = 0;
     player.HPMax = 3;
     player.currentHP = player.HPMax;
@@ -79,16 +79,16 @@ void hitBall()
 
         int rxNet, ryNet;
         float distanceNet;
+        if (player.isHitting)
+        {
         castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
         printf("rayWall: %d %d\n", rxWall/BLOCK_SIZE, ryWall/BLOCK_SIZE);
         printf("distanceWall: %f\n", distanceWall);
 
         printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
         printf("distanceNet: %f\n", distanceNet);
-        if (rxWall > MAP_WIDTH/2)
-        {
             // printf("hit\n");
-            if (player.isHitting)
+            if (rxWall > MAP_WIDTH/2)
             {
                 freeIntList(landingPoint);
                 freeIntList(lastHitPoint);

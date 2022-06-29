@@ -134,7 +134,12 @@ void gestGame()
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                player.isHitting = 1;
+                if (player.isHitting){
+                    player.isHitting = 0;
+                }
+                else {
+                    player.isHitting = 1;
+                }
             }
             break;
 
@@ -149,7 +154,6 @@ void gestGame()
             break;
         }
     }
-    managePlayer();
     SDL_Delay(5);
 }
 
