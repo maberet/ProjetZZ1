@@ -5,6 +5,7 @@ player_t ennemy;
 
 int *landingPoint;
 int *lastHitPoint;
+int landingPointIsFind = 0;
 
 void initPlayer()
 {
@@ -29,15 +30,22 @@ void initPlayer()
     player.viewAngle = 0;
 }
 
-int *generateLandingPoint()
+int *generateLandingPoint(int rxWall)
 {
     int *landingPoint = malloc(sizeof(int) * 2);
-    int randomLength = rand() % (int)((MAP_WIDTH / 2) * BLOCK_SIZE) + (MAP_WIDTH / 2) * BLOCK_SIZE;
-    int randomPointX = randomLength * cos(player.angle) + player.x;
-    int randomPointY = randomLength * sin(player.angle) + player.y;
-    landingPoint[0] = randomPointX / BLOCK_SIZE;
+    srand(time(NULL));
+    //printf("wall x :%d=>%d\n", rxWall, rxWall/BLOCK_SIZE);
+
+    int randomPointX = MAP_WIDTH/2 + 1 + rand()%(rxWall/BLOCK_SIZE - (MAP_WIDTH/2));
+    int randomPointY = -1;
+    
+    //printf("entre %d et %d\n", MAP_WIDTH/2, MAP_WIDTH/2+rxWall/BLOCK_SIZE - (MAP_WIDTH/2));
+    //printf("randomPointX: %d => %d\n", randomPointX, randomPointX*BLOCK_SIZE);
+
+    landingPoint[0] = randomPointX ;
     landingPoint[1] = randomPointY / BLOCK_SIZE;
-    // printf("landing point: %d %d\n", landingPoint[0], landingPoint[1]);
+    landingPointIsFind = 1;
+    
     return landingPoint;
 }
 
@@ -59,17 +67,6 @@ void freeIntList(int *list)
 
 void hitBall()
 {
-    // printf("map edges: %d %d\n",  BLOCK_SIZE * MAP_WIDTH/2,  BLOCK_SIZE *MAP_HEIGHT/2);
-    // printf("ray1: %d %d\n", ray1[0], ray1[1]);
-    int fermetureAngle = 2;
-    //int angleMin = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, player.y);
-    //int angleMax = 90 + RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
-    
-
-    
-    int currAngle = (int)((player.angle) * RD + 90) % 360;
-    // printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
-    // printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
     {
         int rxWall, ryWall;
@@ -78,41 +75,40 @@ void hitBall()
         int rxNet, ryNet;
         float distanceNet;
         castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
-        printf("rayWall: %d %d\n", rxWall/BLOCK_SIZE, ryWall/BLOCK_SIZE);
-        printf("distanceWall: %f\n", distanceWall);
+        //printf("rayWall: %d %d\n", rxWall/BLOCK_SIZE, ryWall/BLOCK_SIZE);
+        //printf("distanceWall: %f\n", distanceWall);
 
-        printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
-        printf("distanceNet: %f\n", distanceNet);
+        //printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
+        //printf("distanceNet: %f\n", distanceNet);
         if (rxWall > MAP_WIDTH/2)
         {
-            // printf("hit\n");
+
             if (player.isHitting)
             {
-                freeIntList(landingPoint);
-                freeIntList(lastHitPoint);
                 
-
-
+                freeIntList(lastHitPoint);
                 lastHitPoint = allocLastHitPoint();
-                landingPoint = generateLandingPoint();
+
+                //cherche et trouve point de chute, UNE SEULE FOIS!
+                if(landingPointIsFind == 0){
+                    freeIntList(landingPoint);
+                    landingPoint = generateLandingPoint(rxWall);
+                    printf("landing point: x=%d; y=%d\n", landingPoint[0], landingPoint[1]);
+                }
+                
                 lastHitPoint[0] = ball.x;
                 lastHitPoint[1] = player.h;
-                /*ball.x = player.x;
-                ball.y = player.y;
-                ball.z = player.h;*/
                 ball.angle = player.angle;
                 ball.speed = 2 * HIT_FORCE;
                 ball.z = player.h;
                 ball.isHit = 1;
             }
-            // printf("valid hit\n");
         }
         else
         {
             // printf("unvalid hit\n");
         }
     }
-    //}
 }
 
 void updateBall()
@@ -121,6 +117,7 @@ void updateBall()
     ball.y = ball.y + ball.speed * sin(ball.angle);
     if (ball.isHit)
     {
+        
         // landingPoint est déjà / BLOCK_SIZE de base
         ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
         if (ball.z > 0)
