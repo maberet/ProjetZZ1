@@ -421,8 +421,8 @@ void castRays(int map[][MAP_WIDTH]){
 
 void drawEnnemy(){
     float ennemyAngle = atan2((ennemy.y + ennemy.w/2)  - (player.y + player.w/2) , (ennemy.x + ennemy.w/2) - (player.x + player.w/2));
-    if (ennemyAngle < 0) ennemyAngle += 2*pi;
-    if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
+    //if (ennemyAngle < 0) ennemyAngle += 2*pi;
+    //if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
     float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
     float ennemyBaseWidth = BLOCK_SIZE;
     float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
@@ -447,10 +447,12 @@ void drawEnnemy(){
         ennemyAngle += 2*pi;
     }
 
+    //printf("ennemy angle: %f player angle: %f\n", ennemyAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
     //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
     //printf("%f\n", player.angle * RD);
 
-    if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+    if (ennemyAngle >= angleMin && ennemyAngle <= angleMax){
         //printf("player angle %f\n", player.angle * RD);
         //printf("ennemy angle %f\n", ennemyAngle * RD);
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
