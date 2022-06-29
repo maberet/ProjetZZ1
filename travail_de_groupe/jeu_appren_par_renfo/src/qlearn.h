@@ -37,6 +37,12 @@ typedef struct line {
 
 }line_t,*ptline_t; 
 
+typedef struct point{
+    int x;
+    int y; 
+} point_t ; 
+
+
 agent_t* initAgent ( );
 void moveAgent(agent_t * agent, int choice);
 float ***** allocateAndInitiateQ();

@@ -6,7 +6,7 @@ agent_t * initAgent (){
         printf("erreur alloc\n  ");
         exit (1);
     }  
-    agent->x=(16+rand()%16)*BLOCK_SIZE;
+    agent->x=(16+rand()%14)*BLOCK_SIZE;
     agent->y=(1+rand()%14)*BLOCK_SIZE;
     agent->high=2*BLOCK_SIZE;
     agent->weight=2*BLOCK_SIZE; 
@@ -92,7 +92,6 @@ float ***** allocateAndInitiateQ(){
     return q;
 }
 
-// attention il manque 3 lignes
 void writeQ(float *****Q){
     int i, j, k, l, m ;
     FILE * fp = fopen("q.txt", "w+");
@@ -247,6 +246,29 @@ int setReward(int xAgent, int yAgent, int dropZone){
         reward=1;
     } 
     return (reward); 
-}  
+} 
 
+float defineAngle (int xCanon, int yCanon , int xDropPoint, int yDropPoint){
+    float distance;
+    float angleSin;
+
+    distance= sqrtf( powf((float)(xDropPoint-xCanon),2)+powf((float)(yDropPoint-yCanon),2)); 
+    angleSin = asinf(distance/(xDropPoint-xCanon));
+    return angleSin;
+}
+
+void traningAgent ( int numberRun, int numberStep, float *****Q) {
+    int i ; 
+    int action;
+    point_t canon ; 
+    point_t dropPoint ; 
+    
+    while (numberRun>0){
+        canon=initPoint(0); 
+        dropPoint= initPoint(1);
+        for (i=0; i< numberStep;i++){ 
+
+        } 
+    } 
+} 
 
