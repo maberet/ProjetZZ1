@@ -6,7 +6,7 @@ int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 void initBall()
 {
     ball.x = 5 * BLOCK_SIZE;
-    ball.y = 5 * BLOCK_SIZE;
+    ball.y = 2 * BLOCK_SIZE;
     ball.z = player.h/BLOCK_SIZE;
     ball.h = 0.5 * BLOCK_SIZE;
     ball.w = 0.5 * BLOCK_SIZE;    
