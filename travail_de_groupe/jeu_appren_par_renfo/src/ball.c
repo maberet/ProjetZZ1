@@ -1,6 +1,6 @@
 #include "ball.h"
 
-ball_t ball;
+//ball_t ball;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall()

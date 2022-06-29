@@ -14,6 +14,7 @@ SDL_Rect ground;
 SDL_Texture * netTexture;
 SDL_Texture * crowdTexture;
 SDL_Texture * playerTexture;
+SDL_Texture * ballTexture;
 
 int ** rays;
 int  raysListLength = 0;
@@ -408,8 +409,8 @@ void castRays(int map[][MAP_WIDTH]){
             //printf("%d %d\n", (int)rx, (int)ry);
             ray2[0] = (int)rx;
             ray2[1] = (int)ry;
-            printf("ray1 %d %d\n", ray1[0]/BLOCK_SIZE, ray1[1]/BLOCK_SIZE);
-            printf("ray2 %d %d\n", ray2[0]/BLOCK_SIZE, ray2[1]/BLOCK_SIZE);
+            //printf("ray1 %d %d\n", ray1[0]/BLOCK_SIZE, ray1[1]/BLOCK_SIZE);
+            ///printf("ray2 %d %d\n", ray2[0]/BLOCK_SIZE, ray2[1]/BLOCK_SIZE);
         }
         //printf("raylistlength %d\n", raysListLength);
         addRayToList(rx, ry);
@@ -420,8 +421,8 @@ void castRays(int map[][MAP_WIDTH]){
 
 void drawEnnemy(){
     float ennemyAngle = atan2((ennemy.y + ennemy.w/2)  - (player.y + player.w/2) , (ennemy.x + ennemy.w/2) - (player.x + player.w/2));
-    if (ennemyAngle < 0) ennemyAngle += 2*pi;
-    if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
+    //if (ennemyAngle < 0) ennemyAngle += 2*pi;
+    //if (ennemyAngle > 2*pi) ennemyAngle -= 2*pi;
     float ennemyDistance = sqrt((ennemy.x - player.x)*(ennemy.x - player.x) + (ennemy.y - player.y)*(ennemy.y - player.y)) * BLOCK_SIZE;
     float ennemyBaseWidth = BLOCK_SIZE;
     float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
@@ -429,29 +430,73 @@ void drawEnnemy(){
     float scaledEnnemyWidth = ennemyBaseWidth / sqrt(3);
     int ennemyWidth = 50;
     int ennemyHeight = 200;
+    float angleMin = player.angle - (FOV_ANGLE * DR)/2;
+    //if (angleMin > 2*pi) angleMin -= 2*pi;
+    float angleMax = player.angle + (FOV_ANGLE * DR)/2;
+    //if (angleMax < 0) angleMax += 2*pi;
+    if (angleMin < 0){
+        angleMin += 2*pi;
+        angleMax += 2*pi;
+    }
+    if (angleMax > 2*pi){
+        angleMax -= 2*pi;
+        angleMin -= 2*pi;
+        //ballAngle -= 2*pi;
+    }
+    if (angleMax > 0 && angleMin > 0 && ennemyAngle < 0){
+        ennemyAngle += 2*pi;
+    }
 
+    //printf("ennemy angle: %f player angle: %f\n", ennemyAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
     //printf("%f %f\n", ennemyAngle, player.angle - (FOV_ANGLE)/2 * DR);
     //printf("%f\n", player.angle * RD);
 
-    if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+    if (ennemyAngle >= angleMin && ennemyAngle <= angleMax){
+        //printf("player angle %f\n", player.angle * RD);
+        //printf("ennemy angle %f\n", ennemyAngle * RD);
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
         rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
         rect.y = (screenDimension.h/2 + player.viewAngle) - rect.h/5;
 
+        
         destRect.x = 0;
         destRect.y = 0;
         destRect.w = 64;
         destRect.h = 64;
+        float angleSum = ennemyAngle + player.angle;
+        if (angleSum > 2*pi) angleSum -= 2*pi;
+        if (angleSum < 0) angleSum += 2*pi;
+
+        //printf("sum: %f\n", angleSum * RD);
+
+        if (angleSum > 5*pi/3 && angleSum <= pi/3){
+            destRect.x = 2 * destRect.w;
+        }
+        else if (angleSum > pi/3 && angleSum <= 2*pi/3){
+            destRect.x = 3 * destRect.w;
+        }
+        else if (angleSum > 2*pi/3 && angleSum <= 4*pi/3){
+            destRect.x = 0 * destRect.w;
+        }
+        else if (angleSum > 4*pi/3 && angleSum <= 5*pi/3){
+            destRect.x = 1 * destRect.w;
+        }
         //printf("%d %d %d %d\n", rect.x, rect.y, rect.w, rect.h);
         SDL_RenderCopy(renderer, playerTexture, &destRect, &rect);
     }
 }
 
+int isAngleInRange(float angle, float min, float max){
+
+    return ((angle >= min && angle <= max)) || ((angle >= max && angle <= min));
+}
+
 void drawBall(){
-    float ballAngle = atan2((ball.y + ball.w/2)  - (player.y + player.w/2) , (ball.x + ball.w/2) - (player.x + player.w/2));
-    if (ballAngle < 0) ballAngle += 2*pi;
-    if (ballAngle > 2*pi) ballAngle -= 2*pi;
+    float ballAngle = atan2(ball.y  - player.y, ball.x  - player.x);
+    //if (ballAngle < 0) ballAngle += 2*pi;
+    //if (ballAngle > 2*pi) ballAngle -= 2*pi;
     float ballDistance = sqrt((ball.x - player.x)*(ball.x - player.x) + (ball.y - player.y)*(ball.y - player.y)) * BLOCK_SIZE;
     float ballBaseWidth = BLOCK_SIZE/2;
     float ballDistanceX = ballDistance * cos(ballAngle - player.angle) * BLOCK_SIZE;
@@ -459,8 +504,29 @@ void drawBall(){
     float scaledBallWidth = ballBaseWidth / sqrt(3);
     int ballWidth = 25;
     int ballHeight = 25;
+    float angleMin = player.angle - (FOV_ANGLE * DR)/2;
+    //if (angleMin > 2*pi) angleMin -= 2*pi;
+    float angleMax = player.angle + (FOV_ANGLE * DR)/2;
+    //if (angleMax < 0) angleMax += 2*pi;
+    if (angleMin < 0){
+        angleMin += 2*pi;
+        angleMax += 2*pi;
+    }
+    if (angleMax > 2*pi){
+        angleMax -= 2*pi;
+        angleMin -= 2*pi;
+        //ballAngle -= 2*pi;
+    }
+    if (angleMax > 0 && angleMin > 0 && ballAngle < 0){
+        ballAngle += 2*pi;
+    }
+        
 
-    if (ballAngle >= player.angle - (FOV_ANGLE)/2 * DR && ballAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+    //if (angleMax > 2*pi) angleMax -= 2*pi;
+    //printf("is playing in range %d\n", isAngleInRange(ballAngle, angleMin, angleMax));
+    //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
+    //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
+    if (ballAngle >= angleMin && ballAngle <= angleMax){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h)/(ballDistance/BLOCK_SIZE);
@@ -544,6 +610,46 @@ void drawFPS(){
     drawString(str, screenDimension.w - 50, 0, 50, 50, 255, 255, 255, 255);
 }
 
+void drawInfosPlayer(){
+    char str_x_player[10];
+    char str_y_player[10];
+    char str_z_player[10];
+    char str_playerX[20] = "playerX:";
+    char str_playerY[20] = "playerY:";
+    char str_playerZ[20] = "playerZ:";
+
+    sprintf(str_x_player, "%d", (int)player.x);
+    strcat(str_playerX, str_x_player);
+    sprintf(str_y_player, "%d", (int)player.y);
+    strcat(str_playerY, str_y_player);
+    sprintf(str_z_player, "%d", (int)player.z);
+    strcat(str_playerZ, str_z_player);
+
+    drawString(str_playerX, screenDimension.w - 120, 50, 100, 50, 255, 255, 255, 255);
+    drawString(str_playerY, screenDimension.w - 120, 100, 100, 50, 255, 255, 255, 255);
+    drawString(str_playerZ, screenDimension.w - 120, 150, 100, 50, 255, 255, 255, 255);
+}
+
+void drawInfosBall(){
+    char str_x_ball[10];
+    char str_y_ball[10];
+    char str_z_ball[10];
+    char str_ballX[20] = "ballX/BS:";
+    char str_ballY[20] = "ballY:";
+    char str_ballZ[20] = "ballZ:";
+
+    sprintf(str_x_ball, "%d", (int)ball.x/BLOCK_SIZE);
+    strcat(str_ballX, str_x_ball);
+    sprintf(str_y_ball, "%d", (int)ball.y);
+    strcat(str_ballY, str_y_ball);
+    sprintf(str_z_ball, "%d", (int)ball.z);
+    strcat(str_ballZ, str_z_ball);
+
+    drawString(str_ballX, screenDimension.w - 120, 200, 100, 50, 255, 255, 255, 255);
+    drawString(str_ballY, screenDimension.w - 120, 250, 100, 50, 255, 255, 255, 255);
+    drawString(str_ballZ, screenDimension.w - 120, 300, 100, 50, 255, 255, 255, 255);
+}
+
 void drawGame(){
     SDL_RenderClear(renderer);
     drawSkyAndGround();
@@ -554,6 +660,8 @@ void drawGame(){
     drawBall();
     drawMap2D(map);
     drawFPS();
+    drawInfosPlayer();
+    drawInfosBall();
     SDL_RenderPresent(renderer);
 }
 

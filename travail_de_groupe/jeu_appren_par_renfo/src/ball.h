@@ -23,7 +23,7 @@ typedef struct ball
     float speed;
 } ball_t;
 
-extern ball_t ball;
+//extern ball_t ball;
 extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall();
