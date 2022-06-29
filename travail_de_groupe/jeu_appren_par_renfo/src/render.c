@@ -18,6 +18,7 @@ SDL_Texture *crowdTexture;
 SDL_Texture *playerTexture;
 SDL_Texture *ballTexture;
 SDL_Texture *skyTexture;
+SDL_Texture *groundTexture;
 
 int **rays;
 int raysListLength = 0;
@@ -884,18 +885,22 @@ void drawBall()
 
 void drawSkyAndGround()
 {
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    SDL_RenderFillRect(renderer, NULL);
+    destRect.x = ((int)( (player.angle+pi) * RD + player.x/BLOCK_SIZE));
+    destRect.y = 0;
+    destRect.w = 100;
+    destRect.h = 128/2;
+
+    rect.x = 0;
+    rect.y = screenDimension.h / 2 + player.viewAngle;
+    rect.h = screenDimension.h - rect.y;
+    rect.w = screenDimension.w;
+    SDL_RenderCopy(renderer, groundTexture, &destRect, &rect);
 
     sky.x = 0;
     sky.y = 0;
     sky.w = screenDimension.w;
     sky.h = screenDimension.h / 2 + player.viewAngle;
 
-    destRect.x = ((int)( (player.angle+pi) * RD + player.x/BLOCK_SIZE));
-    destRect.y = 0;
-    destRect.w = 100;
-    destRect.h = 128/2;
     SDL_RenderCopy(renderer, skyTexture, &destRect, &sky);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -1043,6 +1048,7 @@ void mainLoop()
     netEdgeLeftTexture = loadTexture("Res/netLeft.png");
     netEdgeRightTexture = loadTexture("Res/netRight.png");
     skyTexture = loadTexture("Res/sky.png");
+    groundTexture = loadTexture("Res/ground.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
