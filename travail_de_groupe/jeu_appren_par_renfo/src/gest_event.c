@@ -104,6 +104,13 @@ void gestGame()
                 Keys[1] = 1;
                 continue;
 
+            case SDLK_h:
+                if(showHub == 0){
+                    showHub = 1;
+                }else{
+                    showHub = 0;
+                }
+
             default:
                 break;
             }

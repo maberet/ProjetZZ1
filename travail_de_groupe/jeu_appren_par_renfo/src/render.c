@@ -11,6 +11,8 @@ SDL_Rect rect;
 SDL_Rect sky;
 SDL_Rect ground;
 
+int showHub = 0;
+
 SDL_Texture *netTexture;
 SDL_Texture *netEdgeLeftTexture;
 SDL_Texture *netEdgeRightTexture;
@@ -1010,6 +1012,12 @@ void drawInfosBall()
     drawString(str_ballZ, screenDimension.w - 120, 300, 100, 50, 255, 255, 255, 255);
 }
 
+void drawHub(){
+    drawFPS();
+    drawInfosPlayer();
+    drawInfosBall();
+}
+
 void drawGame()
 {
     SDL_RenderClear(renderer);
@@ -1030,9 +1038,11 @@ void drawGame()
         drawVerticalNet();
     }
     drawMap2D(map);
-    drawFPS();
-    drawInfosPlayer();
-    drawInfosBall();
+    //affiche le hub
+    if(showHub){
+        drawHub();
+    }
+    
     SDL_RenderPresent(renderer);
 }
 

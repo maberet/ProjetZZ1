@@ -37,8 +37,11 @@ extern SDL_DisplayMode screenDimension;
 extern int * ray1;
 extern int * ray2;
 
+extern int showHub;
+
 void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet);
 void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int a);
 void mainLoop();
+void drawHub();
 
 #endif 
