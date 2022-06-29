@@ -7,7 +7,7 @@ agent_t * initAgent (){
         exit (1);
     }  
     agent->x=(16+rand()%14)*BLOCK_SIZE;
-    agent->y=(1+rand()%14)*BLOCK_SIZE;
+    agent->y=(1+rand()%8)*BLOCK_SIZE;
     agent->high=2*BLOCK_SIZE;
     agent->weight=2*BLOCK_SIZE; 
     agent->speed = 1;   
@@ -131,10 +131,21 @@ int convertIntoZone(int xAgent,int yAgent){
     int zone; 
     xAgent=xAgent/BLOCK_SIZE;
     yAgent=yAgent/BLOCK_SIZE;
-    if(xAgent<23 && yAgent<=8){zone=0;} 
-    else if(xAgent<31 && yAgent<=8){zone=1;} 
-    else if(xAgent<23 && yAgent<=18){zone=2;} 
-    else if(xAgent< 31&& yAgent<18){zone=3;}
+    if(xAgent<23 && yAgent<=4){zone=0;} 
+    else if(xAgent<31 && yAgent<=4){zone=1;} 
+    else if(xAgent<23 && yAgent<9){zone=2;} 
+    else if(xAgent< 31&& yAgent<9){zone=3;}
+     
+    return zone ; 
+}
+int convertIntoZoneCanon(int xCanon,int yCanon){
+    int zone; 
+    xCanon=xCanon/BLOCK_SIZE;
+    yCanon=yCanon/BLOCK_SIZE;
+    if(xCanon<9 && yCanon<=4){zone=0;} 
+    else if(xCanon<15 && yCanon<=4){zone=1;} 
+    else if(xCanon<9 && yCanon<9){zone=2;} 
+    else if(xCanon<15&& yCanon<9){zone=3;}
      
     return zone ; 
 }
@@ -214,28 +225,6 @@ int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZ
     return action;
 }
 
-void insertPointToLine(ptline_t head, int receiverZone, int canonZone, int angleHZone, int angleFZone){
-    ptline_t newPoint = (ptline_t )malloc(sizeof(line_t));
-    if (newPoint==NULL){
-        printf("error malloc\n "); 
-        exit(1);
-    } 
-    newPoint->receiverZone = receiverZone;
-    newPoint->shooterZone = canonZone;
-    newPoint-> angleHZone= angleHZone; 
-    newPoint->angleFZone=angleFZone; 
-    newPoint->next =head;// problème pt 
-    head = newPoint;    
-}
-
-void freeLine ( ptline_t headLine){
-    ptline_t current= headLine; 
-    while ( current !=NULL){ 
-        ptline_t temporary = current; 
-        current = current ->next; 
-        free(temporary);
-    } 
-} 
 
 int setReward(int xAgent, int yAgent, int dropZone){
     int zoneAgent; 
@@ -248,27 +237,98 @@ int setReward(int xAgent, int yAgent, int dropZone){
     return (reward); 
 } 
 
-float defineAngle (int xCanon, int yCanon , int xDropPoint, int yDropPoint){
-    float distance;
-    float angleSin;
 
-    distance= sqrtf( powf((float)(xDropPoint-xCanon),2)+powf((float)(yDropPoint-yCanon),2)); 
-    angleSin = asinf(distance/(xDropPoint-xCanon));
-    return angleSin;
+stack_t* initStack(int numberelt){
+    stack_t          *stack=NULL; 
+
+    stack=(stack_t *)malloc(sizeof(stack_t)); // allocation du ptr de tête. 
+
+    if (stack==NULL){  // vérification de l'allocation.   
+        printf("problème d'allocation\n");
+        exit(1);
+    }
+
+    stack->base = (line_t *) malloc(numberelt*sizeof(line_t));// allocation de la stack de longueur numberelt. 
+
+    if (stack->base==NULL){
+        printf("problème d'allocation\n");
+        exit(1);
+    }
+
+    stack->numberelt=numberelt; //ajout du nombre d'élément insérable dans la file.
+    stack->top=-1; //initialisation de l'indice du dernier élément.
+    
+    return (stack);
 }
 
-void traningAgent ( int numberRun, int numberStep, float *****Q) {
-    int i ; 
-    int action;
-    point_t canon ; 
-    point_t dropPoint ; 
-    
-    while (numberRun>0){
-        canon=initPoint(0); 
-        dropPoint= initPoint(1);
-        for (i=0; i< numberStep;i++){ 
 
-        } 
-    } 
-} 
+int emptyStack(stack_t *stack){
+    
+   int        result =0; 
+
+    if (stack->top==-1){   // test de l'indice du top. 
+        
+        result=1;  // la stack est vide.
+    }
+
+    return (result);
+}
+
+int fullStack(stack_t *stack)
+{
+    int result = 0;
+
+    if (stack->numberelt == (stack->top)+1) //si le top est l'indice du dernier élément élément de la stack
+    {
+        result = 1;
+    }
+
+    return result;
+}
+
+void actionStack(stack_t *stack, line_t element)
+{
+    if(!fullStack(stack)) //si la stack n'est pas pleine
+    {
+        stack->base[(stack->top)+1] = element; //on ajoute l'élément à l'indice top+1
+        stack->top = stack->top+1; //on incrémente l'indice du top
+    }
+    else
+    {
+        printf("Pile pleine\n" );
+    }
+}
+
+line_t unStack(stack_t *stack)
+{
+    line_t top;
+    
+    if(!emptyStack(stack)) //si la stack n'est pas vide
+    {
+        top = stack->base[stack->top]; //on récupère le top
+        stack->top = stack->top-1; //on décrémente l'indice du top
+    }
+    else
+    {
+        printf("Pile vide");
+    }
+
+    return top;
+}
+
+void freeStack(stack_t *stack)
+{
+    if(stack != NULL)
+    {
+        free(stack->base); //on libère le tableau dynamique
+        free(stack);    //on libère la tête de la stack
+        printf("Pile libérée\n");
+    }
+    else
+    {
+        printf("Libération impossible, stack == NULL\n");
+    }
+}
+
+
 

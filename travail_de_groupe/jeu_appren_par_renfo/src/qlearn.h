@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>   
-//#include "ball.h"
+#include "ball.h"
 #include "math.h"
 #include "map.h"
 
 #define M_PI 3.14159265358979323846
+
+#define LEARN_RATE 0.9
 
 #define NUMBER_ZONE_SHOOTER 4
 #define NUMBER_ZONE_RECEIVER 4
@@ -19,6 +21,7 @@
 #define UP 2
 #define DOWN 3
 #define WAIT 4 
+
 
 typedef struct agent {
     int x;
@@ -33,14 +36,18 @@ typedef struct line {
     int shooterZone; 
     int angleHZone;
     int angleFZone; 
-    struct line *next ;
+    int action;
+    int reward; 
+}line_t; 
 
-}line_t,*ptline_t; 
+typedef struct stack
+{
+	line_t *base;  
+	int 	   numberelt;  
+	int 	   top; 
 
-typedef struct point{
-    int x;
-    int y; 
-} point_t ; 
+} stack_t;
+
 
 
 agent_t* initAgent ( );
@@ -49,10 +56,16 @@ float ***** allocateAndInitiateQ();
 void writeQ(float *****);
 int argmax(float * );
 int convertIntoZone(int ,int y);
+int convertIntoZoneCanon(int xCanon,int yCanon);
 int converterIntoAngleF(float);
 int converterIntoAngleH(float);
 int takeAction(int ,int , float ***** , int , int, int, float );
-void insertPointToLine(ptline_t head, int, int , int , int); 
-void freeLine ( ptline_t makeheadLine);
 int setReward(int , int , int );
+stack_t* initStack (int nbelt);
+int emptyStack (stack_t *stack);
+int fullStack(stack_t *stack);
+void actionStack(stack_t *stack, line_t line);
+line_t unStack(stack_t *stack);
+void freeStack(stack_t *stack);
+
 #endif

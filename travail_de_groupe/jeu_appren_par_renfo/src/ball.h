@@ -4,14 +4,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include <math.h>
+#include <math.h> 
+#include "render.h"
+
+
 
 #define NUMBERPOINT_TRAJEC 50
 
 typedef enum
 {
-    false,
-    true
+    false, true
+    
 } booleen_t;
 
 typedef struct ball
@@ -23,13 +26,20 @@ typedef struct ball
     float speed;
 } ball_t;
 
+typedef struct point{
+    int x;
+    int y; 
+} point_t ; 
+
 //extern ball_t ball;
 extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
-void initBall();
-float defineAngle(int, int, int, int);
+point_t  initCanon (point_t canon);
+point_t initDropPoint (point_t dropPoint);
+float defineAngleF(int, int, int, int);
+float defineAngleH(int xCanon, int xDropPoint);
 
-int lagrangeInterpolation(float, int, int, int, int, int, int);
+float lagrangeInterpolation(float, int, int, int, int, int, int);
 void calculTrajectoireAntoine2(int, int, int, int, int, int);
 
 #endif

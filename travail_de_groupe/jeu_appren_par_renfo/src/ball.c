@@ -1,20 +1,46 @@
 #include "ball.h"
-
 //ball_t ball;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
-void initBall()
-{
-}
+point_t initCanon (point_t canon){
+    canon.x=(1+rand()%14)*BLOCK_SIZE;
+    canon.y=(1+rand()%8)*BLOCK_SIZE;
+    return canon; 
+} 
 
-float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
+point_t initDropPoint (point_t dropPoint){
+    dropPoint.x=(16+rand()%14)*BLOCK_SIZE;
+    dropPoint.y=(1+rand()%8)*BLOCK_SIZE;
+    return dropPoint; 
+} 
+
+float defineAngleF(int canonX, int canonY, int xDropPoint, int yDropPoint)
 {
     float distance;
     float angleSin;
+    canonX=canonX/BLOCK_SIZE; 
+    canonY=canonY/BLOCK_SIZE; 
+    xDropPoint= xDropPoint/BLOCK_SIZE; 
+    yDropPoint= yDropPoint/BLOCK_SIZE; 
+
     distance = sqrtf(powf((float)(xDropPoint - canonX), 2) + powf((float)(yDropPoint - canonY), 2));
-    angleSin = asinf(distance / (xDropPoint - canonX));
+    angleSin = asinf(((float) (yDropPoint - canonY))/distance);
     return angleSin;
 }
+
+float defineAngleH(int xCanon, int xDropPoint){
+    int xNet =15 ;
+    int yNet= 4; 
+    float angle ; 
+    float yTemp; 
+    xCanon= xCanon/BLOCK_SIZE;
+    xDropPoint=xDropPoint/BLOCK_SIZE;
+
+    yTemp = lagrangeInterpolation((float)(xCanon+(xDropPoint-xCanon)/4), xCanon , 2,xNet , yNet , xDropPoint, 0 ); 
+    angle= atanf( (float)(yTemp/ (xCanon+(xDropPoint-xCanon)/4) )) ;  // possible faute ? 
+
+    return angle; 
+} 
 
 /*
  * Fonction qui prend une valeur de x et 3 points. Elle
@@ -25,7 +51,7 @@ float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
  * Point n°2 (filet ) : int xf, int yf
  * Point n°3 (target) : int xt, int yt
  */
-int lagrangeInterpolation(float xp, int xd, int yd, int xf, int yf, int xt, int yt)
+float lagrangeInterpolation(float xp, int xd, int yd, int xf, int yf, int xt, int yt)
 {
     float x[4], y[4], yp = 0, p;
     int i, j, n;
