@@ -17,6 +17,7 @@ SDL_Texture *netEdgeRightTexture;
 SDL_Texture *crowdTexture;
 SDL_Texture *playerTexture;
 SDL_Texture *ballTexture;
+SDL_Texture *skyTexture;
 
 int **rays;
 int raysListLength = 0;
@@ -206,13 +207,12 @@ void drawRayColumn(rayInfo_t *rayInfo)
     }
 }
 
-void drawVerticalRays()
-{
+void drawVerticalWalls(){
     rayInfo_t *current = raysListHead.next;
     while (current != NULL)
     {
         // printf("%p\n", current);
-        if (current->direction)
+        if (current->direction && !current->isTransparent)
         {
             drawRayColumn(current);
         }
@@ -220,7 +220,20 @@ void drawVerticalRays()
     }
 }
 
-void drawHorizentalRays()
+void drawVerticalNet(){
+    rayInfo_t *current = raysListHead.next;
+    while (current != NULL)
+    {
+        // printf("%p\n", current);
+        if (current->direction && current->isTransparent)
+        {
+            drawRayColumn(current);
+        }
+        current = current->next;
+    }
+}
+
+void drawHorizentalWalls()
 {
     rayInfo_t *current = raysListHead.next;
     while (current != NULL)
@@ -874,12 +887,16 @@ void drawSkyAndGround()
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderFillRect(renderer, NULL);
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     sky.x = 0;
     sky.y = 0;
     sky.w = screenDimension.w;
     sky.h = screenDimension.h / 2 + player.viewAngle;
-    SDL_RenderFillRect(renderer, &sky);
+
+    destRect.x = ((int)( (player.angle+pi) * RD + player.x/BLOCK_SIZE));
+    destRect.y = 0;
+    destRect.w = 100;
+    destRect.h = 128/2;
+    SDL_RenderCopy(renderer, skyTexture, &destRect, &sky);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
@@ -994,16 +1011,18 @@ void drawGame()
     drawSkyAndGround();
     castRays(map);
     if (ball.x < MAP_WIDTH * BLOCK_SIZE/2){
-        drawHorizentalRays();
+        drawVerticalWalls();
         drawEnnemy();
-        drawVerticalRays();
+        drawHorizentalWalls();
+        drawVerticalNet();
         drawBall();
     }
     else {
-        drawHorizentalRays();
-        drawBall();
-        drawVerticalRays();
+        drawVerticalWalls();
         drawEnnemy();
+        drawHorizentalWalls();
+        drawBall();
+        drawVerticalNet();
     }
     drawMap2D(map);
     drawFPS();
@@ -1023,6 +1042,7 @@ void mainLoop()
     ballTexture = loadTexture("Res/ball_sprite.png");
     netEdgeLeftTexture = loadTexture("Res/netLeft.png");
     netEdgeRightTexture = loadTexture("Res/netRight.png");
+    skyTexture = loadTexture("Res/sky.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
