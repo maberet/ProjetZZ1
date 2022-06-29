@@ -1,5 +1,20 @@
 #include "qlearn.h"
 
+agent_t * initAgent (){
+    agent_t * agent =(agent_t*)malloc(sizeof(agent_t));
+    if (agent ==NULL){
+        printf("erreur alloc\n  ");
+        exit (1);
+    }  
+    agent->x=(16+rand()%16)*BLOCK_SIZE;
+    agent->y=(1+rand()%14)*BLOCK_SIZE;
+    agent->high=2*BLOCK_SIZE;
+    agent->weight=2*BLOCK_SIZE; 
+    agent->speed = 1;   
+      // si changement de speed => changement de collisiosn dans le takeaction 
+      return(agent);
+}   
+
 void moveAgent(agent_t * agent, int choice){
     switch (choice)
     {
@@ -115,6 +130,8 @@ int argmax(float * arr){
 
 int convertIntoZone(int xAgent,int yAgent){
     int zone; 
+    xAgent=xAgent/BLOCK_SIZE;
+    yAgent=yAgent/BLOCK_SIZE;
     if(xAgent<23 && yAgent<=8){zone=0;} 
     else if(xAgent<31 && yAgent<=8){zone=1;} 
     else if(xAgent<23 && yAgent<=18){zone=2;} 
@@ -146,43 +163,43 @@ int converterIntoAngleH(float angleH){
     return(angleZone);    
 } 
 
-int takeAction(int xagent, int yagent, float ***** Q, int canonZone, int angleHZone, int angleFZone, float eps){
+int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZone, int angleFZone, float eps){
     int action;
     int proba = rand() % 100;
     int receiverZone=0;
     if (proba < eps * 100){
-        if (xagent > (MAP_WIDTH-1)/2+1 && xagent < MAP_WIDTH- 2 && yagent > 1 && yagent < MAP_HEIGHT - 2){
+        if (xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2 && yAgent/BLOCK_SIZE > 1 && yAgent/BLOCK_SIZE < MAP_HEIGHT - 2){
             action = rand() % 5;// OK cas au centre
         }
-        else if (xagent == (MAP_WIDTH-1)/2+1 && yagent > 1 && yagent < MAP_HEIGHT - 2){
+        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1 && yAgent/BLOCK_SIZE > 1 && yAgent/BLOCK_SIZE < MAP_HEIGHT - 2){
             int possibleActions[4] = {1, 2, 3,4};
             action = possibleActions[rand() % 4];// OK cas filet 
         }
-        else if (xagent == (MAP_WIDTH-1)/2+1 && yagent == 1){
+        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1 && yAgent/BLOCK_SIZE== 1){
             int possibleActions[3] = {1, 3, 4};
             action = possibleActions[rand() % 3];// cas en haut a gauche 
         }
-        else if (xagent == (MAP_WIDTH-1)/2+1  && yagent==MAP_HEIGHT - 2){
+        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1  && yAgent/BLOCK_SIZE==MAP_HEIGHT - 2){
             int possibleActions[3] = {1, 2, 4};
             action = possibleActions[rand() % 3];// cas en bas a gauche 
         }
-        else if (yagent ==1 && xagent > (MAP_WIDTH-1)/2+1 && xagent < MAP_WIDTH- 2){
+        else if (yAgent/BLOCK_SIZE ==1 && xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2){
             int possibleActions[4] = {0, 1,3,4};
             action = possibleActions[rand() % 4];// cas en haut au milieu  
         }
-        else if (xagent == MAP_WIDTH- 2 && yagent == 1){
+        else if (xAgent/BLOCK_SIZE == MAP_WIDTH- 2 && yAgent/BLOCK_SIZE == 1){
             int possibleActions[3] = {0, 3,4};
             action = possibleActions[rand() % 3];// cas en haut a droite
         }
-        else if (xagent ==  MAP_WIDTH-2  && yagent <MAP_HEIGHT-2 && yagent>1){
+        else if (xAgent/BLOCK_SIZE ==  MAP_WIDTH-2  && yAgent/BLOCK_SIZE <MAP_HEIGHT-2 && yAgent/BLOCK_SIZE>1){
             int possibleActions[4] = {0,2,3,4};
             action = possibleActions[rand() % 4];// cas a droite au milieu 
         }
-        else if (xagent == MAP_WIDTH-2 && yagent == MAP_HEIGHT-2){
+        else if (xAgent/BLOCK_SIZE== MAP_WIDTH-2 && yAgent/BLOCK_SIZE == MAP_HEIGHT-2){
             int possibleActions[3] = {0, 2,4};
             action = possibleActions[rand() % 3];// cas en bas a droite 
         }
-        else if (xagent > (MAP_WIDTH-1)/2+1 && xagent < MAP_WIDTH- 2 && yagent == MAP_HEIGHT-2){
+        else if (xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2 && yAgent/BLOCK_SIZE == MAP_HEIGHT-2){
             int possibleActions[4] = {0,1,2,4};
             action = possibleActions[rand() % 4];
         }
@@ -191,9 +208,45 @@ int takeAction(int xagent, int yagent, float ***** Q, int canonZone, int angleHZ
         }
     }
     else{
-        receiverZone= convertIntoZone(xagent,yagent);
+        receiverZone= convertIntoZone(xAgent/BLOCK_SIZE,yAgent/BLOCK_SIZE);
         action = argmax(Q[receiverZone][canonZone][angleHZone][angleFZone]);
         //printf("wtf");
     }
     return action;
 }
+
+void insertPointToLine(ptline_t head, int receiverZone, int canonZone, int angleHZone, int angleFZone){
+    ptline_t newPoint = (ptline_t )malloc(sizeof(line_t));
+    if (newPoint==NULL){
+        printf("error malloc\n "); 
+        exit(1);
+    } 
+    newPoint->receiverZone = receiverZone;
+    newPoint->shooterZone = canonZone;
+    newPoint-> angleHZone= angleHZone; 
+    newPoint->angleFZone=angleFZone; 
+    newPoint->next =head;// problème pt 
+    head = newPoint;    
+}
+
+void freeLine ( ptline_t headLine){
+    ptline_t current= headLine; 
+    while ( current !=NULL){ 
+        ptline_t temporary = current; 
+        current = current ->next; 
+        free(temporary);
+    } 
+} 
+
+int setReward(int xAgent, int yAgent, int dropZone){
+    int zoneAgent; 
+    int reward=0; 
+
+    zoneAgent= convertIntoZone( xAgent,yAgent); 
+    if (zoneAgent==dropZone){
+        reward=1;
+    } 
+    return (reward); 
+}  
+
+
