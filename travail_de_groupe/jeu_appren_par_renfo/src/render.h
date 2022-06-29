@@ -35,7 +35,7 @@ extern SDL_DisplayMode screenDimension;
 extern int * ray1;
 extern int * ray2;
 
-void castSingleRay(float *distance, int *returnX, int *returnY);
+void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet);
 void mainLoop();
 
 #endif 
