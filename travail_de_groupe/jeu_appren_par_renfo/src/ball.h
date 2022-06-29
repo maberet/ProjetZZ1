@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "render.h"
+
 #define NUMBERPOINT_TRAJEC 50
 
 typedef enum
@@ -16,14 +18,17 @@ typedef enum
 
 typedef struct ball
 {
-    int x;
-    int y;
-    int z;
+    float x;
+    float y;
+    float z;
+    int h;
+    int w;
+    int isHit;
     float angle;
-    float speed;
+    int speed;
 } ball_t;
 
-//extern ball_t ball;
+extern ball_t ball;
 extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall();
