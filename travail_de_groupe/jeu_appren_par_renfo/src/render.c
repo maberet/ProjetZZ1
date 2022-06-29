@@ -409,8 +409,8 @@ void castRays(int map[][MAP_WIDTH]){
             //printf("%d %d\n", (int)rx, (int)ry);
             ray2[0] = (int)rx;
             ray2[1] = (int)ry;
-            printf("ray1 %d %d\n", ray1[0]/BLOCK_SIZE, ray1[1]/BLOCK_SIZE);
-            printf("ray2 %d %d\n", ray2[0]/BLOCK_SIZE, ray2[1]/BLOCK_SIZE);
+            //printf("ray1 %d %d\n", ray1[0]/BLOCK_SIZE, ray1[1]/BLOCK_SIZE);
+            ///printf("ray2 %d %d\n", ray2[0]/BLOCK_SIZE, ray2[1]/BLOCK_SIZE);
         }
         //printf("raylistlength %d\n", raysListLength);
         addRayToList(rx, ry);
@@ -435,6 +435,8 @@ void drawEnnemy(){
     //printf("%f\n", player.angle * RD);
 
     if (ennemyAngle >= player.angle - (FOV_ANGLE)/2 * DR && ennemyAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+        //printf("player angle %f\n", player.angle * RD);
+        //printf("ennemy angle %f\n", ennemyAngle * RD);
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ennemyAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ennemyWidth * screenDimension.w) / (ennemyDistance/BLOCK_SIZE);
         rect.h = (ennemyHeight * screenDimension.h)/(ennemyDistance/BLOCK_SIZE);
@@ -446,8 +448,6 @@ void drawEnnemy(){
         destRect.w = 64;
         destRect.h = 64;
         float angleSum = ennemyAngle + player.angle;
-        printf("player angle %f\n", player.angle * RD);
-        printf("ennemy angle %f\n", ennemyAngle * RD);
         if (angleSum > 2*pi) angleSum -= 2*pi;
         if (angleSum < 0) angleSum += 2*pi;
 
@@ -481,8 +481,14 @@ void drawBall(){
     float scaledBallWidth = ballBaseWidth / sqrt(3);
     int ballWidth = 25;
     int ballHeight = 25;
+    float angleMin = player.angle - (FOV_ANGLE)/2 * DR;
 
-    if (ballAngle >= player.angle - (FOV_ANGLE)/2 * DR && ballAngle <= player.angle + (FOV_ANGLE)/2 * DR){
+    float angleMax = player.angle + (FOV_ANGLE)/2 * DR;
+
+
+    printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
+    printf("limit angles: %f %f\n", angleMin, angleMax);
+    if (ballAngle >= angleMin && ballAngle <= angleMax){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h)/(ballDistance/BLOCK_SIZE);

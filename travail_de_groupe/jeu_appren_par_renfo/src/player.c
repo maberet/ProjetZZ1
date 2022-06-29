@@ -72,7 +72,7 @@ void hitBall(){
     //printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2))/BLOCK_SIZE < HIT_RANGE){
         if (currAngle < angleMax && currAngle > angleMin){
-            printf("hit\n");
+            //printf("hit\n");
             freeIntList(landingPoint);
             freeIntList(lastHitPoint);
             lastHitPoint = allocLastHitPoint();
@@ -87,10 +87,10 @@ void hitBall(){
                 ball.speed = HIT_FORCE;
                 ball.isHit = 1;
             }
-           printf("valid hit\n");
+           //printf("valid hit\n");
         }
         else {
-            printf("unvalid hit\n");
+            //printf("unvalid hit\n");
         }
     }
     //}
@@ -102,7 +102,7 @@ void updateBall(){
     if (ball.isHit){
         ball.z = lagrangeInterpolation(ball.x, lastHitPoint[0], lastHitPoint[1], 15 , 2*player.h, landingPoint[0], 0);
     }
-    //printf("ball position: %f %f %f\n", ball.x/BLOCK_SIZE, ball.y/BLOCK_SIZE, ball.z/BLOCK_SIZE);
+    //printf("ball position: %f %f %f\n", ball.x/BLOCK_SIZE, ball.y/BLOCK_SIZE, ball.z);
 }
 
 
