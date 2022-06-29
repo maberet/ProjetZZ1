@@ -522,15 +522,10 @@ void drawBall(){
     }
         
 
-<<<<<<< HEAD
-    //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
-    //printf("limit angles: %f %f\n", angleMin, angleMax);
-=======
     //if (angleMax > 2*pi) angleMax -= 2*pi;
     //printf("is playing in range %d\n", isAngleInRange(ballAngle, angleMin, angleMax));
     //printf("ball angle: %f player angle: %f\n", ballAngle * RD, player.angle * RD);
     //printf("limit angles: %f %f\n", angleMin * RD, angleMax * RD);
->>>>>>> 0eb821b2c8bfe4be52ba9cd900a7693a89f35968
     if (ballAngle >= angleMin && ballAngle <= angleMax){
         rect.x = screenDimension.w/2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance/BLOCK_SIZE);
