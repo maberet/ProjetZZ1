@@ -67,5 +67,5 @@ int fullStack(stack_t *stack);
 void actionStack(stack_t *stack, line_t line);
 line_t unStack(stack_t *stack);
 void freeStack(stack_t *stack);
-
+void traningAgent( int numberRun, int numberStep, float *****Q);
 #endif
