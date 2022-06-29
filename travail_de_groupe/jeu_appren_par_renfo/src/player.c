@@ -61,8 +61,9 @@ void hitBall()
 {
     // printf("map edges: %d %d\n",  BLOCK_SIZE * MAP_WIDTH/2,  BLOCK_SIZE *MAP_HEIGHT/2);
     // printf("ray1: %d %d\n", ray1[0], ray1[1]);
-    int angleMin = RD * atan2((MAP_WIDTH / 2) * BLOCK_SIZE - player.x, player.y);
-    int angleMax = 90 + RD * atan2((MAP_WIDTH / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
+    int fermetureAngle = 2;
+    int angleMin = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, player.y);
+    int angleMax = RD * atan2((MAP_WIDTH+fermetureAngle / 2) * BLOCK_SIZE - player.x, MAP_HEIGHT * BLOCK_SIZE - player.y);
     int currAngle = (int)((player.angle) * RD + 90) % 360;
     // printf("player angle: %d\n",(int) ((player.angle) * RD +90) %360);
     // printf("distance to ball: %f\n", sqrt(pow(ball.x - player.x, 2) + pow(ball.y - player.y, 2))/BLOCK_SIZE);
@@ -82,10 +83,12 @@ void hitBall()
                 float distanceNet;
                 castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
                 printf("rayWall: %d %d\n", rxWall/BLOCK_SIZE, ryWall/BLOCK_SIZE);
-                printf("distance: %f\n", distanceWall);
+                printf("distanceWall: %f\n", distanceWall);
 
                 printf("rayNet: %d %d\n", rxNet/BLOCK_SIZE, ryNet/BLOCK_SIZE);
-                printf("distance: %f\n", distanceNet);
+                printf("distanceNet: %f\n", distanceNet);
+
+
                 lastHitPoint = allocLastHitPoint();
                 landingPoint = generateLandingPoint();
                 lastHitPoint[0] = ball.x;
