@@ -131,7 +131,7 @@ void ennemyHitBall(){
 }
 
 void manageEnnemy(){
-    if (SDL_GetTicks() % 1000 < 20)
+    if (SDL_GetTicks() % 1000 < 50)
     {
         manageEnnemyMovement();
     }

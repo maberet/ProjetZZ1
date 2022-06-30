@@ -810,22 +810,31 @@ void drawBall()
 
 void drawSkyAndGround()
 {
-    destRect.x = ((int)((player.angle + pi) * RD + player.x / BLOCK_SIZE));
-    destRect.y = 0;
-    destRect.w = 100;
-    destRect.h = 128 / 2;
 
     rect.x = 0;
     rect.y = screenDimension.h / 2 + player.viewAngle;
     rect.h = screenDimension.h - rect.y;
     rect.w = screenDimension.w;
-    SDL_RenderCopy(renderer, groundTexture, &destRect, &rect);
 
+    
+    SDL_RenderCopy(renderer, groundTexture, NULL, &rect);
+
+    
     sky.x = 0;
     sky.y = 0;
     sky.w = screenDimension.w;
     sky.h = screenDimension.h / 2 + player.viewAngle;
 
+    destRect.x = 500 + (((player.angle + pi) * RD + player.x / BLOCK_SIZE));
+    if (player.angle > pi){
+        destRect.x = 500 + (((player.angle - pi) * RD + player.x / BLOCK_SIZE));
+    }
+
+    printf("%d\n", sky.h);
+    destRect.y =0;
+    destRect.w = 100;
+    destRect.h = 128;
+    
     SDL_RenderCopy(renderer, skyTexture, &destRect, &sky);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -833,7 +842,7 @@ void drawSkyAndGround()
 
 void drawRacket()
 {
-    // todo
+    SDL_RenderCopy(renderer, racketTexture, NULL, NULL);
 }
 
 void drawMap2D(int map[][MAP_WIDTH])

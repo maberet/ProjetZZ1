@@ -69,7 +69,7 @@ void hitBall()
 
                     ball.angle = player.angle;
                     ball.speed = player.hitIntensity * 5;
-                    ball.z = player.h;
+                   // ball.z = player.h;
                     ball.isHit = 1;
                     ball.isTravelingTo = AI;
 
