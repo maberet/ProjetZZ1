@@ -861,10 +861,10 @@ void drawBall()
         ballAngle += 2 * pi;
     }
 
-    char str[10];
-    int drawBallY = (3 * screenDimension.h / 4 + player.viewAngle) - rect.h / 5 + player.h / BLOCK_SIZE - tan(ballViewAngle) * ballDistance;
-    sprintf(str, "%d", drawBallY);
-    drawString(str, screenDimension.w - 300, 100, 100, 50, 255, 255, 255, 255);
+    //char str[10];
+    //int drawBallY = (3 * screenDimension.h / 4 + player.viewAngle) - rect.h / 5 + player.h / BLOCK_SIZE - tan(ballViewAngle) * ballDistance;
+    //sprintf(str, "%d", drawBallY);
+    //drawString(str, screenDimension.w - 300, 100, 100, 50, 255, 255, 255, 255);
 
     // if (angleMax > 2*pi) angleMax -= 2*pi;
     // printf("is playing in range %d\n", isAngleInRange(ballAngle, angleMin, angleMax));
@@ -1019,7 +1019,6 @@ void drawInfosBall()
 }
 
 void drawHub(){
-    drawFPS();
     drawInfosPlayer();
     drawInfosBall();
 }
@@ -1046,6 +1045,7 @@ void drawGame()
     }
     drawMap2D(map);
     drawRacket();
+    drawFPS();
     //affiche le hub
     if(showHub){
         drawHub();

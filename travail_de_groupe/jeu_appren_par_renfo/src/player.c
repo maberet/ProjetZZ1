@@ -114,18 +114,6 @@ void updateBall()
     {
         // landingPoint est déjà / BLOCK_SIZE de base
         ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
-        if (ball.z > 0)
-        {
-            /*printf("param. lagrange : xp=%f, xd=%d, yd=%d, xf=%d, yf=%d, xt=%d, yt=%d\n",
-                   ball.x / BLOCK_SIZE,
-                   lastHitPoint[0] / BLOCK_SIZE,
-                   lastHitPoint[1] / BLOCK_SIZE,
-                   15,
-                   2 * player.h / BLOCK_SIZE,
-                   landingPoint[0],
-                   0);
-            printf("ballZ: %f\n", ball.z);*/
-        }
     }
 
     if ((int)ball.z == 0)
