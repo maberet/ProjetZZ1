@@ -894,10 +894,10 @@ void drawMap2D(int map[][MAP_WIDTH])
     SDL_RenderFillRect(renderer, &rect);
 
     // draw landing point
-    if (landingPointIsFind == 1)
+    if (landingPointPlayerIsFind == 1)
     {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        rect.x = landingPoint[0] * CELL_SIZE;
+        rect.x = landingPointPlayerX * CELL_SIZE;
         rect.y = CELL_SIZE;
         rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
         rect.w = 3;

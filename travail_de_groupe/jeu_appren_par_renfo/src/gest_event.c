@@ -68,11 +68,11 @@ void gestGame()
             }
             if (event.motion.yrel > 0)
             {
-                player.viewAngle -= 1;
+                player.viewAngle -= 0.01 * RD;
             }
             if (event.motion.yrel < 0)
             {
-                player.viewAngle += 1;
+                player.viewAngle += 0.01 * RD;
             }
             player.deltax = cos(player.angle);
             player.deltay = sin(player.angle);
@@ -118,7 +118,8 @@ void gestGame()
 
             case SDLK_b:
                 initBall();
-                landingPointIsFind = 0;
+                landingPointPlayerIsFind = 0;
+                landingPointEnnemyIsFind = 0;
                 break;
 
             default:

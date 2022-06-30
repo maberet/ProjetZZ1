@@ -1,5 +1,13 @@
 #include "player.h"
 
+int landingPointEnnemyX;
+int landingPointEnnemyY;
+
+int lastHitPointEnnemyX;
+int lastHitPointEnnemyY = 0;
+
+int landingPointEnnemyIsFind = 0;
+
 int angleF;
 int angleH;
 int ennemyZone;
@@ -22,12 +30,12 @@ void manageEnnemyMovement()
 {
     if (ball.isTravelingTo == AI)
     {
-        angleF = defineAngleF(lastHitPoint[0], lastHitPoint[1], landingPoint[0], landingPoint[1]);
+        angleF = defineAngleF(lastHitPointPlayerX, lastHitPointPlayerY, landingPointPlayerX, landingPointPlayerY);
         angleF = converterIntoAngleF(angleF);
-        angleH = defineAngleH(lastHitPoint[0], landingPoint[0]);
+        angleH = defineAngleH(lastHitPointPlayerX, landingPointPlayerX);
         angleH = converterIntoAngleH(angleH);
         ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
-        canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
+        canonZone = convertIntoZone(lastHitPointPlayerX, lastHitPointPlayerY);
         action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
         while (ennemyHasMoved == 0)
         {
@@ -90,17 +98,16 @@ void manageEnnemyMovement()
     }
 }
 
-int * generateLandingPointEnnemy(){
-    int *landingPoint = malloc(sizeof(int) * 2);
+int generatelandingPointEnnemy(){
 
     int randomPointX = rand() % ((MAP_WIDTH/2));
 
-    landingPoint[0] = randomPointX ;
-    landingPoint[1] = 0;
-    landingPointIsFind = 1;
+    landingPointEnnemyIsFind = 1;
+    landingPointPlayerIsFind = 0;
 
-    return landingPoint;
+    return randomPointX;
 }
+
 
 void ennemyHitBall(){
     if (sqrt(pow(ennemy.x - ball.x, 2) + pow(ennemy.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
@@ -108,20 +115,21 @@ void ennemyHitBall(){
         if (ball.isTravelingTo == AI)
         {
             
-            if(landingPointIsFind == 0){
-                freeIntList(landingPoint);
-                landingPoint = generateLandingPointEnnemy();
-            }
-            ball.isTravelingTo = PLAYER;
-            ball.angle = ennemy.angle;
-            ball.speed = HIT_FORCE;
-            ball.isHit = 1;
-            lastHitPoint[0] = ball.x;
-            lastHitPoint[1] = player.h;
+                //cherche et trouve point de chute, UNE SEULE FOIS!
+            if(landingPointEnnemyIsFind == 0){
+                landingPointEnnemyX = generatelandingPointEnnemy();
+                ball.isTravelingTo = PLAYER;
+                ball.angle = ennemy.angle;
+                ball.speed = HIT_FORCE;
+                ball.isHit = 1;
+                lastHitPointEnnemyX = ball.x;
+                lastHitPointEnnemyY = player.h;
 
-            printf("ennemy new lastHitPoint : %d %d\n", lastHitPoint[0]/BLOCK_SIZE, lastHitPoint[1]/BLOCK_SIZE);
+                printf("ennemy new lastHitPointEnnemy : %d %d\n", lastHitPointEnnemyX/BLOCK_SIZE, lastHitPointEnnemyY/BLOCK_SIZE);
 
-            printf("ennemy new landingPoint : %d %d\n", landingPoint[0]/BLOCK_SIZE, landingPoint[1]/BLOCK_SIZE);
+                printf("ennemy new landingPointEnnemy : %d %d\n", landingPointEnnemyX/BLOCK_SIZE, landingPointEnnemyY/BLOCK_SIZE);
+                }
+
         }
     }
 }
