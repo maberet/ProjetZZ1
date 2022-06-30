@@ -11,7 +11,7 @@
 #define ENTITIES_RIGHT 3
 
 #define HIT_RANGE 2
-#define HIT_FORCE 20
+#define HIT_FORCE 10
 
 #define MOVEMENT_SPEED 20
 typedef struct player{
