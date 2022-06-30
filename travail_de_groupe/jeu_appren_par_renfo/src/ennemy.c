@@ -93,7 +93,7 @@ void manageEnnemyMovement()
 int * generateLandingPointEnnemy(){
     int *landingPoint = malloc(sizeof(int) * 2);
 
-    int randomPointX = rand() % ((MAP_WIDTH/2));
+    int randomPointX = rand() % ((MAP_WIDTH-1)/2);
 
     landingPoint[0] = randomPointX ;
     landingPoint[1] = 0;
