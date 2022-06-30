@@ -18,21 +18,36 @@ agent_t * initAgent (){
 void moveAgent(agent_t * agent, int choice){
     switch (choice)
     {
-    case BACK:
-        agent->x += 1*agent->speed; //Avancer 
-        break;
+   case BACK:
+                if (agent->x + 1 < (MAP_WIDTH-1) * 1)
+                {
+                    agent->x += 1;
+                }
+        
+                break;
 
-    case FOWARD:
-        agent->x -= 1*agent->speed; // reculer 
-        break;
+            case FOWARD:
+                if (agent->x - 1 > (MAP_WIDTH/2 + 1) * 1)
+                {
+                    agent->x -= 1;
+                }
+            
+                break;
 
-    case UP:
-        agent->y += 1*agent->speed;
-        break;
+            case UP:
+                if (agent->y - 1 > 1)
+                {
+                    agent->y -= 1;
+                }
+                break;
 
-    case DOWN:
-        agent->y -= 1*agent->speed;
-        break;
+            case DOWN:
+                if (agent->y + 1 < (MAP_HEIGHT-1) * 1)
+                {
+                    agent->y += 1;
+                }
+              
+                break;
     case WAIT: 
         break; 
     }
@@ -144,14 +159,20 @@ int argmax(float * arr){
     return maxIndex;
 }
 
+// int convertIntoZone(int xAgent,int yAgent){
+//     int zone=0; 
+//     xAgent=xAgent;
+//     yAgent=yAgent;
+//     if(xAgent> 15 && xAgent<23 && yAgent<=4){zone=0;} 
+//     else if(xAgent>22 && xAgent<31 && yAgent<=4){zone=1;} 
+//     else if(xAgent> 15 && xAgent<23 && yAgent<9){zone=2;}
+//     else if(xAgent> 22 && xAgent<= 31&& yAgent<9){zone=3;}
+     
+//     return zone ; 
+// }
 int convertIntoZone(int xAgent,int yAgent){
     int zone=0; 
-    xAgent=xAgent;
-    yAgent=yAgent;
-    if(xAgent> 15 && xAgent<23 && yAgent<=4){zone=0;} 
-    else if(xAgent>22 && xAgent<31 && yAgent<=4){zone=1;} 
-    else if(xAgent> 15 && xAgent<23 && yAgent<9){zone=2;}
-    else if(xAgent> 22 && xAgent<= 31&& yAgent<9){zone=3;}
+    zone = (yAgent-1)*14 +(xAgent -16)%14 ;
      
     return zone ; 
 }
@@ -387,6 +408,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                             reward=0; 
                             //printf (" %d \n  ", m);
                             while(i>0){
+                                printf("%d %d \n  ",agent->x ,agent->y );
                                 action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
                                 agentZone= convertIntoZone( agent->x,agent->y ); 
                                 line.receiverZone= agentZone; 

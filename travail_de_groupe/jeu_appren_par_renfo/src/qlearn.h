@@ -17,7 +17,7 @@
 
 
 #define NUMBER_ZONE_SHOOTER 4
-#define NUMBER_ZONE_RECEIVER 4
+#define NUMBER_ZONE_RECEIVER 112
 #define NUMBER_ACTION 5 
 
 #define FOWARD 0//<--

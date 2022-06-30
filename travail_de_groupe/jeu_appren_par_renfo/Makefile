@@ -1,7 +1,7 @@
 CC=gcc
 
-LDFLAG=$(shell sdl2-config --cflags --libs) -lm -lSDL2_ttf -D_REENTRANT -lSDL2_image -pthread
-CFLAG=-Wall $(shell sdl2-config --cflags --libs)
+LDFLAG=$(shell sdl2-config --cflags --libs) -lm -lSDL2_ttf -D_REENTRANT -lSDL2_image -pthread -g
+CFLAG=-Wall $(shell sdl2-config --cflags --libs) -g
 
 EXEC=run
 SRC=$(wildcard src/*.c)

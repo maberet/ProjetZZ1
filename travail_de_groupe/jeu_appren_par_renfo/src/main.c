@@ -8,9 +8,10 @@ int main(){
     int i= 10;
     
     srand ( time(NULL));
-    while (i>0){
+    // while (i>0){
     traningAgent(100000,30, Q);
-    i--;} 
+    // i--;} 
+    //printf(" %d \n ", convertIntoZone(agent->x,agent->y));
     
     writeQ(Q);
     // running = 1;
@@ -22,5 +23,5 @@ int main(){
     // mainLoop();
 
 
-    mainLoop();
+    //mainLoop();
 }
