@@ -94,6 +94,7 @@ void hitBall()
                 ball.speed = 2 * HIT_FORCE;
                 ball.z = player.h;
                 ball.isHit = 1;
+                ball.isTravelingTo = AI;
             }
         }
     }
@@ -125,5 +126,4 @@ void managePlayer()
 {
     manageMovement();
     hitBall();
-    updateBall();
 }

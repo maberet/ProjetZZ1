@@ -63,7 +63,7 @@ int convertIntoZone(int ,int y);
 int convertIntoZoneCanon(int xCanon,int yCanon);
 int converterIntoAngleF(float);
 int converterIntoAngleH(float);
-int takeAction(int ,int , float ***** , int , int, int, float );
+int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZone, int angleFZone, float eps);
 int setReward(int , int , int );
 stack_t* initStack (int nbelt);
 int emptyStack (stack_t *stack);
@@ -72,4 +72,5 @@ void actionStack(stack_t *stack, line_t line);
 line_t unStack(stack_t *stack);
 void freeStack(stack_t *stack);
 void traningAgent( int numberRun, int numberStep, float *****Q);
+void readQFromFile(float *****Q);
 #endif

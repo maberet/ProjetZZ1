@@ -25,5 +25,6 @@
 
 extern int running;
 extern int game_state;
+extern float ***** Q;
 
 #endif

@@ -110,6 +110,23 @@ void writeQ(float *****Q){
     fclose(fp);
 }
 
+void readQFromFile(float *****Q){
+    int i, j, k, l, m ;
+    FILE * fp = fopen("q.txt", "r");
+    for(i = 0; i < NUMBER_ZONE_RECEIVER; i++){
+        for(j = 0; j < NUMBER_ZONE_SHOOTER; j++){
+            for(k = 0; k < 3; k++){
+                for(l= 0; l < 5; l++){
+                    for(m= 0; m <5; m++){
+                         fscanf(fp, "%f ", &Q[i][j][k][l][m]);
+                    }
+                }
+            }
+        }
+    }
+    fclose(fp);
+}
+
 
 int argmax(float * arr){
     int i;

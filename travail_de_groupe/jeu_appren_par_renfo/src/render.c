@@ -1064,6 +1064,8 @@ void mainLoop()
             case GAME:
                 drawGame();
                 managePlayer();
+                manageEnnemy();
+                updateBall();
                 break;
             }
         }

@@ -5,6 +5,7 @@
 #include "map.h"
 #include "render.h"
 #include "ball.h"
+#include "qlearn.h"
 
 
 

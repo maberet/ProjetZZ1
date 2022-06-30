@@ -2,9 +2,11 @@
 
 int running;
 int game_state;
-
+float ***** Q;
 int main()
 {
+    Q = allocateAndInitiateQ();
+    readQFromFile(Q);
     running = 1;
     game_state = GAME;
     readMapFromFile("map.txt");
@@ -13,6 +15,8 @@ int main()
     initEnnemy();
     initKeys();
     initBall();
+
+
 
     mainLoop();
 }
