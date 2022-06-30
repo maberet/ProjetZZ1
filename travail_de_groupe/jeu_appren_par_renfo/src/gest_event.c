@@ -114,11 +114,12 @@ void gestGame()
                 {
                     showHub = 0;
                 }
+                break;
 
             case SDLK_b:
                 initBall();
                 landingPointIsFind = 0;
-                continue;
+                break;
 
             default:
                 break;
