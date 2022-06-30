@@ -11,7 +11,7 @@
 #define ENTITIES_RIGHT 3
 
 #define HIT_RANGE 2
-#define HIT_FORCE 10
+#define HIT_FORCE 2
 #define MOVEMENT_SPEED 10
 
 typedef struct player
@@ -43,5 +43,6 @@ extern int landingPointIsFind;
 
 void initPlayer();
 void managePlayer();
+void freeIntList(int *list);
 
 #endif

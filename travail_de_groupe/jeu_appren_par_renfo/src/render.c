@@ -12,7 +12,7 @@ SDL_Rect sky;
 SDL_Rect ground;
 SDL_Rect racket;
 
-int showHub = 0;
+int showHub = 1;
 
 SDL_Texture *netTexture;
 SDL_Texture *netEdgeLeftTexture;

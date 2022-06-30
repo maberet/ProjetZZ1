@@ -90,9 +90,16 @@ void manageEnnemyMovement()
     }
 }
 
-void generateLandingPointEnnemy(){
-    landingPoint[0] = rand() % ((MAP_WIDTH/2));
-    landingPoint[1] = rand() % (MAP_HEIGHT);
+int * generateLandingPointEnnemy(){
+    int *landingPoint = malloc(sizeof(int) * 2);
+
+    int randomPointX = rand() % ((MAP_WIDTH/2));
+
+    landingPoint[0] = randomPointX ;
+    landingPoint[1] = 0;
+    landingPointIsFind = 1;
+
+    return landingPoint;
 }
 
 void ennemyHitBall(){
@@ -101,6 +108,10 @@ void ennemyHitBall(){
         if (ball.isTravelingTo == AI)
         {
             
+            if(landingPointIsFind == 0){
+                freeIntList(landingPoint);
+                landingPoint = generateLandingPointEnnemy();
+            }
             ball.isTravelingTo = PLAYER;
             ball.angle = ennemy.angle;
             ball.speed = HIT_FORCE;
@@ -108,13 +119,17 @@ void ennemyHitBall(){
             lastHitPoint[0] = ball.x;
             lastHitPoint[1] = player.h;
 
-            printf("new lastHitPoint : %d %d\n", lastHitPoint[0], lastHitPoint[1]);
-            generateLandingPointEnnemy();
+            printf("ennemy new lastHitPoint : %d %d\n", lastHitPoint[0]/BLOCK_SIZE, lastHitPoint[1]/BLOCK_SIZE);
+
+            printf("ennemy new landingPoint : %d %d\n", landingPoint[0]/BLOCK_SIZE, landingPoint[1]/BLOCK_SIZE);
         }
     }
 }
 
 void manageEnnemy(){
-    manageEnnemyMovement();
+    if (SDL_GetTicks() % 1000 < 100)
+    {
+        manageEnnemyMovement();
+    }
     ennemyHitBall();
 }

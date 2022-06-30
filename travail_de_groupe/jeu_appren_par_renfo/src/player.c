@@ -33,13 +33,11 @@ void initPlayer()
 int *generateLandingPoint(int rxWall)
 {
     int *landingPoint = malloc(sizeof(int) * 2);
-    srand(time(NULL));
 
     int randomPointX = MAP_WIDTH/2 + 1 + rand()%(rxWall/BLOCK_SIZE - (MAP_WIDTH/2));
-    int randomPointY = -1;
 
     landingPoint[0] = randomPointX ;
-    landingPoint[1] = randomPointY / BLOCK_SIZE;
+    landingPoint[1] = 0;
     landingPointIsFind = 1;
 
     return landingPoint;
@@ -94,6 +92,10 @@ void hitBall()
                 ball.z = player.h;
                 ball.isHit = 1;
                 ball.isTravelingTo = AI;
+
+                printf("ennemy new lastHitPoint : %d %d\n", lastHitPoint[0]/BLOCK_SIZE, lastHitPoint[1]/BLOCK_SIZE);
+
+                printf("ennemy new landingPoint : %d %d\n", landingPoint[0]/BLOCK_SIZE, landingPoint[1]/BLOCK_SIZE);
             }
             // printf("valid hit\n");
         }
