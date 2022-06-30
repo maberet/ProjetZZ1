@@ -73,7 +73,6 @@ void hitBall()
         if (player.isHitting)
         {
             castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
-            // printf("hit\n");
             if (rxWall > MAP_WIDTH / 2)
             {
 
@@ -96,14 +95,8 @@ void hitBall()
                 ball.z = player.h;
                 ball.isHit = 1;
             }
-            // printf("valid hit\n");
-        }
-        else
-        {
-            // printf("unvalid hit\n");
         }
     }
-    //}
 }
 
 void updateBall()
