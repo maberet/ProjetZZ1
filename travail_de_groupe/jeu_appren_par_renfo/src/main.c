@@ -3,18 +3,15 @@
 int running;
 int game_state;
 
-int main(){
-
-    //float ***** Q = allocateAndInitiateQ();
-    //writeQ(Q);
+int main()
+{
     running = 1;
     game_state = GAME;
     readMapFromFile("map.txt");
-    //printMap();
+
     initPlayer();
     initKeys();
     initBall();
 
     mainLoop();
-
-} 
+}
