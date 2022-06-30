@@ -36,10 +36,10 @@ typedef struct agent {
 } agent_t;
 
 typedef struct line {
-    int receiverZone;
-    int shooterZone; 
-    int angleHZone;
-    int angleFZone; 
+    int xAgent;
+    int yAgent;
+    int landX;
+    int landY;
     int action;
     int reward; 
 }line_t; 
@@ -57,14 +57,14 @@ typedef struct stack
 agent_t* initAgent ( );
 void moveAgent(agent_t * agent, int choice);
 float ***** allocateAndInitiateQ();
-void writeQ(float *****);
+void writeQToFile(float ***** q, char * filename);
 int argmax(float * );
 int convertIntoZone(int ,int y);
 int convertIntoZoneCanon(int xCanon,int yCanon);
 int converterIntoAngleF(float);
 int converterIntoAngleH(float);
-int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZone, int angleFZone, float eps);
-int setReward(int , int , int );
+int takeAction(int xAgent, int yAgent, float ***** Q, int , int , float eps);
+int setReward(int , int , int , int);
 stack_t* initStack (int nbelt);
 int emptyStack (stack_t *stack);
 int fullStack(stack_t *stack);
@@ -72,5 +72,5 @@ void actionStack(stack_t *stack, line_t line);
 line_t unStack(stack_t *stack);
 void freeStack(stack_t *stack);
 void traningAgent( int numberRun, int numberStep, float *****Q);
-void readQFromFile(float *****Q);
+void readQFromFile(float *****Q, char *);
 #endif

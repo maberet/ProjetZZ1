@@ -9,11 +9,11 @@ int main(){
     
     srand ( time(NULL));
     // while (i>0){
-    traningAgent(100000,30, Q);
+    traningAgent(100,30, Q);
     // i--;} 
     //printf(" %d \n ", convertIntoZone(agent->x,agent->y));
     
-    writeQ(Q);
+    writeQToFile(Q, "q.txt");
     // running = 1;
     // game_state = GAME;
     // readMapFromFile("map.txt");

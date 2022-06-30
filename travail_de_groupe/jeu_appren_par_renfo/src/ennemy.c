@@ -19,13 +19,13 @@ void initEnnemy()
 void manageEnnemyMovement()
 {
     if (ball.isTravelingTo == AI){
-        angleF = defineAngleF(lastHitPoint[0], lastHitPoint[1], landingPoint[0], landingPoint[1]);
-        angleF = converterIntoAngleF(angleF);
-        angleH = defineAngleH(lastHitPoint[0], landingPoint[0]);
-        angleH = converterIntoAngleH(angleH);
-        ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
-        canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
-        action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 0);
+        //angleF = defineAngleF(lastHitPoint[0], lastHitPoint[1], landingPoint[0], landingPoint[1]);
+        //angleF = converterIntoAngleF(angleF);
+        //angleH = defineAngleH(lastHitPoint[0], landingPoint[0]);
+        //angleH = converterIntoAngleH(angleH);
+        //ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
+        //canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
+        action = 0;//takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 0);
         switch (action)
         {
             case BACK:
