@@ -110,6 +110,23 @@ void writeQ(float *****Q){
     fclose(fp);
 }
 
+void readQFromFile(float *****Q){
+    int i, j, k, l, m ;
+    FILE * fp = fopen("q.txt", "r");
+    for(i = 0; i < NUMBER_ZONE_RECEIVER; i++){
+        for(j = 0; j < NUMBER_ZONE_SHOOTER; j++){
+            for(k = 0; k < 3; k++){
+                for(l= 0; l < 5; l++){
+                    for(m= 0; m <5; m++){
+                         fscanf(fp, "%f ", &Q[i][j][k][l][m]);
+                    }
+                }
+            }
+        }
+    }
+    fclose(fp);
+}
+
 
 int argmax(float * arr){
     int i;
@@ -408,63 +425,4 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
         numberRun--; 
     }
     freeStack(stack); 
-
-
-
-
-
-
-
-
-    //     printf("%d %d %d %d \n",dropZone, canonZone,zoneAngleH,zoneAngleF);
-    //     printf("%d %d  \n",agent->x, agent->y);
-
-    //     for (i=0; i<numberStep-1;i++){ 
-    //         action = takeAction(agent->x,agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
-    //         agentZone = convertIntoZone(agent->x, agent->y); 
-    //         line.receiverZone=agentZone; 
-    //         line.shooterZone =canonZone; 
-    //         line.angleHZone= zoneAngleH; 
-    //         line.angleFZone= zoneAngleF; 
-    //         line.action= action;
-    //         line.reward= reward ; 
-    //         actionStack(stack,line);
-    //         moveAgent(agent, action);
-
-    //     }
-    //     action = takeAction(agent->x, agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
-    //     agentZone = convertIntoZone(agent->x, agent->y); 
-       
-    //     line.receiverZone=agentZone; 
-    //     line.shooterZone =canonZone; 
-    //     line.angleHZone= zoneAngleH; 
-    //     line.angleFZone= zoneAngleF; 
-    //     line.action= action;
-    //     line.reward = 0; 
-    //    // actionStack(stack,line);
-    //     moveAgent(agent, action);
-    //      if (agentZone==dropZone){ 
-    //                reward=1; 
-    //             }
-    //             else{reward= 0;}
-        
-
-    //     Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=  
-    //                 + LEARN_RATE* ( reward - Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
-       
-    //     while (!emptyStack(stack)){
-    //         maxAction= argmax(Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone]);
-    //         reward=line.reward;
-    //         line=unStack(stack);
-
-    //         Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=  
-    //                 + LEARN_RATE* ( reward +  DISCOUNT*Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][maxAction]
-    //                 - Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
-    //     }  
-    //     numberRun--; 
-    //     greedy=greedy-1/((float)numberRun);
-
-    //     if ( numberRun%1000000==1){printf (" %d \n  ", numberRun);} 
-    // } 
-    // freeStack(stack);
 } 

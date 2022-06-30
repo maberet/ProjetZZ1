@@ -13,6 +13,9 @@
 
 #define NUMBERPOINT_TRAJEC 50
 
+#define PLAYER 0
+#define AI 1
+
 typedef enum
 {
     false, true
@@ -29,6 +32,7 @@ typedef struct ball
     int isHit;
     float angle;
     int speed;
+    int isTravelingTo;
 } ball_t;
 
 extern ball_t ball;
@@ -40,9 +44,12 @@ typedef struct point{
 //extern ball_t ball;
 extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
+void initBall();
+float defineAngle(int, int, int, int);
+void updateBall();
 point_t  initCanon (point_t canon);
 point_t initDropPoint (point_t dropPoint);
-float defineAngleF(int, int, int, int);
+float defineAngleF(int canonX, int canonY, int xDropPoint, int yDropPoint);
 float defineAngleH(int xCanon, int xDropPoint);
 
 float lagrangeInterpolation(float, int, int, int, int, int, int);

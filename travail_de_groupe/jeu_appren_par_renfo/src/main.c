@@ -2,10 +2,10 @@
 
 int running;
 int game_state;
-
-
+float ***** Q;
 int main(){ 
-    float ***** Q = allocateAndInitiateQ();
+    Q = allocateAndInitiateQ();
+    readQFromFile(Q);
     int i= 10;
     
     srand ( time(NULL));
@@ -22,4 +22,6 @@ int main(){
     
     // mainLoop();
 
-} 
+
+    mainLoop();
+}
