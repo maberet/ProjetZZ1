@@ -3,18 +3,23 @@
 int running;
 int game_state;
 
-int main(){
 
-    //float ***** Q = allocateAndInitiateQ();
-    //writeQ(Q);
-    running = 1;
-    game_state = GAME;
-    readMapFromFile("map.txt");
-    //printMap();
-    initPlayer();
-    initKeys();
-    initBall();
-
-    mainLoop();
+int main(){ 
+    float ***** Q = allocateAndInitiateQ();
+    int i= 10;
+    
+    srand ( time(NULL));
+    while (i>0){
+    traningAgent(10000,5000, Q);
+    i--;} 
+    
+    writeQ(Q);
+    // running = 1;
+    // game_state = GAME;
+    // readMapFromFile("map.txt");
+    // initPlayer();
+    // initKeys();
+    
+    // mainLoop();
 
 } 
