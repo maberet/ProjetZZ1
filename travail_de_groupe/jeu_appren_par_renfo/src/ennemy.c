@@ -25,7 +25,7 @@ void manageEnnemyMovement()
         angleH = converterIntoAngleH(angleH);
         ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
         canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
-        action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 0);
+        action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
         switch (action)
         {
             case BACK:

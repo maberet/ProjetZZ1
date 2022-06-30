@@ -33,7 +33,6 @@ void initPlayer()
 int *generateLandingPoint(int rxWall)
 {
     int *landingPoint = malloc(sizeof(int) * 2);
-    srand(time(NULL));
 
     int randomPointX = MAP_WIDTH / 2 + 1 + rand() % (rxWall / BLOCK_SIZE - (MAP_WIDTH / 2));
     int randomPointY = -1;

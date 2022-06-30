@@ -5,6 +5,7 @@ int game_state;
 float ***** Q;
 int main()
 {
+    srand(time(NULL));
     Q = allocateAndInitiateQ();
     readQFromFile(Q);
     running = 1;

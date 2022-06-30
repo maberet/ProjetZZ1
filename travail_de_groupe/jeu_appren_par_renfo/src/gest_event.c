@@ -115,6 +115,11 @@ void gestGame()
                     showHub = 0;
                 }
 
+            case SDLK_b:
+                initBall();
+                landingPointIsFind = 0;
+                continue;
+
             default:
                 break;
             }
