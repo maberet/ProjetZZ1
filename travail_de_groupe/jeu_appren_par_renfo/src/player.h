@@ -11,10 +11,11 @@
 #define ENTITIES_RIGHT 3
 
 #define HIT_RANGE 2
-#define HIT_FORCE 20
+#define HIT_FORCE 10
+#define MOVEMENT_SPEED 10
 
-#define MOVEMENT_SPEED 20
-typedef struct player{
+typedef struct player
+{
     float x;
     float y;
     float z;
@@ -36,6 +37,9 @@ typedef struct player{
 
 extern player_t player;
 extern player_t ennemy;
+extern int *landingPoint;
+extern int *lastHitPoint;
+extern int landingPointIsFind;
 
 void initPlayer();
 void managePlayer();

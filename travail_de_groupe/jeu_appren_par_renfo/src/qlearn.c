@@ -110,6 +110,23 @@ void writeQ(float *****Q){
     fclose(fp);
 }
 
+void readQFromFile(float *****Q){
+    int i, j, k, l, m ;
+    FILE * fp = fopen("q.txt", "r");
+    for(i = 0; i < NUMBER_ZONE_RECEIVER; i++){
+        for(j = 0; j < NUMBER_ZONE_SHOOTER; j++){
+            for(k = 0; k < 3; k++){
+                for(l= 0; l < 5; l++){
+                    for(m= 0; m <5; m++){
+                         fscanf(fp, "%f ", &Q[i][j][k][l][m]);
+                    }
+                }
+            }
+        }
+    }
+    fclose(fp);
+}
+
 
 int argmax(float * arr){
     int i;
@@ -355,6 +372,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
     
     while (numberRun>0){
         agent=initAgent(); 
+<<<<<<< HEAD
         for( j=0; j<4;j++){ 
             for (k=0;k<3;k++){ 
                     for (l=0; l<5;l++){ 
@@ -420,6 +438,64 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
             } writeQ(Q);
         if ( numberRun%10000==1){printf (" %d \n  ", numberRun);} 
         greedy = greedy - 1/numberRun;
+=======
+        canon=initCanon(canon); 
+        dropPoint= initDropPoint(dropPoint);
+        angleF=defineAngleF( canon.x, canon.x, dropPoint.x, dropPoint.y );
+        angleH=defineAngleH( canon.x, canon.y ); 
+        zoneAngleF=converterIntoAngleF(angleF);
+        zoneAngleH=converterIntoAngleH(angleH);
+        dropZone=convertIntoZone(dropPoint.x,dropPoint.y); 
+        canonZone= convertIntoZoneCanon(canon.x,canon.y); 
+        reward=0; 
+
+        for ( i=0; i< numberStep - 1; i++ ){
+            action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
+            agentZone= convertIntoZone( agent->x,agent->y ); 
+            line.receiverZone= agentZone; 
+            line.shooterZone= canonZone; 
+            line.angleHZone=zoneAngleH; 
+            line.angleFZone=zoneAngleF; 
+            line.action= action; 
+            line.reward= 0; 
+            actionStack( stack , line); 
+            moveAgent(agent, action); 
+        } 
+        action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
+        agentZone= convertIntoZone( agent->x,agent->y ); 
+        line.receiverZone= agentZone; 
+        line.shooterZone= canonZone; 
+        line.angleHZone=zoneAngleH; 
+        line.angleFZone=zoneAngleF; 
+        line.action= action; 
+        moveAgent(agent, action);  
+        agentZone= convertIntoZone( agent->x,agent->y ); 
+
+        reward = (agentZone==dropZone); 
+
+        Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] += 
+            LEARN_RATE* ( reward -
+             Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
+
+        while ( !emptyStack(stack)){
+            reward=line.reward; 
+            maxAction= argmax(Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone]); 
+            agentZone= line.receiverZone;
+            canonZone= line.shooterZone; 
+            zoneAngleH= line.angleHZone;
+            zoneAngleF=line.angleFZone; 
+
+            line=unStack(stack); 
+
+
+            Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=
+                    DISCOUNT*(reward +
+                    LEARN_RATE* Q[agentZone][canonZone][zoneAngleH][zoneAngleF][maxAction]
+                    -Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action]);
+        }
+        //if ( numberRun%1000000==1){printf (" %d \n  ", numberRun);}  
+        //greedy = greedy - 1/numberRun;
+>>>>>>> qlearn
         numberRun--; 
     }
     freeStack(stack); 

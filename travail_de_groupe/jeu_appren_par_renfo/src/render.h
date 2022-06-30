@@ -8,7 +8,7 @@
 
 #define FPS_TO_GET 60
 #define CELL_SIZE 10
- 
+
 #define DOF 100
 #define BLOCK_SIZE 64
 #define DR 0.0174533
@@ -18,27 +18,31 @@
 #define NB_RAYS (screenDimension.w)
 #define ANGLE_INC ((DR * FOV_ANGLE) / NB_RAYS)
 
-typedef struct rayInfo{
+typedef struct rayInfo
+{
     float ra;
     float distT;
     int r;
     int isTransparent;
-    int direction; 
+    int direction;
     float htexture;
     int rx;
     int ry;
-    struct rayInfo * next;
+    struct rayInfo *next;
 } rayInfo_t;
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_DisplayMode screenDimension;
 
-extern int * ray1;
-extern int * ray2;
+extern int *ray1;
+extern int *ray2;
+
+extern int showHub;
 
 void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet);
 void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int a);
 void mainLoop();
+void drawHub();
 
-#endif 
+#endif

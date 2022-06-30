@@ -2,8 +2,7 @@
 
 int running;
 int game_state;
-
-
+float ***** Q;
 int main(){ 
     float ***** Q = allocateAndInitiateQ();
     int i= 1;
@@ -22,4 +21,6 @@ int main(){
     
     // mainLoop();
 
-} 
+
+    mainLoop();
+}
