@@ -5,11 +5,11 @@ int game_state;
 float ***** Q;
 int main(){ 
     float ***** Q = allocateAndInitiateQ();
-    int i= 1;
+    int i= 10;
     
     srand ( time(NULL));
     while (i>0){
-    traningAgent(10000,30, Q);
+    traningAgent(100000,30, Q);
     i--;} 
     
     writeQ(Q);
