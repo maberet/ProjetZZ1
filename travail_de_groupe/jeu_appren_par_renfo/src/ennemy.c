@@ -44,7 +44,7 @@ void manageEnnemyMovement()
             case BACK:
                 if (ennemy.x + BLOCK_SIZE < (MAP_WIDTH-1) * BLOCK_SIZE)
                 {
-                    ennemy.x += BLOCK_SIZE;
+                    ennemy.x += BLOCK_SIZE/2;
                     ennemyHasMoved = 1;
                 }
                 else
@@ -56,7 +56,7 @@ void manageEnnemyMovement()
             case FOWARD:
                 if (ennemy.x - BLOCK_SIZE > (MAP_WIDTH/2 + 1) * BLOCK_SIZE)
                 {
-                    ennemy.x -= BLOCK_SIZE;
+                    ennemy.x -= BLOCK_SIZE/2;
                     ennemyHasMoved = 1;
                 }
                 else
@@ -68,7 +68,7 @@ void manageEnnemyMovement()
             case UP:
                 if (ennemy.y - BLOCK_SIZE > 1)
                 {
-                    ennemy.y -= BLOCK_SIZE;
+                    ennemy.y -= BLOCK_SIZE/2;
                     ennemyHasMoved = 1;
                 }
                 else
@@ -80,7 +80,7 @@ void manageEnnemyMovement()
             case DOWN:
                 if (ennemy.y + BLOCK_SIZE < (MAP_HEIGHT-1) * BLOCK_SIZE)
                 {
-                    ennemy.y += BLOCK_SIZE;
+                    ennemy.y += BLOCK_SIZE/2;
                     ennemyHasMoved = 1;
                 }
                 else
