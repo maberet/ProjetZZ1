@@ -11,7 +11,7 @@
 #define M_PI 3.14159265358979323846
 
 #define LEARN_RATE 0.8
-#define DISCOUNT 0.5
+#define DISCOUNT 0.2
 
 
 

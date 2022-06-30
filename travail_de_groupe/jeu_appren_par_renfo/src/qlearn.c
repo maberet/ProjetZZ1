@@ -128,18 +128,18 @@ int argmax(float * arr){
 }
 
 int convertIntoZone(int xAgent,int yAgent){
-    int zone; 
+    int zone=0; 
     xAgent=xAgent/BLOCK_SIZE;
     yAgent=yAgent/BLOCK_SIZE;
-    if(xAgent<23 && yAgent<=4){zone=0;} 
-    else if(xAgent<31 && yAgent<=4){zone=1;} 
-    else if(xAgent<23 && yAgent<9){zone=2;}
-    else if(xAgent< 31&& yAgent<9){zone=3;}
+    if(xAgent> 15 && xAgent<23 && yAgent<=4){zone=0;} 
+    else if(xAgent>22 && xAgent<31 && yAgent<=4){zone=1;} 
+    else if(xAgent> 15 && xAgent<23 && yAgent<=9){zone=2;}
+    else if(xAgent> 22 && xAgent<= 31&& yAgent<=9){zone=3;}
      
     return zone ; 
 }
 int convertIntoZoneCanon(int xCanon,int yCanon){
-    int zone; 
+    int zone=0; 
     xCanon=xCanon/BLOCK_SIZE;
     yCanon=yCanon/BLOCK_SIZE;
     if(xCanon<9 && yCanon<=4){zone=0;} 
@@ -174,9 +174,9 @@ int converterIntoAngleH(float angleH){
 
 int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZone, int angleFZone, float eps){
     int action;
-    int proba = rand() % 100;
+    int proba = rand() % 10000;
     int receiverZone=0;
-    if (proba < eps * 100){
+    if (proba < eps * 10000){
         if (xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2 && yAgent/BLOCK_SIZE > 1 && yAgent/BLOCK_SIZE < MAP_HEIGHT - 2){
             action = rand() % 5;// OK cas au centre
         }
@@ -321,7 +321,7 @@ void freeStack(stack_t *stack)
     {
         free(stack->base); //on libère le tableau dynamique
         free(stack);    //on libère la tête de la stack
-        printf("Pile libérée\n");
+        //printf("Pile libérée\n");
     }
     else
     {
@@ -349,7 +349,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
     line_t line; 
     float greedy=1; 
     int maxAction;
-    stack= initStack(1000); 
+    stack= initStack(6000); 
     
     while (numberRun>0){
         agent=initAgent(); 
@@ -362,7 +362,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
         dropZone=convertIntoZone(dropPoint.x,dropPoint.y); 
         canonZone= convertIntoZoneCanon(canon.x,canon.y); 
         reward=0; 
-        //printf("%d %d %d %d \n",dropZone, canonZone,zoneAngleH,zoneAngleF);
+        printf("%d %d %d %d \n",dropZone, canonZone,zoneAngleH,zoneAngleF);
 
         for (i=0; i<numberStep-1;i++){ 
             action = takeAction(agent->x,agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
@@ -372,28 +372,30 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
             line.angleHZone= zoneAngleH; 
             line.angleFZone= zoneAngleF; 
             line.action= action;
-            line.reward=0; 
+            line.reward= reward ; 
             actionStack(stack,line);
             moveAgent(agent, action);
 
         }
         action = takeAction(agent->x, agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
         agentZone = convertIntoZone(agent->x, agent->y); 
+        if (agentZone==dropZone){ 
+                   reward=1; 
+                }
+                else{reward= 0;}
         line.receiverZone=agentZone; 
         line.shooterZone =canonZone; 
         line.angleHZone= zoneAngleH; 
         line.angleFZone= zoneAngleF; 
         line.action= action;
-        
-        if (agentZone==dropZone){ 
-                    line.reward=1; 
-                }
-                else{line.reward= 0;}
-        actionStack(stack,line);
+        line.reward = reward; 
+       // actionStack(stack,line);
         moveAgent(agent, action);
+        
+        
 
         Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=  
-                    + LEARN_RATE* ( line.reward - Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
+                    + LEARN_RATE* ( reward - Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
        
         while (!emptyStack(stack)){
             maxAction= argmax(Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone]);
@@ -404,10 +406,10 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                     + LEARN_RATE* ( reward +  DISCOUNT*Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][maxAction]
                     - Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
         }  
-        //printf("is empty : %d\n ", emptyStack(stack));
         numberRun--; 
         greedy=greedy-1/((float)numberRun);
 
         if ( numberRun%1000000==1){printf (" %d \n  ", numberRun);} 
     } 
+    freeStack(stack);
 } 
