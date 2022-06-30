@@ -5,8 +5,8 @@ int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall()
 {
-    ball.x = (rand()%(MAP_WIDTH/2)) * BLOCK_SIZE + BLOCK_SIZE;
-    ball.y = (rand()% (MAP_HEIGHT - 2)) * BLOCK_SIZE + BLOCK_SIZE;
+    ball.x = player.x + player.w / 2;
+    ball.y = player.y;
     ball.z = player.h / BLOCK_SIZE;
     ball.h = 0.5 * BLOCK_SIZE;
     ball.w = 0.5 * BLOCK_SIZE;
@@ -137,11 +137,4 @@ void updateBall()
         ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
     }
 
-    if ((int)ball.z == 0)
-    {
-        ball.x = 0;
-        ball.y = 0;
-        ball.z = 0;
-        ball.speed = 0;
-    }
 }

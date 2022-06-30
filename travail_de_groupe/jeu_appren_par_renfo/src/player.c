@@ -33,11 +33,12 @@ void initPlayer()
 int *generateLandingPoint(int rxWall)
 {
     int *landingPoint = malloc(sizeof(int) * 2);
+    srand(time(NULL));
 
-    int randomPointX = MAP_WIDTH / 2 + 1 + rand() % (rxWall / BLOCK_SIZE - (MAP_WIDTH / 2));
+    int randomPointX = MAP_WIDTH/2 + 1 + rand()%(rxWall/BLOCK_SIZE - (MAP_WIDTH/2));
     int randomPointY = -1;
 
-    landingPoint[0] = randomPointX;
+    landingPoint[0] = randomPointX ;
     landingPoint[1] = randomPointY / BLOCK_SIZE;
     landingPointIsFind = 1;
 
@@ -71,16 +72,16 @@ void hitBall()
         float distanceNet;
         if (player.isHitting)
         {
-            castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
-            if (rxWall > MAP_WIDTH / 2)
+        castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
+            // printf("hit\n");
+            if (rxWall > MAP_WIDTH/2)
             {
-
+                
                 freeIntList(lastHitPoint);
                 lastHitPoint = allocLastHitPoint();
 
-                // cherche et trouve point de chute, UNE SEULE FOIS!
-                if (landingPointIsFind == 0)
-                {
+                //cherche et trouve point de chute, UNE SEULE FOIS!
+                if(landingPointIsFind == 0){
                     freeIntList(landingPoint);
                     landingPoint = generateLandingPoint(rxWall);
                     printf("landing point: x=%d; y=%d\n", landingPoint[0], landingPoint[1]);
@@ -90,15 +91,20 @@ void hitBall()
                 lastHitPoint[1] = player.h;
 
                 ball.angle = player.angle;
-                ball.speed = 2 * HIT_FORCE;
+                ball.speed = HIT_FORCE;
                 ball.z = player.h;
                 ball.isHit = 1;
                 ball.isTravelingTo = AI;
             }
+            // printf("valid hit\n");
+        }
+        else
+        {
+            // printf("unvalid hit\n");
         }
     }
+    //}
 }
-
 
 void manageMovement()
 {
@@ -110,8 +116,7 @@ void manageMovement()
     float y_increment = (Keys[0] - Keys[2]) * player.deltay + (Keys[1] - Keys[3]) * cos(player.angle);
     float newpos_x = (player.x + x_increment * MOVEMENT_SPEED) / BLOCK_SIZE;
     float newpos_y = (player.y + y_increment * MOVEMENT_SPEED) / BLOCK_SIZE;
-    int widthColli = player.w / (3 * BLOCK_SIZE);
-    if (newpos_x > widthColli && newpos_x < MAP_WIDTH - widthColli && newpos_y > widthColli && newpos_y < MAP_HEIGHT - widthColli)
+    if (newpos_x >= 0 && newpos_x < MAP_WIDTH && newpos_y >= 0 && newpos_y < MAP_HEIGHT)
     {
         if (map[(int)newpos_y][(int)newpos_x] != 1)
         {
@@ -125,4 +130,5 @@ void managePlayer()
 {
     manageMovement();
     hitBall();
+    updateBall();
 }
