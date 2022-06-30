@@ -13,6 +13,8 @@ void initBall()
     ball.isHit = 0;
     ball.angle = -pi;
     ball.speed = 0;
+    landingPointEnnemyIsFind = 0;
+    landingPointPlayerIsFind = 0;
 }
 //ball_t ball;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
@@ -134,7 +136,12 @@ void updateBall()
     if (ball.isHit)
     {
         // landingPoint est déjà / BLOCK_SIZE de base
-        ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
+        if (ball.isTravelingTo == AI){
+            ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPointPlayerX / BLOCK_SIZE, lastHitPointPlayerY / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPointPlayerX, 0);
+        }
+        else if (ball.isTravelingTo == PLAYER){
+            ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPointEnnemyX / BLOCK_SIZE, lastHitPointEnnemyY / BLOCK_SIZE, 15, 2 * ennemy.h / BLOCK_SIZE, landingPointEnnemyX, 0);
+        }
     }
     if (ball.z < 0)
     {

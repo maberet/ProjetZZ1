@@ -1,5 +1,7 @@
 #include "render.h"
 
+float timer = 0;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -808,22 +810,31 @@ void drawBall()
 
 void drawSkyAndGround()
 {
-    destRect.x = ((int)((player.angle + pi) * RD + player.x / BLOCK_SIZE));
-    destRect.y = 0;
-    destRect.w = 100;
-    destRect.h = 128 / 2;
 
     rect.x = 0;
     rect.y = screenDimension.h / 2 + player.viewAngle;
     rect.h = screenDimension.h - rect.y;
     rect.w = screenDimension.w;
-    SDL_RenderCopy(renderer, groundTexture, &destRect, &rect);
 
+    
+    SDL_RenderCopy(renderer, groundTexture, NULL, &rect);
+
+    
     sky.x = 0;
     sky.y = 0;
     sky.w = screenDimension.w;
     sky.h = screenDimension.h / 2 + player.viewAngle;
 
+    destRect.x = 500 + (((player.angle + pi) * RD + player.x / BLOCK_SIZE));
+    if (player.angle > pi){
+        destRect.x = 500 + (((player.angle - pi) * RD + player.x / BLOCK_SIZE));
+    }
+
+    printf("%d\n", sky.h);
+    destRect.y =0;
+    destRect.w = 100;
+    destRect.h = 128;
+    
     SDL_RenderCopy(renderer, skyTexture, &destRect, &sky);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -831,7 +842,7 @@ void drawSkyAndGround()
 
 void drawRacket()
 {
-    // todo
+    SDL_RenderCopy(renderer, racketTexture, NULL, NULL);
 }
 
 void drawMap2D(int map[][MAP_WIDTH])
@@ -894,10 +905,22 @@ void drawMap2D(int map[][MAP_WIDTH])
     SDL_RenderFillRect(renderer, &rect);
 
     // draw landing point
-    if (landingPointIsFind == 1)
+    if (landingPointPlayerIsFind == 1)
     {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        rect.x = landingPoint[0] * CELL_SIZE;
+        rect.x = landingPointPlayerX * CELL_SIZE;
+        rect.y = CELL_SIZE;
+        rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
+        rect.w = 3;
+        SDL_RenderFillRect(renderer, &rect);
+        // reset taille cellule
+        rect.h = CELL_SIZE;
+        rect.w = CELL_SIZE;
+    }
+    if (landingPointEnnemyIsFind == 1)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        rect.x = landingPointEnnemyX * CELL_SIZE;
         rect.y = CELL_SIZE;
         rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
         rect.w = 3;
@@ -928,6 +951,16 @@ void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int 
     SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_FreeSurface(text);
     SDL_DestroyTexture(texture);
+}
+
+void drawHitIntensity(){
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    rect.w = screenDimension.w/20;
+    rect.x = screenDimension.w - rect.w;
+    //printf("%f\n", player.hitIntensityTimer);
+    rect.h = 2 * screenDimension.h/2 * ( player.hitIntensityTimer/1000);
+    rect.y = 3 * screenDimension.h/4 - rect.h;
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void drawFPS()
@@ -993,22 +1026,26 @@ void drawGame()
     if (ball.x < MAP_WIDTH * BLOCK_SIZE / 2)
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         drawVerticalNet();
         drawBall();
     }
     else
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         // todo bonus : draw point de chute de la balle
         drawBall();
         drawVerticalNet();
     }
     drawMap2D(map);
     drawRacket();
+    if (player.isHoldingClick){
+
+        drawHitIntensity();
+    }
     drawFPS();
     // affiche le hub
     if (showHub)
@@ -1055,6 +1092,7 @@ void mainLoop()
         if (delta > 1000 / FPS_TO_GET)
         {
             fps = 1000 / delta;
+            timer += delta;
             b = a;
             switch (game_state)
             {
