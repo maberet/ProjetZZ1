@@ -1,5 +1,7 @@
 #include "render.h"
 
+float timer = 0;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -942,6 +944,16 @@ void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int 
     SDL_DestroyTexture(texture);
 }
 
+void drawHitIntensity(){
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    rect.w = screenDimension.w/20;
+    rect.x = screenDimension.w - rect.w;
+    //printf("%f\n", player.hitIntensityTimer);
+    rect.h = 2 * screenDimension.h/2 * ( player.hitIntensityTimer/1000);
+    rect.y = 3 * screenDimension.h/4 - rect.h;
+    SDL_RenderFillRect(renderer, &rect);
+}
+
 void drawFPS()
 {
     char str[10];
@@ -1005,22 +1017,26 @@ void drawGame()
     if (ball.x < MAP_WIDTH * BLOCK_SIZE / 2)
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         drawVerticalNet();
         drawBall();
     }
     else
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         // todo bonus : draw point de chute de la balle
         drawBall();
         drawVerticalNet();
     }
     drawMap2D(map);
     drawRacket();
+    if (player.isHoldingClick){
+
+        drawHitIntensity();
+    }
     drawFPS();
     // affiche le hub
     if (showHub)
@@ -1067,6 +1083,7 @@ void mainLoop()
         if (delta > 1000 / FPS_TO_GET)
         {
             fps = 1000 / delta;
+            timer += delta;
             b = a;
             switch (game_state)
             {

@@ -35,8 +35,7 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern SDL_DisplayMode screenDimension;
 
-extern int *ray1;
-extern int *ray2;
+extern float timer;
 
 extern int showHub;
 

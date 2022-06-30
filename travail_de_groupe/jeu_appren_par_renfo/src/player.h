@@ -13,6 +13,7 @@
 #define HIT_RANGE 2
 #define HIT_FORCE 2
 #define MOVEMENT_SPEED 10
+#define MAX_HIT_TIME 3
 
 typedef struct player
 {
@@ -23,16 +24,18 @@ typedef struct player
     int w;
     int speed;
     int isMoving;
-    int isHitting;
+    int startHitBool;
     int isHit;
     int direction;
-    int HPMax;
-    int currentHP;
-    int coins;
     float angle;
     float deltax;
     float deltay;
     float viewAngle;
+    float startHitTimer;
+    float endHitTimer;
+    float hitIntensity;
+    float hitIntensityTimer;
+    int isHoldingClick;
 } player_t;
 
 extern player_t player;
@@ -44,6 +47,9 @@ extern int lastHitPointPlayerX;
 extern int lastHitPointPlayerY;
 extern int landingPointPlayerIsFind;
 
+extern int rxWall;
+
+int generatelandingPointPlayer(int rxWall, float hitIntensity);
 void initPlayer();
 void managePlayer();
 void freeIntList(int *list);

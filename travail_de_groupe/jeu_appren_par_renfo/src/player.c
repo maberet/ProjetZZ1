@@ -9,6 +9,9 @@ int landingPointPlayerY = 0;
 int lastHitPointPlayerX;
 int lastHitPointPlayerY;
 
+int rxWall, ryWall;
+float distanceWall;
+
 int landingPointPlayerIsFind = 0;
 
 void initPlayer()
@@ -25,19 +28,16 @@ void initPlayer()
     ennemy.angle = -pi;
     player.speed = 100;
     player.isMoving = 0;
-    player.HPMax = 3;
-    player.currentHP = player.HPMax;
-    player.coins = 0;
     player.angle = 0;
     player.deltax = 1;
     player.deltay = 0;
     player.viewAngle = 0;
 }
 
-int generatelandingPointPlayer(int rxWall)
+int generatelandingPointPlayer(int rxWall, float hitIntensity)
 {
 
-    int randomPointX = MAP_WIDTH/2 + 1 + rand()%(rxWall/BLOCK_SIZE - (MAP_WIDTH/2));
+    int randomPointX = MAP_WIDTH/2 + hitIntensity * 5;
 
     landingPointPlayerIsFind = 1;
     landingPointEnnemyIsFind = 0;
@@ -49,12 +49,10 @@ void hitBall()
 {
     if (sqrt(pow(player.x - ball.x, 2) + pow(player.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
     {
-        int rxWall, ryWall;
-        float distanceWall;
 
         int rxNet, ryNet;
         float distanceNet;
-        if (player.isHitting)
+        if (player.startHitBool)
         {
         castSingleRay(player.angle, &distanceWall, &distanceNet, &rxWall, &ryWall, &rxNet, &ryNet);
             // printf("hit\n");
@@ -64,16 +62,18 @@ void hitBall()
                 //cherche et trouve point de chute, UNE SEULE FOIS!
                 if(landingPointPlayerIsFind == 0){
 
-                    landingPointPlayerX = generatelandingPointPlayer(rxWall);
-                    
+                    landingPointPlayerX = generatelandingPointPlayer(rxWall, player.hitIntensity);
+
                     lastHitPointPlayerX = ball.x;
                     lastHitPointPlayerY = player.h;
 
                     ball.angle = player.angle;
-                    ball.speed = HIT_FORCE;
+                    ball.speed = player.hitIntensity * 5;
                     ball.z = player.h;
                     ball.isHit = 1;
                     ball.isTravelingTo = AI;
+
+                    player.startHitBool = 0;
                 }
 
             }
@@ -112,4 +112,5 @@ void managePlayer()
     manageMovement();
     hitBall();
     updateBall();
+    player.hitIntensityTimer = timer - player.startHitTimer;
 }
