@@ -8,7 +8,13 @@
 #include "qlearn.h"
 
 
+extern int landingPointEnnemyX;
+extern int landingPointEnnemyY;
 
+extern int lastHitPointEnnemyX;
+extern int lastHitPointEnnemyY;
+
+extern int landingPointEnnemyIsFind;
 
 void initEnnemy();
 void manageEnnemy();

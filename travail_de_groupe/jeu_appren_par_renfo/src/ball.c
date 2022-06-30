@@ -1,18 +1,21 @@
 #include "ball.h"
 
 ball_t ball;
+int whoScored;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall()
 {
-    ball.x = (rand()%(MAP_WIDTH/2)) * BLOCK_SIZE + BLOCK_SIZE;
-    ball.y = (rand()% (MAP_HEIGHT - 2)) * BLOCK_SIZE + BLOCK_SIZE;
+    ball.x = player.x + player.w / 2;
+    ball.y = player.y;
     ball.z = player.h / BLOCK_SIZE;
     ball.h = 0.5 * BLOCK_SIZE;
     ball.w = 0.5 * BLOCK_SIZE;
     ball.isHit = 0;
     ball.angle = -pi;
     ball.speed = 0;
+    landingPointEnnemyIsFind = 0;
+    landingPointPlayerIsFind = 0;
 }
 //ball_t ball;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
@@ -134,14 +137,27 @@ void updateBall()
     if (ball.isHit)
     {
         // landingPoint est déjà / BLOCK_SIZE de base
-        ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
+        if (ball.isTravelingTo == AI){
+            ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPointPlayerX / BLOCK_SIZE, lastHitPointPlayerY / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPointPlayerX, 0);
+        }
+        else if (ball.isTravelingTo == PLAYER){
+            ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPointEnnemyX / BLOCK_SIZE, lastHitPointEnnemyY / BLOCK_SIZE, 15, 2 * ennemy.h / BLOCK_SIZE, landingPointEnnemyX, 0);
+        }
     }
-
-    if ((int)ball.z == 0)
+    if (ball.z < 0)
     {
-        ball.x = 0;
-        ball.y = 0;
+        if (ball.x/BLOCK_SIZE < MAP_WIDTH/2){
+            whoScored = AI;
+        }
+        else {
+            whoScored = PLAYER;
+        }
         ball.z = 0;
         ball.speed = 0;
+        //initBall();
     }
+    else {
+        whoScored = NONE;
+    }
+
 }
