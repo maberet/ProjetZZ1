@@ -120,8 +120,9 @@ void ennemyHitBall(){
                 landingPointEnnemyX = generatelandingPointEnnemy();
                 ball.isTravelingTo = PLAYER;
                 ball.angle = ennemy.angle;
-                ball.speed = HIT_FORCE;
+                ball.speed = 4 * HIT_FORCE;
                 ball.isHit = 1;
+                ball.z = ball.z;
                 lastHitPointEnnemyX = ball.x;
                 lastHitPointEnnemyY = player.h;
                 }
@@ -131,9 +132,8 @@ void ennemyHitBall(){
 }
 
 void manageEnnemy(){
-    if (SDL_GetTicks() % 1000 < 50)
-    {
-        manageEnnemyMovement();
-    }
+
+    manageEnnemyMovement();
+
     ennemyHitBall();
 }

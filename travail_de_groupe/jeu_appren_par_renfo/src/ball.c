@@ -1,6 +1,7 @@
 #include "ball.h"
 
 ball_t ball;
+int whoScored;
 int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall()
@@ -145,7 +146,18 @@ void updateBall()
     }
     if (ball.z < 0)
     {
-        initBall();
+        if (ball.x/BLOCK_SIZE < MAP_WIDTH/2){
+            whoScored = AI;
+        }
+        else {
+            whoScored = PLAYER;
+        }
+        ball.z = 0;
+        ball.speed = 0;
+        //initBall();
+    }
+    else {
+        whoScored = NONE;
     }
 
 }

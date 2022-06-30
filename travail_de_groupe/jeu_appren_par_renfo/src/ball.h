@@ -15,6 +15,7 @@
 
 #define PLAYER 0
 #define AI 1
+#define NONE 2
 
 typedef enum
 {
@@ -43,6 +44,7 @@ typedef struct point{
 
 //extern ball_t ball;
 extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
+extern int whoScored;
 
 void initBall();
 float defineAngle(int, int, int, int);

@@ -25,6 +25,8 @@ SDL_Texture *ballTexture;
 SDL_Texture *skyTexture;
 SDL_Texture *groundTexture;
 SDL_Texture *racketTexture;
+SDL_Texture *iaScoredTexture;
+SDL_Texture *humanScoredTexture;
 
 int **rays;
 int raysListLength = 0;
@@ -797,7 +799,7 @@ void drawBall()
         rect.x = screenDimension.w / 2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (2 * ballDistance / BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h) / (2 * ballDistance / BLOCK_SIZE);
-        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - 2 * tan(ballViewAngle) * ballDistance;
+        rect.y = (2.5 * screenDimension.h / 4 + player.viewAngle) - 2 * tan(ballViewAngle) * ballDistance;
 
         destRect.x = 32 * (SDL_GetTicks() / 150 % 4);
         destRect.y = 0;
@@ -829,8 +831,6 @@ void drawSkyAndGround()
     if (player.angle > pi){
         destRect.x = 500 + (((player.angle - pi) * RD + player.x / BLOCK_SIZE));
     }
-
-    printf("%d\n", sky.h);
     destRect.y =0;
     destRect.w = 100;
     destRect.h = 128;
@@ -842,7 +842,14 @@ void drawSkyAndGround()
 
 void drawRacket()
 {
-    SDL_RenderCopy(renderer, racketTexture, NULL, NULL);
+    destRect.x = 0;
+    destRect.y = 0;
+    destRect.w = 64;
+    destRect.h = 32;
+    if (player.isHoldingClick){
+        destRect.x = 64 * ((int)(player.hitIntensityTimer/100) % 4);
+    }
+    SDL_RenderCopy(renderer, racketTexture, &destRect, NULL);
 }
 
 void drawMap2D(int map[][MAP_WIDTH])
@@ -1018,6 +1025,25 @@ void drawHub()
     drawInfosBall();
 }
 
+void drawWhoScored(){
+    switch (whoScored)
+    {
+        case NONE:
+            break;
+
+        case AI:
+            SDL_RenderCopy(renderer, iaScoredTexture, NULL, NULL);
+            break;
+
+        case PLAYER:
+            SDL_RenderCopy(renderer, humanScoredTexture, NULL, NULL);
+            break;
+
+        default:
+            break;
+    }
+}
+
 void drawGame()
 {
     SDL_RenderClear(renderer);
@@ -1052,6 +1078,7 @@ void drawGame()
     {
         drawHub();
     }
+    drawWhoScored();
 
     SDL_RenderPresent(renderer);
 }
@@ -1070,6 +1097,8 @@ void mainLoop()
     skyTexture = loadTexture("Res/sky.png");
     groundTexture = loadTexture("Res/ground.png");
     racketTexture = loadTexture("Res/racket.png");
+    iaScoredTexture = loadTexture("Res/iascored.png");
+    humanScoredTexture = loadTexture("Res/humanscored.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
