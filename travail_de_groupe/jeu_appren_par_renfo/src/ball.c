@@ -7,13 +7,12 @@ void initBall()
 {
     ball.x = 5 * BLOCK_SIZE;
     ball.y = 5 * BLOCK_SIZE;
-    ball.z = player.h/BLOCK_SIZE;
+    ball.z = player.h / BLOCK_SIZE;
     ball.h = 0.5 * BLOCK_SIZE;
-    ball.w = 0.5 * BLOCK_SIZE;    
+    ball.w = 0.5 * BLOCK_SIZE;
     ball.isHit = 0;
     ball.angle = -pi;
     ball.speed = 0;
-
 }
 
 float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
