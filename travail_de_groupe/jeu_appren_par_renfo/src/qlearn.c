@@ -391,4 +391,5 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
         greedy = greedy - 1/(n+1);
         n++; 
     }
+    writeQToFile(Q, "q1.txt");
 } 
