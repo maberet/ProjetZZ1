@@ -5,11 +5,7 @@
 
 
 #define MAP_WIDTH 31
-<<<<<<< HEAD
-#define MAP_HEIGHT 10
-=======
 #define MAP_HEIGHT 11
->>>>>>> qlearn
 
 
 extern int map[MAP_HEIGHT][MAP_WIDTH];

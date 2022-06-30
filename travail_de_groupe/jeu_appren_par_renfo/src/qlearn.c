@@ -6,10 +6,10 @@ agent_t * initAgent (){
         printf("erreur alloc\n  ");
         exit (1);
     }  
-    agent->x=(16+rand()%14)*BLOCK_SIZE;
-    agent->y=(1+rand()%8)*BLOCK_SIZE;
-    agent->high=2*BLOCK_SIZE;
-    agent->weight=2*BLOCK_SIZE; 
+    agent->x=(16+rand()%14);
+    agent->y=(1+rand()%8);
+    agent->high=2;
+    agent->weight=2; 
     agent->speed = 1;   
       // si changement de speed => changement de collisiosn dans le takeaction 
       return(agent);
@@ -129,19 +129,19 @@ int argmax(float * arr){
 
 int convertIntoZone(int xAgent,int yAgent){
     int zone=0; 
-    xAgent=xAgent/BLOCK_SIZE;
-    yAgent=yAgent/BLOCK_SIZE;
+    xAgent=xAgent;
+    yAgent=yAgent;
     if(xAgent> 15 && xAgent<23 && yAgent<=4){zone=0;} 
     else if(xAgent>22 && xAgent<31 && yAgent<=4){zone=1;} 
-    else if(xAgent> 15 && xAgent<23 && yAgent<=9){zone=2;}
-    else if(xAgent> 22 && xAgent<= 31&& yAgent<=9){zone=3;}
+    else if(xAgent> 15 && xAgent<23 && yAgent<9){zone=2;}
+    else if(xAgent> 22 && xAgent<= 31&& yAgent<9){zone=3;}
      
     return zone ; 
 }
 int convertIntoZoneCanon(int xCanon,int yCanon){
     int zone=0; 
-    xCanon=xCanon/BLOCK_SIZE;
-    yCanon=yCanon/BLOCK_SIZE;
+    xCanon=xCanon;
+    yCanon=yCanon;
     if(xCanon<9 && yCanon<=4){zone=0;} 
     else if(xCanon<15 && yCanon<=4){zone=1;} 
     else if(xCanon<9 && yCanon<9){zone=2;} 
@@ -177,38 +177,38 @@ int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZ
     int proba = rand() % 10000;
     int receiverZone=0;
     if (proba < eps * 10000){
-        if (xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2 && yAgent/BLOCK_SIZE > 1 && yAgent/BLOCK_SIZE < MAP_HEIGHT - 2){
+        if (xAgent > (MAP_WIDTH-1)/2+1 && xAgent < MAP_WIDTH- 2 && yAgent > 1 && yAgent < MAP_HEIGHT - 2){
             action = rand() % 5;// OK cas au centre
         }
-        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1 && yAgent/BLOCK_SIZE > 1 && yAgent/BLOCK_SIZE < MAP_HEIGHT - 2){
+        else if (xAgent == (MAP_WIDTH-1)/2+1 && yAgent > 1 && yAgent < MAP_HEIGHT - 2){
             int possibleActions[4] = {1, 2, 3,4};
             action = possibleActions[rand() % 4];// OK cas filet 
         }
-        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1 && yAgent/BLOCK_SIZE== 1){
+        else if (xAgent == (MAP_WIDTH-1)/2+1 && yAgent== 1){
             int possibleActions[3] = {1, 3, 4};
             action = possibleActions[rand() % 3];// cas en haut a gauche 
         }
-        else if (xAgent/BLOCK_SIZE == (MAP_WIDTH-1)/2+1  && yAgent/BLOCK_SIZE==MAP_HEIGHT - 2){
+        else if (xAgent == (MAP_WIDTH-1)/2+1  && yAgent==MAP_HEIGHT - 2){
             int possibleActions[3] = {1, 2, 4};
             action = possibleActions[rand() % 3];// cas en bas a gauche 
         }
-        else if (yAgent/BLOCK_SIZE ==1 && xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2){
+        else if (yAgent ==1 && xAgent > (MAP_WIDTH-1)/2+1 && xAgent < MAP_WIDTH- 2){
             int possibleActions[4] = {0, 1,3,4};
             action = possibleActions[rand() % 4];// cas en haut au milieu  
         }
-        else if (xAgent/BLOCK_SIZE == MAP_WIDTH- 2 && yAgent/BLOCK_SIZE == 1){
+        else if (xAgent == MAP_WIDTH- 2 && yAgent == 1){
             int possibleActions[3] = {0, 3,4};
             action = possibleActions[rand() % 3];// cas en haut a droite
         }
-        else if (xAgent/BLOCK_SIZE ==  MAP_WIDTH-2  && yAgent/BLOCK_SIZE <MAP_HEIGHT-2 && yAgent/BLOCK_SIZE>1){
+        else if (xAgent ==  MAP_WIDTH-2  && yAgent <MAP_HEIGHT-2 && yAgent>1){
             int possibleActions[4] = {0,2,3,4};
             action = possibleActions[rand() % 4];// cas a droite au milieu 
         }
-        else if (xAgent/BLOCK_SIZE== MAP_WIDTH-2 && yAgent/BLOCK_SIZE == MAP_HEIGHT-2){
+        else if (xAgent== MAP_WIDTH-2 && yAgent == MAP_HEIGHT-2){
             int possibleActions[3] = {0, 2,4};
             action = possibleActions[rand() % 3];// cas en bas a droite 
         }
-        else if (xAgent/BLOCK_SIZE > (MAP_WIDTH-1)/2+1 && xAgent/BLOCK_SIZE < MAP_WIDTH- 2 && yAgent/BLOCK_SIZE == MAP_HEIGHT-2){
+        else if (xAgent > (MAP_WIDTH-1)/2+1 && xAgent < MAP_WIDTH- 2 && yAgent == MAP_HEIGHT-2){
             int possibleActions[4] = {0,1,2,4};
             action = possibleActions[rand() % 4];
         }
@@ -217,7 +217,7 @@ int takeAction(int xAgent, int yAgent, float ***** Q, int canonZone, int angleHZ
         }
     }
     else{
-        receiverZone= convertIntoZone(xAgent/BLOCK_SIZE,yAgent/BLOCK_SIZE);
+        receiverZone= convertIntoZone(xAgent,yAgent);
         action = argmax(Q[receiverZone][canonZone][angleHZone][angleFZone]);
         //printf("wtf");
     }
@@ -363,6 +363,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
         canonZone= convertIntoZoneCanon(canon.x,canon.y); 
         reward=0; 
         printf("%d %d %d %d \n",dropZone, canonZone,zoneAngleH,zoneAngleF);
+        printf("%d %d  \n",agent->x, agent->y);
 
         for (i=0; i<numberStep-1;i++){ 
             action = takeAction(agent->x,agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
@@ -379,19 +380,19 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
         }
         action = takeAction(agent->x, agent->y,Q,canonZone,zoneAngleH,zoneAngleF,greedy); 
         agentZone = convertIntoZone(agent->x, agent->y); 
-        if (agentZone==dropZone){ 
-                   reward=1; 
-                }
-                else{reward= 0;}
+       
         line.receiverZone=agentZone; 
         line.shooterZone =canonZone; 
         line.angleHZone= zoneAngleH; 
         line.angleFZone= zoneAngleF; 
         line.action= action;
-        line.reward = reward; 
+        line.reward = 0; 
        // actionStack(stack,line);
         moveAgent(agent, action);
-        
+         if (agentZone==dropZone){ 
+                   reward=1; 
+                }
+                else{reward= 0;}
         
 
         Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=  
