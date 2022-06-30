@@ -65,11 +65,7 @@ void hitBall()
                 if(landingPointPlayerIsFind == 0){
 
                     landingPointPlayerX = generatelandingPointPlayer(rxWall);
-
-                    printf("player new lastHitPointPlayer : %d %d\n", lastHitPointPlayerX/BLOCK_SIZE, lastHitPointPlayerY/BLOCK_SIZE);
-
-                    printf("player new landingPointPlayer : %d %d\n", landingPointPlayerX/BLOCK_SIZE, landingPointPlayerY/BLOCK_SIZE);
-
+                    
                     lastHitPointPlayerX = ball.x;
                     lastHitPointPlayerY = player.h;
 

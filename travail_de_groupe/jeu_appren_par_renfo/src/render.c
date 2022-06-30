@@ -906,6 +906,18 @@ void drawMap2D(int map[][MAP_WIDTH])
         rect.h = CELL_SIZE;
         rect.w = CELL_SIZE;
     }
+    if (landingPointEnnemyIsFind == 1)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        rect.x = landingPointEnnemyX * CELL_SIZE;
+        rect.y = CELL_SIZE;
+        rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
+        rect.w = 3;
+        SDL_RenderFillRect(renderer, &rect);
+        // reset taille cellule
+        rect.h = CELL_SIZE;
+        rect.w = CELL_SIZE;
+    }
 
     // draw ball
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);

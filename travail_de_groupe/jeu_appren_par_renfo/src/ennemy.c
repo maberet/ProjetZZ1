@@ -124,10 +124,6 @@ void ennemyHitBall(){
                 ball.isHit = 1;
                 lastHitPointEnnemyX = ball.x;
                 lastHitPointEnnemyY = player.h;
-
-                printf("ennemy new lastHitPointEnnemy : %d %d\n", lastHitPointEnnemyX/BLOCK_SIZE, lastHitPointEnnemyY/BLOCK_SIZE);
-
-                printf("ennemy new landingPointEnnemy : %d %d\n", landingPointEnnemyX/BLOCK_SIZE, landingPointEnnemyY/BLOCK_SIZE);
                 }
 
         }
@@ -135,7 +131,7 @@ void ennemyHitBall(){
 }
 
 void manageEnnemy(){
-    if (SDL_GetTicks() % 1000 < 100)
+    if (SDL_GetTicks() % 1000 < 200)
     {
         manageEnnemyMovement();
     }
