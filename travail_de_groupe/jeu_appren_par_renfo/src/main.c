@@ -6,11 +6,13 @@ float ***** Q;
 int main(){ 
     Q = allocateAndInitiateQ();
     readQFromFile(Q);
-    int i= 10;
+    int i= 50;
     
     srand ( time(NULL));
     while (i>0){
     traningAgent(1000000,30, Q);
+    printf("%d \n ", i);
+    writeQ(Q);
     i--;} 
     
     writeQ(Q);
