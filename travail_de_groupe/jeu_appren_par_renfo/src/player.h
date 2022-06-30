@@ -12,7 +12,7 @@
 
 #define HIT_RANGE 2
 #define HIT_FORCE 10
-#define MOVEMENT_SPEED 20
+#define MOVEMENT_SPEED 10
 
 typedef struct player
 {

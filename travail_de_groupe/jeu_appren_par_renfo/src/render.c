@@ -508,10 +508,6 @@ void drawEnnemy()
 {
     float ennemyAngle = atan2((ennemy.y + ennemy.w / 2) - (player.y + player.w / 2), (ennemy.x + ennemy.w / 2) - (player.x + player.w / 2));
     float ennemyDistance = sqrt((ennemy.x - player.x) * (ennemy.x - player.x) + (ennemy.y - player.y) * (ennemy.y - player.y)) * BLOCK_SIZE;
-    float ennemyBaseWidth = BLOCK_SIZE;
-    float ennemyDistanceX = ennemyDistance * cos(ennemyAngle - player.angle) * BLOCK_SIZE;
-    float ennemyDistanceY = ennemyDistance * fabs(sin(ennemyAngle - player.angle)) * BLOCK_SIZE;
-    float scaledEnnemyWidth = ennemyBaseWidth / sqrt(3);
     int ennemyWidth = 50;
     int ennemyHeight = 200;
     float angleMin = player.angle - (FOV_ANGLE * DR) / 2;
@@ -571,9 +567,8 @@ void drawEnnemy()
 void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet)
 {
     // ray casting variables
-    float htexture, htexture2;
-    int r, mx, my, dof;
-    double rx, ry, rx2, ry2, xo, yo, distT, distT2;
+    int mx, my, dof;
+    double rx, ry, rx2, ry2, xo, yo, distT2;
     double ra;
     mx = 0;
     my = 0;
@@ -586,7 +581,7 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
     // check horizontal rays
     int foundSolidWallH = 0;
     dof = 0;
-    float disH = 100000, disH2 = 100000, hx = player.x, hy = player.y, hx2 = player.x, hy2 = player.y;
+    float disH, hx = player.x, hy = player.y, hx2 = player.x, hy2 = player.y;
     float aTan = -1 / tan(ra);
     if (ra > pi)
     { // looking up
@@ -626,7 +621,6 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
             {
                 hx2 = rx;
                 hy2 = ry;
-                disH2 = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
                 dof++;
                 rx += xo;
                 ry += yo;
@@ -699,26 +693,18 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
         }
     }
 
-    int direction, direction2;
-
     if (foundTransparentWallV)
     {
         if (disH < disV2)
         {
             rx = hx2;
             ry = hy2;
-            distT = disH2;
             distT2 = disV2;
-            direction = 0;
-            htexture = (int)(rx) % BLOCK_SIZE;
         }
         else
         {
             rx = vx2;
             ry = vy2;
-            distT = disV2;
-            direction = 1;
-            htexture = (int)(ry) % BLOCK_SIZE;
         }
         if (foundSolidWallV)
         {
@@ -727,16 +713,12 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
                 rx2 = hx;
                 ry2 = hy;
                 distT2 = disH;
-                direction2 = 0;
-                htexture2 = (int)(rx2) % BLOCK_SIZE;
             }
             else
             {
                 rx2 = vx;
                 ry2 = vy;
                 distT2 = disV;
-                direction2 = 1;
-                htexture2 = (int)(ry2) % BLOCK_SIZE;
             }
         }
         if (foundSolidWallH)
@@ -746,16 +728,12 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
                 rx2 = hx;
                 ry2 = hy;
                 distT2 = disH;
-                direction2 = 0;
-                htexture2 = (int)(rx2) % BLOCK_SIZE;
             }
             else
             {
                 rx2 = vx;
                 ry2 = vy;
                 distT2 = disV;
-                direction2 = 1;
-                htexture2 = (int)(ry2) % BLOCK_SIZE;
             }
         }
     }
@@ -765,17 +743,11 @@ void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *re
         {
             rx = hx;
             ry = hy;
-            distT = disH;
-            direction = 0;
-            htexture = (int)(rx) % BLOCK_SIZE;
         }
         else
         {
             rx = vx;
             ry = vy;
-            distT = disV;
-            direction = 1;
-            htexture = (int)(ry) % BLOCK_SIZE;
         }
     }
 
@@ -799,10 +771,7 @@ void drawBall()
     float ballDistance = sqrt((ball.x - player.x) * (ball.x - player.x) + (ball.y - player.y) * (ball.y - player.y)) * BLOCK_SIZE;
     float ballBaseWidth = BLOCK_SIZE / 2;
     float ballDistanceX = ballDistance * cos(ballAngle - player.angle);
-    float ballDistanceY = ballDistance * fabs(sin(ballAngle - player.angle));
-    float ballDistanceZ = (ball.z - player.h);
     float ballViewAngle = atan2(ball.z * BLOCK_SIZE, ballDistanceX);
-    float scaledBallWidth = ballBaseWidth / sqrt(3);
     int ballWidth = 25;
     int ballHeight = 25;
     float angleMin = player.angle - (FOV_ANGLE * DR) / 2;
@@ -825,9 +794,9 @@ void drawBall()
     if (ballAngle >= angleMin && ballAngle <= angleMax)
     {
         rect.x = screenDimension.w / 2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
-        rect.w = (ballWidth * screenDimension.w) / (ballDistance / BLOCK_SIZE);
-        rect.h = (ballHeight * screenDimension.h) / (ballDistance / BLOCK_SIZE);
-        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - 1.2 * tan(ballViewAngle) * ballDistance;
+        rect.w = (ballWidth * screenDimension.w) / (2 * ballDistance / BLOCK_SIZE);
+        rect.h = (ballHeight * screenDimension.h) / (2 * ballDistance / BLOCK_SIZE);
+        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - 2 * tan(ballViewAngle) * ballDistance;
 
         destRect.x = 32 * (SDL_GetTicks() / 150 % 4);
         destRect.y = 0;
