@@ -84,7 +84,6 @@ void hitBall()
                 if(landingPointIsFind == 0){
                     freeIntList(landingPoint);
                     landingPoint = generateLandingPoint(rxWall);
-                    printf("landing point: x=%d; y=%d\n", landingPoint[0], landingPoint[1]);
                 }
 
                 lastHitPoint[0] = ball.x;
