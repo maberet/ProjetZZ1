@@ -33,6 +33,7 @@ extern int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
 void initBall();
 float defineAngle(int, int, int, int);
+void updateBall();
 
 float lagrangeInterpolation(float, int, int, int, int, int, int);
 void calculTrajectoireAntoine2(int, int, int, int, int, int);

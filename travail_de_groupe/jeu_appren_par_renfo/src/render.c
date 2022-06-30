@@ -262,6 +262,202 @@ void drawHorizentalWalls()
     }
 }
 
+void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet)
+{
+    // ray casting variables
+    int mx, my, dof;
+    double rx, ry, rx2, ry2, xo, yo, distT2;
+    double ra;
+    mx = 0;
+    my = 0;
+    raysListHead.next = NULL;
+    ra = angle;
+    if (ra < 0)
+        ra -= 2 * pi;
+    if (ra > 2 * pi)
+        ra -= 2 * pi;
+    // check horizontal rays
+    int foundSolidWallH = 0;
+    dof = 0;
+    float disH, hx = player.x, hy = player.y, hx2 = player.x, hy2 = player.y;
+    float aTan = -1 / tan(ra);
+    if (ra > pi)
+    { // looking up
+        ry = (((int)player.y >> 6) << 6) - 0.0001;
+        rx = (player.y - ry) * aTan + player.x;
+        yo = -BLOCK_SIZE;
+        xo = -yo * aTan;
+    }
+    if (ra < pi)
+    { // looking down
+        ry = (((int)player.y >> 6) << 6) + BLOCK_SIZE;
+        rx = (player.y - ry) * aTan + player.x;
+        yo = BLOCK_SIZE;
+        xo = -yo * aTan;
+    }
+    if (ra == pi)
+    {
+        ry = player.y;
+        rx = player.x;
+        dof = DOF;
+    }
+    while (dof < DOF)
+    {
+        mx = (int)rx >> 6;
+        my = (int)ry >> 6;
+        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT)
+        {
+            if (map[my][mx] == 1)
+            {
+                hx = rx;
+                hy = ry;
+                disH = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                dof = DOF;
+                foundSolidWallH = 1;
+            }
+            else
+            {
+                hx2 = rx;
+                hy2 = ry;
+                dof++;
+                rx += xo;
+                ry += yo;
+            }
+        }
+        else
+        {
+            rx += xo;
+            ry += yo;
+            dof++;
+        }
+    }
+
+    // check vertical rays
+    dof = 0;
+    float disV = 100000, disV2 = 100000, vx = player.x, vy = player.y, vx2, vy2;
+    float nTan = -tan(ra);
+    if (ra > pi / 2 && ra < 3 * pi / 2)
+    { // looking left
+        rx = (((int)player.x >> 6) << 6) - 0.0001;
+        ry = player.y + (player.x - rx) * nTan;
+        xo = -BLOCK_SIZE;
+        yo = -xo * nTan;
+    }
+    if (ra < pi / 2 || ra > 3 * pi / 2)
+    { // looking right
+        rx = (((int)player.x >> 6) << 6) + BLOCK_SIZE;
+        ry = player.y + (player.x - rx) * nTan;
+        xo = BLOCK_SIZE;
+        yo = -xo * nTan;
+    }
+    if (ra == pi || ra == 0)
+    {
+        ry = player.y;
+        rx = player.x;
+        dof = DOF;
+    }
+    int foundSolidWallV = 0;
+    int foundTransparentWallV = 0;
+    while (dof < DOF)
+    {
+        mx = (int)rx >> 6;
+        my = (int)ry >> 6;
+        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx])
+        {
+            if (map[my][mx] == 1)
+            {
+                vx = rx;
+                vy = ry;
+                disV = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                foundSolidWallV = 1;
+                dof = DOF;
+            }
+            else
+            {
+                vx2 = rx;
+                vy2 = ry;
+                disV2 = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
+                foundTransparentWallV = 1;
+                dof++;
+                rx += xo;
+                ry += yo;
+            }
+        }
+        else
+        {
+            rx += xo;
+            ry += yo;
+            dof++;
+        }
+    }
+
+    if (foundTransparentWallV)
+    {
+        if (disH < disV2)
+        {
+            rx = hx2;
+            ry = hy2;
+            distT2 = disV2;
+        }
+        else
+        {
+            rx = vx2;
+            ry = vy2;
+        }
+        if (foundSolidWallV)
+        {
+            if (disH < disV)
+            {
+                rx2 = hx;
+                ry2 = hy;
+                distT2 = disH;
+            }
+            else
+            {
+                rx2 = vx;
+                ry2 = vy;
+                distT2 = disV;
+            }
+        }
+        if (foundSolidWallH)
+        {
+            if (disH < disV)
+            {
+                rx2 = hx;
+                ry2 = hy;
+                distT2 = disH;
+            }
+            else
+            {
+                rx2 = vx;
+                ry2 = vy;
+                distT2 = disV;
+            }
+        }
+    }
+    else
+    {
+        if (disH < disV)
+        {
+            rx = hx;
+            ry = hy;
+        }
+        else
+        {
+            rx = vx;
+            ry = vy;
+        }
+    }
+
+    *returnXWall = (int)rx2;
+    *returnYWall = (int)ry2;
+    *distanceWall = distT2;
+
+    *returnXNet = (int)rx;
+    *returnYNet = (int)ry2;
+    *distanceNet = (int)distT2;
+}
+
 void castRays(int map[][MAP_WIDTH])
 {
     // ray casting variables
@@ -564,201 +760,6 @@ void drawEnnemy()
     }
 }
 
-void castSingleRay(float angle, float *distanceWall, float *distanceNet, int *returnXWall, int *returnYWall, int *returnXNet, int *returnYNet)
-{
-    // ray casting variables
-    int mx, my, dof;
-    double rx, ry, rx2, ry2, xo, yo, distT2;
-    double ra;
-    mx = 0;
-    my = 0;
-    raysListHead.next = NULL;
-    ra = angle;
-    if (ra < 0)
-        ra -= 2 * pi;
-    if (ra > 2 * pi)
-        ra -= 2 * pi;
-    // check horizontal rays
-    int foundSolidWallH = 0;
-    dof = 0;
-    float disH, hx = player.x, hy = player.y, hx2 = player.x, hy2 = player.y;
-    float aTan = -1 / tan(ra);
-    if (ra > pi)
-    { // looking up
-        ry = (((int)player.y >> 6) << 6) - 0.0001;
-        rx = (player.y - ry) * aTan + player.x;
-        yo = -BLOCK_SIZE;
-        xo = -yo * aTan;
-    }
-    if (ra < pi)
-    { // looking down
-        ry = (((int)player.y >> 6) << 6) + BLOCK_SIZE;
-        rx = (player.y - ry) * aTan + player.x;
-        yo = BLOCK_SIZE;
-        xo = -yo * aTan;
-    }
-    if (ra == pi)
-    {
-        ry = player.y;
-        rx = player.x;
-        dof = DOF;
-    }
-    while (dof < DOF)
-    {
-        mx = (int)rx >> 6;
-        my = (int)ry >> 6;
-        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT)
-        {
-            if (map[my][mx] == 1)
-            {
-                hx = rx;
-                hy = ry;
-                disH = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
-                dof = DOF;
-                foundSolidWallH = 1;
-            }
-            else
-            {
-                hx2 = rx;
-                hy2 = ry;
-                dof++;
-                rx += xo;
-                ry += yo;
-            }
-        }
-        else
-        {
-            rx += xo;
-            ry += yo;
-            dof++;
-        }
-    }
-
-    // check vertical rays
-    dof = 0;
-    float disV = 100000, disV2 = 100000, vx = player.x, vy = player.y, vx2, vy2;
-    float nTan = -tan(ra);
-    if (ra > pi / 2 && ra < 3 * pi / 2)
-    { // looking left
-        rx = (((int)player.x >> 6) << 6) - 0.0001;
-        ry = player.y + (player.x - rx) * nTan;
-        xo = -BLOCK_SIZE;
-        yo = -xo * nTan;
-    }
-    if (ra < pi / 2 || ra > 3 * pi / 2)
-    { // looking right
-        rx = (((int)player.x >> 6) << 6) + BLOCK_SIZE;
-        ry = player.y + (player.x - rx) * nTan;
-        xo = BLOCK_SIZE;
-        yo = -xo * nTan;
-    }
-    if (ra == pi || ra == 0)
-    {
-        ry = player.y;
-        rx = player.x;
-        dof = DOF;
-    }
-    int foundSolidWallV = 0;
-    int foundTransparentWallV = 0;
-    while (dof < DOF)
-    {
-        mx = (int)rx >> 6;
-        my = (int)ry >> 6;
-        if (mx >= 0 && mx < MAP_WIDTH && my >= 0 && my < MAP_HEIGHT && map[my][mx])
-        {
-            if (map[my][mx] == 1)
-            {
-                vx = rx;
-                vy = ry;
-                disV = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
-                foundSolidWallV = 1;
-                dof = DOF;
-            }
-            else
-            {
-                vx2 = rx;
-                vy2 = ry;
-                disV2 = sqrt((rx - player.x) * (rx - player.x) + (ry - player.y) * (ry - player.y));
-                foundTransparentWallV = 1;
-                dof++;
-                rx += xo;
-                ry += yo;
-            }
-        }
-        else
-        {
-            rx += xo;
-            ry += yo;
-            dof++;
-        }
-    }
-
-    if (foundTransparentWallV)
-    {
-        if (disH < disV2)
-        {
-            rx = hx2;
-            ry = hy2;
-            distT2 = disV2;
-        }
-        else
-        {
-            rx = vx2;
-            ry = vy2;
-        }
-        if (foundSolidWallV)
-        {
-            if (disH < disV)
-            {
-                rx2 = hx;
-                ry2 = hy;
-                distT2 = disH;
-            }
-            else
-            {
-                rx2 = vx;
-                ry2 = vy;
-                distT2 = disV;
-            }
-        }
-        if (foundSolidWallH)
-        {
-            if (disH < disV)
-            {
-                rx2 = hx;
-                ry2 = hy;
-                distT2 = disH;
-            }
-            else
-            {
-                rx2 = vx;
-                ry2 = vy;
-                distT2 = disV;
-            }
-        }
-    }
-    else
-    {
-        if (disH < disV)
-        {
-            rx = hx;
-            ry = hy;
-        }
-        else
-        {
-            rx = vx;
-            ry = vy;
-        }
-    }
-
-    *returnXWall = (int)rx2;
-    *returnYWall = (int)ry2;
-    *distanceWall = distT2;
-
-    *returnXNet = (int)rx;
-    *returnYNet = (int)ry2;
-    *distanceNet = (int)distT2;
-}
 
 int isAngleInRange(float angle, float min, float max)
 {
@@ -769,7 +770,6 @@ void drawBall()
 {
     float ballAngle = atan2(ball.y - player.y, ball.x - player.x);
     float ballDistance = sqrt((ball.x - player.x) * (ball.x - player.x) + (ball.y - player.y) * (ball.y - player.y)) * BLOCK_SIZE;
-    float ballBaseWidth = BLOCK_SIZE / 2;
     float ballDistanceX = ballDistance * cos(ballAngle - player.angle);
     float ballViewAngle = atan2(ball.z * BLOCK_SIZE, ballDistanceX);
     int ballWidth = 25;

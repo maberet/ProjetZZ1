@@ -38,6 +38,7 @@ typedef struct player
 extern player_t player;
 extern player_t ennemy;
 extern int *landingPoint;
+extern int *lastHitPoint;
 extern int landingPointIsFind;
 
 void initPlayer();

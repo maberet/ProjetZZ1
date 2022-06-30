@@ -13,10 +13,12 @@
 
 #include <pthread.h>
 
-#include "render.h"
 #include "gest_event.h"
+#include "player.h"
+#include "ennemy.h"
 #include "map.h"
 #include "qlearn.h"
+#include "render.h"
 
 #define MENU 0
 #define GAME 1

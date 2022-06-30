@@ -93,3 +93,22 @@ void calculTrajectoireAntoine2(int xd, int yd, int xf, int yf, int xt, int yt)
     trajectoireAntoine[NUMBERPOINT_TRAJEC - 1][0] = xt;
     trajectoireAntoine[NUMBERPOINT_TRAJEC - 1][1] = yt;
 }
+
+void updateBall()
+{
+    ball.x = ball.x + ball.speed * cos(ball.angle);
+    ball.y = ball.y + ball.speed * sin(ball.angle);
+    if (ball.isHit)
+    {
+        // landingPoint est déjà / BLOCK_SIZE de base
+        ball.z = lagrangeInterpolation(ball.x / BLOCK_SIZE, lastHitPoint[0] / BLOCK_SIZE, lastHitPoint[1] / BLOCK_SIZE, 15, 2 * player.h / BLOCK_SIZE, landingPoint[0], 0);
+    }
+
+    if ((int)ball.z == 0)
+    {
+        ball.x = 0;
+        ball.y = 0;
+        ball.z = 0;
+        ball.speed = 0;
+    }
+}

@@ -10,6 +10,7 @@ int main()
     readMapFromFile("map.txt");
 
     initPlayer();
+    initEnnemy();
     initKeys();
     initBall();
 
