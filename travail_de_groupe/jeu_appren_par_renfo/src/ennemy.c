@@ -100,7 +100,7 @@ void manageEnnemyMovement()
 
 int generatelandingPointEnnemy(){
 
-    int randomPointX = rand() % ((MAP_WIDTH/2));
+    int randomPointX = rand() % ((MAP_WIDTH-1)/2);
 
     landingPointEnnemyIsFind = 1;
     landingPointPlayerIsFind = 0;
