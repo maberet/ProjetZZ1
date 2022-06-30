@@ -14,15 +14,48 @@ void initBall()
     ball.angle = -pi;
     ball.speed = 0;
 }
+//ball_t ball;
+int trajectoireAntoine[NUMBERPOINT_TRAJEC][2];
 
-float defineAngle(int canonX, int canonY, int xDropPoint, int yDropPoint)
+point_t initCanon (point_t canon){
+    canon.x=(1+rand()%14);
+    canon.y=(1+rand()%8);
+    return canon; 
+} 
+
+point_t initDropPoint (point_t dropPoint){
+    dropPoint.x=(16+rand()%14);
+    dropPoint.y=(1+rand()%8);
+    return dropPoint; 
+} 
+
+float defineAngleF(int canonX, int canonY, int xDropPoint, int yDropPoint)
 {
     float distance;
     float angleSin;
+    canonX=canonX; 
+    canonY=canonY; 
+    xDropPoint= xDropPoint; 
+    yDropPoint= yDropPoint; 
+
     distance = sqrtf(powf((float)(xDropPoint - canonX), 2) + powf((float)(yDropPoint - canonY), 2));
-    angleSin = asinf(distance / (xDropPoint - canonX));
+    angleSin = asinf(((float) (yDropPoint - canonY))/distance);
     return angleSin;
 }
+
+float defineAngleH(int xCanon, int xDropPoint){
+    int xNet =15 ;
+    int yNet= 4; 
+    float angle ; 
+    float yTemp; 
+    xCanon= xCanon;
+    xDropPoint=xDropPoint;
+
+    yTemp = lagrangeInterpolation((float)(xCanon+(xDropPoint-xCanon)/4), xCanon , 2,xNet , yNet , xDropPoint, 0 ); 
+    angle= atanf( (float)(yTemp/ (xCanon+(xDropPoint-xCanon)/4) )) ;  // possible faute ? 
+
+    return angle; 
+} 
 
 /*
  * Fonction qui prend une valeur de x et 3 points. Elle
