@@ -498,17 +498,7 @@ void castRays(int map[][MAP_WIDTH])
                 addRayInfoToList(&raysListHead, column);
             }
         }
-        // draw the ray in the minimap
-        if (r == 0)
-        {
-            ray1[0] = (int)rx;
-            ray1[1] = (int)ry;
-        }
-        if (r == NB_RAYS - 1)
-        {
-            ray2[0] = (int)rx;
-            ray2[1] = (int)ry;
-        }
+
         addRayToList(rx, ry);
         addRayToList(rx2, ry2);
     }
@@ -837,7 +827,7 @@ void drawBall()
         rect.x = screenDimension.w / 2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (ballDistance / BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h) / (ballDistance / BLOCK_SIZE);
-        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - sqrt(3) * tan(ballViewAngle) * ballDistance;
+        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - 1.2 * tan(ballViewAngle) * ballDistance;
 
         destRect.x = 32 * (SDL_GetTicks() / 150 % 4);
         destRect.y = 0;
@@ -883,37 +873,77 @@ void drawMap2D(int map[][MAP_WIDTH])
     rect.h = CELL_SIZE;
     rect.x = 0;
     rect.y = 0;
+    // draw ray
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     for (i = 0; i < raysListLength; i++)
     {
         SDL_RenderDrawLine(renderer, player.x * CELL_SIZE / BLOCK_SIZE, player.y * CELL_SIZE / BLOCK_SIZE, rays[i][0] * CELL_SIZE / BLOCK_SIZE, rays[i][1] * CELL_SIZE / BLOCK_SIZE);
     }
+    // draw map
     for (i = 0; i < MAP_HEIGHT; i++)
     {
         for (j = 0; j < MAP_WIDTH; j++)
         {
             switch (map[i][j])
             {
+            // bords du terrain
             case 1:
                 SDL_SetRenderDrawColor(renderer, 5, 255, 255, 255);
                 SDL_RenderFillRect(renderer, &rect);
                 break;
-
+            // filet du milieu
             case 2:
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
                 SDL_RenderFillRect(renderer, &rect);
                 break;
-            }
-            if ((i == player.x / BLOCK_SIZE && j == player.y / BLOCK_SIZE) || (i == ennemy.x / BLOCK_SIZE && j == ennemy.y / BLOCK_SIZE))
-            {
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+            // extremites du filet gauche et droit
+            case 3:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
                 SDL_RenderFillRect(renderer, &rect);
+                break;
+            case 4:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
+                SDL_RenderFillRect(renderer, &rect);
+                break;
             }
             rect.x += CELL_SIZE;
         }
         rect.y += CELL_SIZE;
         rect.x = 0;
     }
+
+    // draw player
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    rect.x = (player.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.y = (player.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    SDL_RenderFillRect(renderer, &rect);
+
+    // draw ennemi
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    rect.x = (ennemy.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.y = (ennemy.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    SDL_RenderFillRect(renderer, &rect);
+
+    //draw landing point
+    if(landingPointIsFind == 1){
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        rect.x = landingPoint[0] * CELL_SIZE;
+        rect.y = CELL_SIZE;
+        rect.h = (MAP_HEIGHT-2) * CELL_SIZE;
+        rect.w = 3;
+        SDL_RenderFillRect(renderer, &rect);
+        // reset taille cellule
+        rect.h = CELL_SIZE;
+        rect.w = CELL_SIZE;
+    }
+
+    // draw ball
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    rect.x = (ball.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.y = (ball.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    SDL_RenderFillRect(renderer, &rect);
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
