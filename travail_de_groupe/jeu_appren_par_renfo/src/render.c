@@ -760,7 +760,6 @@ void drawEnnemy()
     }
 }
 
-
 int isAngleInRange(float angle, float min, float max)
 {
     return ((angle >= min && angle <= max)) || ((angle >= max && angle <= min));
@@ -884,22 +883,23 @@ void drawMap2D(int map[][MAP_WIDTH])
 
     // draw player
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    rect.x = (player.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (player.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (player.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (player.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
     // draw ennemi
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    rect.x = (ennemy.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (ennemy.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (ennemy.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (ennemy.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
-    //draw landing point
-    if(landingPointIsFind == 1){
+    // draw landing point
+    if (landingPointIsFind == 1)
+    {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         rect.x = landingPoint[0] * CELL_SIZE;
         rect.y = CELL_SIZE;
-        rect.h = (MAP_HEIGHT-2) * CELL_SIZE;
+        rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
         rect.w = 3;
         SDL_RenderFillRect(renderer, &rect);
         // reset taille cellule
@@ -909,8 +909,8 @@ void drawMap2D(int map[][MAP_WIDTH])
 
     // draw ball
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    rect.x = (ball.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (ball.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (ball.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (ball.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

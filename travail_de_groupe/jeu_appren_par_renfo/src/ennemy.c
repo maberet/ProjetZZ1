@@ -6,6 +6,8 @@ int ennemyZone;
 int canonZone;
 int action;
 
+int ennemyHasMoved = 0;
+
 void initEnnemy()
 {
     ennemy.h = 2 * BLOCK_SIZE;
@@ -18,7 +20,8 @@ void initEnnemy()
 
 void manageEnnemyMovement()
 {
-    if (ball.isTravelingTo == AI){
+    if (ball.isTravelingTo == AI)
+    {
         angleF = defineAngleF(lastHitPoint[0], lastHitPoint[1], landingPoint[0], landingPoint[1]);
         angleF = converterIntoAngleF(angleF);
         angleH = defineAngleH(lastHitPoint[0], landingPoint[0]);
@@ -26,30 +29,68 @@ void manageEnnemyMovement()
         ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
         canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
         action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
-        switch (action)
+        while (ennemyHasMoved == 0)
         {
+            switch (action)
+            {
             case BACK:
-                ennemy.x += MOVEMENT_SPEED;
+                if (ennemy.x + BLOCK_SIZE < (MAP_WIDTH-1) * BLOCK_SIZE)
+                {
+                    ennemy.x += BLOCK_SIZE;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case FOWARD:
-                ennemy.x -= MOVEMENT_SPEED;
+                if (ennemy.x - BLOCK_SIZE > (MAP_WIDTH/2 + 1) * BLOCK_SIZE)
+                {
+                    ennemy.x -= BLOCK_SIZE;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case UP:
-                ennemy.y -= MOVEMENT_SPEED;
+                if (ennemy.y - BLOCK_SIZE > 1)
+                {
+                    ennemy.y -= BLOCK_SIZE;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case DOWN:
-                ennemy.y += MOVEMENT_SPEED;
+                if (ennemy.y + BLOCK_SIZE < (MAP_HEIGHT-1) * BLOCK_SIZE)
+                {
+                    ennemy.y += BLOCK_SIZE;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
-            
+
             default:
+                ennemyHasMoved = 1;
                 break;
+            }
         }
+        ennemyHasMoved = 0;
     }
 }
 
-void manageEnnemy(){
+void manageEnnemy()
+{
     manageEnnemyMovement();
 }
