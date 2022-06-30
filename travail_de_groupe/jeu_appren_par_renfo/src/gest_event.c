@@ -53,6 +53,7 @@ void gestGame()
             break;
 
         case SDL_MOUSEMOTION:
+            // mouvement de caméra
             if (event.motion.xrel > 0)
             {
                 player.angle += 0.01;
@@ -105,9 +106,12 @@ void gestGame()
                 continue;
 
             case SDLK_h:
-                if(showHub == 0){
+                if (showHub == 0)
+                {
                     showHub = 1;
-                }else{
+                }
+                else
+                {
                     showHub = 0;
                 }
 
@@ -141,10 +145,12 @@ void gestGame()
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                if (player.isHitting){
+                if (player.isHitting)
+                {
                     player.isHitting = 0;
                 }
-                else {
+                else
+                {
                     player.isHitting = 1;
                 }
             }
