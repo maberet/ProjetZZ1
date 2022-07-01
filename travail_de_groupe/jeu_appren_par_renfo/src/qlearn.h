@@ -11,7 +11,7 @@
 #define M_PI 3.14159265358979323846
 
 #define LEARN_RATE 0.8
-#define DISCOUNT 0.2
+#define DISCOUNT 0.8
 
 
 
@@ -71,6 +71,7 @@ int fullStack(stack_t *stack);
 void actionStack(stack_t *stack, line_t line);
 line_t unStack(stack_t *stack);
 void freeStack(stack_t *stack);
+void freeQ(float ***** Q);
 void traningAgent( int numberRun, int numberStep, float *****Q);
 void readQFromFile(float *****Q);
 #endif

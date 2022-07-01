@@ -367,7 +367,31 @@ void freeStack(stack_t *stack)
     }
 }
 
+void freeQ(float ***** Q){
+     int i,j,k,l;
+    
+    for(i = 0; i <  NUMBER_ZONE_RECEIVER; i++){  
+        
 
+        for(j = 0; j< NUMBER_ZONE_SHOOTER; j++){
+
+            for(k = 0; k <3 ; k++){
+                
+                for(l = 0; l<5 ; l++){
+                    free(Q[i][j][k][l]);
+                        
+                }
+                free(Q[i][j][k]); 
+
+            }
+            free(Q[i][j]);
+        }
+        free(Q[i]);  
+    }
+    free(Q);
+    Q=NULL;
+    
+} 
 
 void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir la bonne taille il faut diviser par block size 
     int i ; 
@@ -408,7 +432,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                             reward=0; 
                             //printf (" %d \n  ", m);
                             while(i>0){
-                                printf("%d %d \n  ",agent->x ,agent->y );
+                               // printf("%d %d \n  ",agent->x ,agent->y );
                                 action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
                                 agentZone= convertIntoZone( agent->x,agent->y ); 
                                 line.receiverZone= agentZone; 
@@ -466,7 +490,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                     } 
                 }
             } writeQ(Q);
-        if ( numberRun%10000==1){printf (" %d \n  ", numberRun);} 
+        if (n%10000==1){printf (" %d \n  ", n);} 
         greedy = greedy - 1/(n+1);
         n++; 
     }

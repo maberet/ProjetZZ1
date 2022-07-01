@@ -21,6 +21,7 @@ int main(){
     // initKeys();
     
     // mainLoop();
+    freeQ(Q);
 
 
     //mainLoop();
