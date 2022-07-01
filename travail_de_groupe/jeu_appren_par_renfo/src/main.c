@@ -5,12 +5,12 @@ int game_state;
 float ***** Q;
 int main(){ 
     float ***** Q = allocateAndInitiateQ();
-    int i= 10;
-    
+    int i= 5;
+    readQFromFile(Q,"q.txt");
     srand ( time(NULL));
-    // while (i>0){
-    traningAgent(100,30, Q);
-    // i--;} 
+    while (i>0){
+    traningAgent(10000000,30, Q);
+    i--;} 
     //printf(" %d \n ", convertIntoZone(agent->x,agent->y));
     
     writeQToFile(Q, "q.txt");
@@ -21,7 +21,5 @@ int main(){
     // initKeys();
     
     // mainLoop();
-
-
     //mainLoop();
 }

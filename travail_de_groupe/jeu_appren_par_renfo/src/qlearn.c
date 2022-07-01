@@ -18,7 +18,7 @@ agent_t * initAgent (){
 void moveAgent(agent_t * agent, int choice){
     switch (choice)
     {
-   case BACK:
+            case BACK:
                 if (agent->x + 1 < (MAP_WIDTH-1) * 1)
                 {
                     agent->x += 1;
@@ -96,7 +96,7 @@ float ***** allocateAndInitiateQ(){
                         exit(1);
                     }
                     for(m = 0; m < NUMBER_ACTION; m++){
-                        q[i][j][k][l][m] = 0;
+                        q[i][j][k][l][m] = 0.5;
                     }
                 }
 
@@ -105,7 +105,6 @@ float ***** allocateAndInitiateQ(){
     }
     return q;
 }
-
 void writeQToFile(float ***** q, char * filename){
     int i,j,k,l,m;
     FILE * fichier = NULL;
@@ -121,7 +120,7 @@ void writeQToFile(float ***** q, char * filename){
                 for(l = 0; l < MAP_HEIGHT; l++){
                     for(m = 0; m < NUMBER_ACTION; m++){
                         fprintf(fichier, "%f ", q[i][j][k][l][m]);
-                    }
+                    }fprintf(fichier, "\n");
                 }
                 fprintf(fichier, "\n");
             }
@@ -187,9 +186,8 @@ int argmax(float * arr){
 
 int takeAction(int xAgent, int yAgent, float ***** Q, int landPointX, int landPointY, float eps){
     int action;
-    int proba = rand() % 100;
-    int receiverZone=0;
-    if (proba < eps * 100){
+    int proba = rand() % 1000000;
+    if (proba < eps * 1000000){
         if (xAgent > (MAP_WIDTH-1)/2+1 && xAgent < MAP_WIDTH- 2 && yAgent > 1 && yAgent < MAP_HEIGHT - 2){
             action = rand() % 5;// OK cas au centre
         }
@@ -341,9 +339,9 @@ void freeStack(stack_t *stack)
 
 
 void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir la bonne taille il faut diviser par block size 
-    int i ; 
+    int i=0 ; 
     int action;
-    int nextAction;
+    //int nextAction;
     // point_t canon ; 
     point_t dropPoint ; 
     int reward;
@@ -357,39 +355,137 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
     int yAgent;
     int landX;
     int landY;
-
     int n = 0;
+
     while (n<numberRun){
+
         agent=initAgent(); 
         dropPoint=initDropPoint(dropPoint);
-        printf("running %d\n", n);
-          
-        while (agent->x!=dropPoint.x || agent->y!=dropPoint.y){
+        // printf("running %d\n", n);
+        // printf("landing point : %d %d \n", dropPoint.x, dropPoint.y);  
+        i=0;
+        line.landX= dropPoint.x;
+        line.landY= dropPoint.y;
+        
 
+
+        while ((agent->x!=dropPoint.x || agent->y!=dropPoint.y)&& i<numberStep){
             reward=0; 
-            printf("agent positions : %d %d \n  ",agent->x ,agent->y );
-            printf("landing point : %d %d \n", dropPoint.x, dropPoint.y);
-            action =takeAction(agent->x ,agent->y , Q, dropPoint.x, dropPoint.y, 0.5);
-            printf("action : %d \n", action);
+           
+            action =takeAction(agent->x ,agent->y , Q, dropPoint.x, dropPoint.y,greedy);
+            // printf("action : %d \n", action);
             line.action= action; 
-            line.reward= (agent->x==dropPoint.x && agent->y==dropPoint.y); 
-            line.landX= dropPoint.x;
-            line.landY= dropPoint.y;
+            line.reward= (agent->x==dropPoint.x && agent->y==dropPoint.y)*100; 
             line.xAgent= agent->x;
             line.yAgent= agent->y;
-            agent_t nextAgent;
-            nextAgent.x = agent->x;
-            nextAgent.y = agent->y;
-            moveAgent(&nextAgent, action);
-            nextAction = argmax(Q[nextAgent.x][nextAgent.y][dropPoint.x][dropPoint.y]);
 
-            Q[agent->x][agent->y][dropPoint.x][dropPoint.y][action] = Q[agent->x][agent->y][dropPoint.x][dropPoint.y][action] + 0.1*(reward + 0.9*Q[nextAgent.x][nextAgent.y][dropPoint.x][dropPoint.y][nextAction] - Q[agent->x][agent->y][dropPoint.x][dropPoint.y][action]);
-            //actionStack( stack , line); 
+            actionStack(stack, line);
             moveAgent(agent, action);
-        }    
-                                            
-        greedy = greedy - 1/(n+1);
+            
+            // printf("agent positions : %d %d \n  ",agent->x ,agent->y );
+            i++;
+        } 
+
+            
+        action =takeAction(agent->x ,agent->y , Q, dropPoint.x, dropPoint.y, greedy);
+        line.action= action; 
+        line.reward= (agent->x==dropPoint.x && agent->y==dropPoint.y) ; 
+        line.xAgent= agent->x;
+        line.yAgent= agent->y;
+        moveAgent(agent,action);
+        reward=(agent->x==dropPoint.x && agent->y==dropPoint.y)*100;
+        //printf(" q :  %f\n ", Q[agent->x][agent->y][dropPoint.x][dropPoint.y][line.action]);
+            Q[agent->x][agent->y][dropPoint.x][dropPoint.y][line.action] += 
+                    LEARN_RATE* ( reward -
+                        Q[agent->x][agent->y][dropPoint.x][dropPoint.y][line.action] );
+        
+        //printf(" q :  %f\n ", Q[agent->x][agent->y][dropPoint.x][dropPoint.y][line.action]);
+
+        while ( !emptyStack(stack)){
+            maxAction= argmax(Q[agent->x][agent->y][dropPoint.x][dropPoint.y]); 
+            xAgent= line.xAgent;
+            yAgent= line.yAgent; 
+            landX= line.landX;
+            landY=line.landY; 
+            reward=line.reward; 
+
+            line=unStack(stack);
+            //printf(" q :  %f\n ", Q[agent->x][agent->y][dropPoint.x][dropPoint.y][line.action]); 
+
+
+            Q[line.xAgent][line.yAgent][line.landX][line.landY][line.action]  +=
+                DISCOUNT*(reward +
+                LEARN_RATE* Q[xAgent][yAgent][landX][landY][maxAction]
+                - Q[line.xAgent][line.yAgent][line.landX][line.landY][line.action]);
+            //printf(" q :  %f\n ",Q[line.xAgent][line.yAgent][line.landX][line.landY][line.action]);
+            }
+              
+                                       
+        //greedy = greedy - 1/(n+1);
         n++; 
     }
-    writeQToFile(Q, "q1.txt");
+    freeStack(stack);
+    writeQToFile(Q, "q.txt");
 } 
+
+
+// while (numberRun>0){
+//         agent=initAgent(); 
+//         canon=initCanon(canon); 
+//         dropPoint= initDropPoint(dropPoint);
+//         angleF=defineAngleF( canon.x, canon.x, dropPoint.x, dropPoint.y );
+//         angleH=defineAngleH( canon.x, canon.y ); 
+//         zoneAngleF=converterIntoAngleF(angleF);
+//         zoneAngleH=converterIntoAngleH(angleH);
+//         dropZone=convertIntoZone(dropPoint.x,dropPoint.y); 
+//         canonZone= convertIntoZoneCanon(canon.x,canon.y); 
+//         reward=0; 
+
+//         for ( i=0; i< numberStep - 1; i++ ){
+//             action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
+//             agentZone= convertIntoZone( agent->x,agent->y ); 
+//             line.receiverZone= agentZone; 
+//             line.shooterZone= canonZone; 
+//             line.angleHZone=zoneAngleH; 
+//             line.angleFZone=zoneAngleF; 
+//             line.action= action; 
+//             line.reward= 0; 
+//             actionStack( stack , line); 
+//             moveAgent(agent, action); 
+//         } 
+//         action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
+//         agentZone= convertIntoZone( agent->x,agent->y ); 
+//         line.receiverZone= agentZone; 
+//         line.shooterZone= canonZone; 
+//         line.angleHZone=zoneAngleH; 
+//         line.angleFZone=zoneAngleF; 
+//         line.action= action; 
+//         moveAgent(agent, action);  
+//         agentZone= convertIntoZone( agent->x,agent->y ); 
+
+//         reward = (agentZone==dropZone); 
+
+//         Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] += 
+//             LEARN_RATE* ( reward -
+//              Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] );
+
+//         while ( !emptyStack(stack)){
+//             reward=line.reward; 
+//             maxAction= argmax(Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone]); 
+//             agentZone= line.receiverZone;
+//             canonZone= line.shooterZone; 
+//             zoneAngleH= line.angleHZone;
+//             zoneAngleF=line.angleFZone; 
+
+//             line=unStack(stack); 
+
+
+//             Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action] +=
+//                     DISCOUNT*(reward +
+//                     LEARN_RATE* Q[agentZone][canonZone][zoneAngleH][zoneAngleF][maxAction]
+//                     -Q[line.receiverZone][line.shooterZone][line.angleHZone][line.angleFZone][line.action]);
+//         }
+//         //if ( numberRun%1000000==1){printf (" %d \n  ", numberRun);}  
+//         //greedy = greedy - 1/numberRun;
+//         numberRun--; 
+//     }
