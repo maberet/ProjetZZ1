@@ -430,9 +430,7 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                             dropZone=convertIntoZone(dropPoint.x,dropPoint.y); 
                             canonZone= j; 
                             reward=0; 
-                            //printf (" %d \n  ", m);
                             while(i>0){
-                               // printf("%d %d \n  ",agent->x ,agent->y );
                                 action =takeAction(agent->x ,agent->y , Q, canonZone, zoneAngleH, zoneAngleF, greedy);
                                 agentZone= convertIntoZone( agent->x,agent->y ); 
                                 line.receiverZone= agentZone; 
@@ -489,10 +487,12 @@ void traningAgent ( int numberRun, int numberStep, float *****Q) {// pour avoir 
                         
                     } 
                 }
-            } writeQ(Q);
+            }
+        writeQ(Q);
         if (n%10000==1){printf (" %d \n  ", n);} 
         greedy = greedy - 1/(n+1);
         n++; 
     }
+    
     freeStack(stack); 
 } 
