@@ -127,7 +127,7 @@ void writeQ(float *****Q){
 
 void readQFromFile(float *****Q){
     int i, j, k, l, m ;
-    FILE * fp = fopen("q.txt", "r");
+    FILE * fp = fopen("matriceQ/6720etats.txt", "r");
     for(i = 0; i < NUMBER_ZONE_RECEIVER; i++){
         for(j = 0; j < NUMBER_ZONE_SHOOTER; j++){
             for(k = 0; k < 3; k++){
