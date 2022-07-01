@@ -40,5 +40,25 @@ Trello : https://trello.com/b/YGhNeYX3/projet-apprentissage-par-renforcement
     |   ├── Makefile
     |   ├── markov.txt
     |   └── map.txt
-    └── jeu_appren_par_renfo    
+    └── jeu_appren_par_renfo  
+        ├── render_2d
+        ├── bin
+        |   └── [fichiers .o]  
+        ├── moving_ball
+        |   └── [test de q-learning]  
+        ├── Res
+        |   └── [fichiers .png et .ttf]  
+        ├── src
+        |   ├── ball.c
+        |   ├── ennemy.c
+        |   ├── gest_event.c
+        |   ├── main.c
+        |   ├── map.c
+        |   ├── player.c
+        |   ├── qlearn.c
+        |   ├── render.c
+        |   └── [fichiers .h associés]
+        ├── Makefile
+        ├── map.txt
+        └── q.txt
 ```

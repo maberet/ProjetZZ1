@@ -1,5 +1,7 @@
 #include "render.h"
 
+float timer = 0;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -12,7 +14,7 @@ SDL_Rect sky;
 SDL_Rect ground;
 SDL_Rect racket;
 
-int showHub = 0;
+int showHub = 1;
 
 SDL_Texture *netTexture;
 SDL_Texture *netEdgeLeftTexture;
@@ -23,6 +25,8 @@ SDL_Texture *ballTexture;
 SDL_Texture *skyTexture;
 SDL_Texture *groundTexture;
 SDL_Texture *racketTexture;
+SDL_Texture *iaScoredTexture;
+SDL_Texture *humanScoredTexture;
 
 int **rays;
 int raysListLength = 0;
@@ -760,7 +764,6 @@ void drawEnnemy()
     }
 }
 
-
 int isAngleInRange(float angle, float min, float max)
 {
     return ((angle >= min && angle <= max)) || ((angle >= max && angle <= min));
@@ -796,7 +799,7 @@ void drawBall()
         rect.x = screenDimension.w / 2 + (screenDimension.w * tan(ballAngle - player.angle)) * sqrt(3) * 0.5;
         rect.w = (ballWidth * screenDimension.w) / (2 * ballDistance / BLOCK_SIZE);
         rect.h = (ballHeight * screenDimension.h) / (2 * ballDistance / BLOCK_SIZE);
-        rect.y = (3 * screenDimension.h / 4 + player.viewAngle) - 2 * tan(ballViewAngle) * ballDistance;
+        rect.y = (2.5 * screenDimension.h / 4 + player.viewAngle) - 2 * tan(ballViewAngle) * ballDistance;
 
         destRect.x = 32 * (SDL_GetTicks() / 150 % 4);
         destRect.y = 0;
@@ -809,22 +812,29 @@ void drawBall()
 
 void drawSkyAndGround()
 {
-    destRect.x = ((int)((player.angle + pi) * RD + player.x / BLOCK_SIZE));
-    destRect.y = 0;
-    destRect.w = 100;
-    destRect.h = 128 / 2;
 
     rect.x = 0;
     rect.y = screenDimension.h / 2 + player.viewAngle;
     rect.h = screenDimension.h - rect.y;
     rect.w = screenDimension.w;
-    SDL_RenderCopy(renderer, groundTexture, &destRect, &rect);
 
+    
+    SDL_RenderCopy(renderer, groundTexture, NULL, &rect);
+
+    
     sky.x = 0;
     sky.y = 0;
     sky.w = screenDimension.w;
     sky.h = screenDimension.h / 2 + player.viewAngle;
 
+    destRect.x = 500 + (((player.angle + pi) * RD + player.x / BLOCK_SIZE));
+    if (player.angle > pi){
+        destRect.x = 500 + (((player.angle - pi) * RD + player.x / BLOCK_SIZE));
+    }
+    destRect.y =0;
+    destRect.w = 100;
+    destRect.h = 128;
+    
     SDL_RenderCopy(renderer, skyTexture, &destRect, &sky);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -832,7 +842,14 @@ void drawSkyAndGround()
 
 void drawRacket()
 {
-    // todo
+    destRect.x = 0;
+    destRect.y = 0;
+    destRect.w = 64;
+    destRect.h = 32;
+    if (player.isHoldingClick){
+        destRect.x = 64 * ((int)(player.hitIntensityTimer/100) % 4);
+    }
+    SDL_RenderCopy(renderer, racketTexture, &destRect, NULL);
 }
 
 void drawMap2D(int map[][MAP_WIDTH])
@@ -884,22 +901,35 @@ void drawMap2D(int map[][MAP_WIDTH])
 
     // draw player
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    rect.x = (player.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (player.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (player.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (player.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
     // draw ennemi
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    rect.x = (ennemy.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (ennemy.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (ennemy.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (ennemy.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
-    //draw landing point
-    if(landingPointIsFind == 1){
+    // draw landing point
+    if (landingPointPlayerIsFind == 1)
+    {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        rect.x = landingPoint[0] * CELL_SIZE;
+        rect.x = landingPointPlayerX * CELL_SIZE;
         rect.y = CELL_SIZE;
-        rect.h = (MAP_HEIGHT-2) * CELL_SIZE;
+        rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
+        rect.w = 3;
+        SDL_RenderFillRect(renderer, &rect);
+        // reset taille cellule
+        rect.h = CELL_SIZE;
+        rect.w = CELL_SIZE;
+    }
+    if (landingPointEnnemyIsFind == 1)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        rect.x = landingPointEnnemyX * CELL_SIZE;
+        rect.y = CELL_SIZE;
+        rect.h = (MAP_HEIGHT - 2) * CELL_SIZE;
         rect.w = 3;
         SDL_RenderFillRect(renderer, &rect);
         // reset taille cellule
@@ -909,8 +939,8 @@ void drawMap2D(int map[][MAP_WIDTH])
 
     // draw ball
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    rect.x = (ball.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
-    rect.y = (ball.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE/2;
+    rect.x = (ball.x * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
+    rect.y = (ball.y * CELL_SIZE) / BLOCK_SIZE - CELL_SIZE / 2;
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -928,6 +958,16 @@ void drawString(char *str, int x, int y, int w, int h, int r, int g, int b, int 
     SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_FreeSurface(text);
     SDL_DestroyTexture(texture);
+}
+
+void drawHitIntensity(){
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    rect.w = screenDimension.w/20;
+    rect.x = screenDimension.w - rect.w;
+    //printf("%f\n", player.hitIntensityTimer);
+    rect.h = 2 * screenDimension.h/2 * ( player.hitIntensityTimer/1000);
+    rect.y = 3 * screenDimension.h/4 - rect.h;
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void drawFPS()
@@ -985,6 +1025,25 @@ void drawHub()
     drawInfosBall();
 }
 
+void drawWhoScored(){
+    switch (whoScored)
+    {
+        case NONE:
+            break;
+
+        case AI:
+            SDL_RenderCopy(renderer, iaScoredTexture, NULL, NULL);
+            break;
+
+        case PLAYER:
+            SDL_RenderCopy(renderer, humanScoredTexture, NULL, NULL);
+            break;
+
+        default:
+            break;
+    }
+}
+
 void drawGame()
 {
     SDL_RenderClear(renderer);
@@ -993,28 +1052,33 @@ void drawGame()
     if (ball.x < MAP_WIDTH * BLOCK_SIZE / 2)
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         drawVerticalNet();
         drawBall();
     }
     else
     {
         drawVerticalWalls();
-        drawEnnemy();
         drawHorizentalWalls();
+        drawEnnemy();
         // todo bonus : draw point de chute de la balle
         drawBall();
         drawVerticalNet();
     }
     drawMap2D(map);
     drawRacket();
+    if (player.isHoldingClick){
+
+        drawHitIntensity();
+    }
     drawFPS();
     // affiche le hub
     if (showHub)
     {
         drawHub();
     }
+    drawWhoScored();
 
     SDL_RenderPresent(renderer);
 }
@@ -1033,6 +1097,8 @@ void mainLoop()
     skyTexture = loadTexture("Res/sky.png");
     groundTexture = loadTexture("Res/ground.png");
     racketTexture = loadTexture("Res/racket.png");
+    iaScoredTexture = loadTexture("Res/iascored.png");
+    humanScoredTexture = loadTexture("Res/humanscored.png");
 
     ray1 = malloc(sizeof(int) * 2);
     ray2 = malloc(sizeof(int) * 2);
@@ -1055,6 +1121,7 @@ void mainLoop()
         if (delta > 1000 / FPS_TO_GET)
         {
             fps = 1000 / delta;
+            timer += delta;
             b = a;
             switch (game_state)
             {

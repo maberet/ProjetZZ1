@@ -68,11 +68,11 @@ void gestGame()
             }
             if (event.motion.yrel > 0)
             {
-                player.viewAngle -= 1;
+                player.viewAngle -= 0.05 * RD;
             }
             if (event.motion.yrel < 0)
             {
-                player.viewAngle += 1;
+                player.viewAngle += 0.05 * RD;
             }
             player.deltax = cos(player.angle);
             player.deltay = sin(player.angle);
@@ -114,6 +114,13 @@ void gestGame()
                 {
                     showHub = 0;
                 }
+                break;
+
+            case SDLK_b:
+                initBall();
+                landingPointPlayerIsFind = 0;
+                landingPointEnnemyIsFind = 0;
+                break;
 
             default:
                 break;
@@ -145,21 +152,20 @@ void gestGame()
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                if (player.isHitting)
-                {
-                    player.isHitting = 0;
-                }
-                else
-                {
-                    player.isHitting = 1;
-                }
+                player.isHoldingClick = 1;
+                player.startHitTimer = timer;
+                player.startHitBool = 0;
             }
             break;
 
         case SDL_MOUSEBUTTONUP:
+
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                player.isHitting = 0;
+                player.endHitTimer = timer;
+                player.startHitBool = 1;
+                player.hitIntensity = (player.endHitTimer - player.startHitTimer) / 200;
+                player.isHoldingClick = 0;
             }
             break;
 

@@ -1,10 +1,20 @@
 #include "player.h"
 
+int landingPointEnnemyX;
+int landingPointEnnemyY;
+
+int lastHitPointEnnemyX;
+int lastHitPointEnnemyY = 0;
+
+int landingPointEnnemyIsFind = 0;
+
 int angleF;
 int angleH;
 int ennemyZone;
 int canonZone;
 int action;
+
+int ennemyHasMoved = 0;
 
 void initEnnemy()
 {
@@ -18,38 +28,112 @@ void initEnnemy()
 
 void manageEnnemyMovement()
 {
-    if (ball.isTravelingTo == AI){
-        angleF = defineAngleF(lastHitPoint[0], lastHitPoint[1], landingPoint[0], landingPoint[1]);
+    if (ball.isTravelingTo == AI)
+    {
+        angleF = defineAngleF(lastHitPointPlayerX, lastHitPointPlayerY, landingPointPlayerX, landingPointPlayerY);
         angleF = converterIntoAngleF(angleF);
-        angleH = defineAngleH(lastHitPoint[0], landingPoint[0]);
+        angleH = defineAngleH(lastHitPointPlayerX, landingPointPlayerX);
         angleH = converterIntoAngleH(angleH);
         ennemyZone = convertIntoZone(ennemy.x, ennemy.y);
-        canonZone = convertIntoZone(lastHitPoint[0], lastHitPoint[1]);
-        action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 0);
-        switch (action)
+        canonZone = convertIntoZone(lastHitPointPlayerX, lastHitPointPlayerY);
+        action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+        while (ennemyHasMoved == 0)
         {
+            switch (action)
+            {
             case BACK:
-                ennemy.x += MOVEMENT_SPEED;
+                if (ennemy.x + BLOCK_SIZE < (MAP_WIDTH-1) * BLOCK_SIZE)
+                {
+                    ennemy.x += BLOCK_SIZE/2;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case FOWARD:
-                ennemy.x -= MOVEMENT_SPEED;
+                if (ennemy.x - BLOCK_SIZE > (MAP_WIDTH/2 + 1) * BLOCK_SIZE)
+                {
+                    ennemy.x -= BLOCK_SIZE/2;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case UP:
-                ennemy.y -= MOVEMENT_SPEED;
+                if (ennemy.y - BLOCK_SIZE > 1)
+                {
+                    ennemy.y -= BLOCK_SIZE/2;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
 
             case DOWN:
-                ennemy.y += MOVEMENT_SPEED;
+                if (ennemy.y + BLOCK_SIZE < (MAP_HEIGHT-1) * BLOCK_SIZE)
+                {
+                    ennemy.y += BLOCK_SIZE/2;
+                    ennemyHasMoved = 1;
+                }
+                else
+                {
+                    action = takeAction(ennemy.x, ennemy.y, Q, canonZone, angleH, angleF, 1);
+                }
                 break;
-            
+
             default:
+                ennemyHasMoved = 1;
                 break;
+            }
+        }
+        ennemyHasMoved = 0;
+    }
+}
+
+int generatelandingPointEnnemy(){
+
+    int randomPointX = rand() % ((MAP_WIDTH-1)/2);
+
+    landingPointEnnemyIsFind = 1;
+    landingPointPlayerIsFind = 0;
+
+    return randomPointX;
+}
+
+
+void ennemyHitBall(){
+    if (sqrt(pow(ennemy.x - ball.x, 2) + pow(ennemy.y - ball.y, 2)) / BLOCK_SIZE < HIT_RANGE)
+    {
+        if (ball.isTravelingTo == AI)
+        {
+            
+                //cherche et trouve point de chute, UNE SEULE FOIS!
+            if(landingPointEnnemyIsFind == 0){
+                landingPointEnnemyX = generatelandingPointEnnemy();
+                ball.isTravelingTo = PLAYER;
+                ball.angle = ennemy.angle;
+                ball.speed = 4 * HIT_FORCE;
+                ball.isHit = 1;
+                ball.z = ball.z;
+                lastHitPointEnnemyX = ball.x;
+                lastHitPointEnnemyY = player.h;
+                }
+
         }
     }
 }
 
 void manageEnnemy(){
+
     manageEnnemyMovement();
+
+    ennemyHitBall();
 }
